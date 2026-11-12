@@ -6,7 +6,7 @@ This Cloudflare Worker records page visits and download clicks for the GitHub Pa
 
 - The visitor IP as received from Cloudflare's `CF-Connecting-IP` header.
 - Approximate Cloudflare network geolocation: city, region, country and latitude/longitude.
-- A random browser identifier, stored as an HMAC in D1 for unique-visitor counting.
+- A random browser identifier kept in browser local storage and stored only as an HMAC in D1 for unique-visitor counting.
 - Page path, referrer, event type and timestamp.
 
 IP addresses and visit-level records are retained for **30 days**. Old rows are removed during incoming tracking requests. The location is approximate (often a city/network area), not a home or street address. Download numbers are **download-link clicks**, not proof that the file finished downloading.
