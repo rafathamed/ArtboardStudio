@@ -1,5 +1,5 @@
 const ADMIN_EMAIL = "rafathamed9@gmail.com";
-const MAX_DAYS = 90;
+const MAX_DAYS = 30;
 const DEFAULT_DAYS = 30;
 const MAX_RECENT = 120;
 const BOT_RE = /bot|crawler|spider|slurp|facebookexternalhit|preview|headlesschrome|uptimerobot/i;
@@ -136,6 +136,9 @@ async function trackEvent(request, env) {
 async function adminSummary(request, env) {
   if (!validOrigin(request, env)) return json({ ok: false, error: "origin_not_allowed" }, 403);
   if (!(await authenticateAdmin(request, env))) return json({ ok: false, error: "unauthorized" }, 401);
+
+  // Enforce the 30-day retention window whenever the dashboard is opened.
+  await env.DB.prepare("DELETE FROM analytics_events WHERE datetime(created_at) < datetime('now', '-30 days')").run();
 
   const url = new URL(request.url);
   const days = clampDays(url.searchParams.get("days"));
