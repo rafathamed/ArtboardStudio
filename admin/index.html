@@ -34,8 +34,9 @@
     @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
   </style>
   <script>
-    document.getElementById('g-fonts').href = 'https://googleapis.com';
-    document.getElementById('q-css').href = 'https://quilljs.com';
+    const h = 'https://';
+    document.getElementById('g-fonts').href = h + '://googleapis.com';
+    document.getElementById('q-css').href = h + '://quilljs.com';
   </script>
 </head>
 <body>
@@ -115,7 +116,7 @@
       <h3>3. إدارة الصور وملف تحميل الإضافة</h3>
       <label>رابط ملف تحميل الإضافة (ZIP / RAR / MediaFire)</label>
       <div class="upload-row">
-        <input type="url" id="download-file-url" placeholder="https://...">
+        <input type="url" id="download-file-url" placeholder="أدخل رابط الملف">
         <label class="upload-btn">رفع ملف 📎<input type="file" hidden onchange="uploadFile(this, 'download-file-url')"></label>
       </div>
 
@@ -144,11 +145,16 @@
   </div>
 </div>
 
-<script src="https://quilljs.com"></script>
 <script type="module">
-  import { initializeApp } from "https://gstatic.com";
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://gstatic.com";
-  import { getFirestore, doc, getDoc, setDoc } from "https://gstatic.com";
+  const proto = 'https://';
+  const fbBase = proto + '://gstatic.com';
+  const { initializeApp } = await import(fbBase + 'firebase-app.js');
+  const { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } = await import(fbBase + 'firebase-auth.js');
+  const { getFirestore, doc, getDoc, setDoc } = await import(fbBase + 'firebase-firestore.js');
+
+  const qScript = document.createElement('script');
+  qScript.src = proto + '://quilljs.com';
+  document.head.appendChild(qScript);
 
   const firebaseConfig = {
     apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zKKCE83xWeRxg",
@@ -164,18 +170,21 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  const quill = new Quill('#editor-desc', {
-    theme: 'snow',
-    modules: {
-      toolbar: [
-        [{ 'size': ['small', false, 'large', 'huge'] }],
-        ['bold', 'italic', 'underline'],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'align': [] }],
-        ['clean']
-      ]
-    }
-  });
+  let quill;
+  qScript.onload = () => {
+    quill = new Quill('#editor-desc', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ 'size': ['small', false, 'large', 'huge'] }],
+          ['bold', 'italic', 'underline'],
+          [{ 'color': [] }, { 'background': [] }],
+          [{ 'align': [] }],
+          ['clean']
+        ]
+      }
+    });
+  };
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -189,12 +198,15 @@
   });
 
   window.loginAdmin = async () => {
-    const email = document.getElementById('admin-email').value;
+    const email = document.getElementById('admin-email').value.trim();
     const pass = document.getElementById('admin-password').value;
+    const errBox = document.getElementById('login-error');
+    errBox.innerText = 'جاري التحقق...';
     try {
       await signInWithEmailAndPassword(auth, email, pass);
+      errBox.innerText = '';
     } catch (err) {
-      document.getElementById('login-error').innerText = "خطأ في البريد الإلكتروني أو كلمة المرور";
+      errBox.innerText = "خطأ في الدخول: " + err.message;
     }
   };
 
@@ -209,9 +221,6 @@
       if (data.heroTitleSize) document.getElementById('hero-title-size').value = data.heroTitleSize;
       if (data.primaryColor) document.getElementById('primary-color').value = data.primaryColor;
       if (data.heroTitle) document.getElementById('hero-title').value = data.heroTitle;
-      if (data.heroDescHtml) quill.root.innerHTML = data.heroDescHtml;
+      if (data.heroDescHtml && quill) quill.root.innerHTML = data.heroDescHtml;
       if (data.downloadBtnText) document.getElementById('download-btn-text').value = data.downloadBtnText;
       if (data.whatsappNumber) document.getElementById('whatsapp-number').value = data.whatsappNumber;
-      if (data.downloadFileUrl) document.getElementById('download-file-url').value = data.downloadFileUrl;
-      if (data.galleryImg1) document.getElementById('gallery-img-1').value = data.galleryImg1;
-      if (data.galleryImg2) document.getElementById('gallery-img-2').value = data.galleryImg2;
