@@ -1,0 +1,20 @@
+{
+  "version": "1.9.1",
+  "released": "2026-11-12",
+  "minVersion": "1.4.0",
+  "notes": [
+    "إصلاح زر «تطبيق»: استُبدلت نافذة التأكيد التي لا تعمل داخل Illustrator بنافذة داخل الإضافة",
+    "بعد التحديث التلقائي تظهر نافذة تطلب إغلاق Illustrator وفتحه مرة أخرى ولا تعمل الإضافة قبل ذلك",
+    "أزرار التطبيق خضراء ثابتة أسفل اللوحة، وتبويب تحويل الصورة: تحميل أخضر في الأعلى وقفل الخيارات وأيقونات للأدوات، ونافذة أعرض"
+  ],
+  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/",
+  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/",
+  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/",
+  "package": {
+    "url": "https://rafathamed.github.io/ArtboardStudio/updates/ArtboardStudio-update-1.9.1.zip",
+    "size": 1205305,
+    "sha256": "17b153ed8b2578bc5899ba8f368aba076a0f96f1395ff5ff6ccce1b228649f78",
+    "signature": "bYuF6ygNbelBYqyS8OBIZRQ10r61WaNeJJE8pjzPFID7R0vctq3xrhzBOP/gWJ9sLAq3qhgRFXdRUThH2O4cDA==",
+    "format": "zip-stored-v1"
+  }
+}
