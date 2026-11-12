@@ -116,8 +116,8 @@ async function trackEvent(request, env) {
   const city = cleanText(cf.city || "", 100);
   const region = cleanText(cf.region || cf.regionCode || "", 100);
   const country = cleanText(cf.country || "", 4);
-  const latitude = Number.isFinite(Number(cf.latitude)) ? Number(cf.latitude) : null;
-  const longitude = Number.isFinite(Number(cf.longitude)) ? Number(cf.longitude) : null;
+  const latitude = cf.latitude !== undefined && cf.latitude !== null && cf.latitude !== "" && Number.isFinite(Number(cf.latitude)) ? Number(cf.latitude) : null;
+  const longitude = cf.longitude !== undefined && cf.longitude !== null && cf.longitude !== "" && Number.isFinite(Number(cf.longitude)) ? Number(cf.longitude) : null;
   const referrer = cleanText(body.referrer || "", 500);
   const pagePath = cleanText(body.path || "/", 500);
   const visitorKey = await visitorHash(visitorId, env.VISITOR_HASH_SECRET);
