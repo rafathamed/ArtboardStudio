@@ -692,6 +692,19 @@
       }
     });
   }
+  function completeDailySeries(rows, dayCount) {
+    var lookup = {};
+    (rows || []).forEach(function (row) { lookup[row.day] = row; });
+    var output = [], today = new Date();
+    today.setUTCHours(0,0,0,0);
+    for (var offset = dayCount - 1; offset >= 0; offset--) {
+      var date = new Date(today.getTime() - offset * 86400000);
+      var key = date.toISOString().slice(0,10);
+      var existing = lookup[key] || {};
+      output.push({day:key,visits:Number(existing.visits || 0),downloads:Number(existing.downloads || 0)});
+    }
+    return output;
+  }
   function renderAnalyticsCountries(rows) {
     var target = document.getElementById("as-analytics-countries");
     if (!target) return; target.textContent = "";
@@ -787,7 +800,7 @@
       });
       renderAnalyticsCountries(data.countries || []);
       renderAnalyticsRecent(data.recent || []);
-      drawAnalyticsChart(data.daily || []);
+      drawAnalyticsChart(completeDailySeries(data.daily || [], Number(range) || 30));
       await renderAnalyticsMap(data.mapPoints || []);
       analyticsStatus("تم تحديث البيانات. النطاق: آخر " + range + " يومًا. الاحتفاظ بالسجلات: 30 يومًا.", false);
     } catch (error) {
