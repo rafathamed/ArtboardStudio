@@ -73,9 +73,10 @@ async function authenticateAdmin(request, env) {
   if (!response.ok) return false;
   const data = await response.json();
   const user = data && data.users && data.users[0];
+  const allowedAdmin = String(env.ADMIN_EMAIL || ADMIN_EMAIL).toLowerCase();
   return !!(
     user &&
-    String(user.email || "").toLowerCase() === ADMIN_EMAIL &&
+    String(user.email || "").toLowerCase() === allowedAdmin &&
     user.emailVerified === true
   );
 }
