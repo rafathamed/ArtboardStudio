@@ -3,169 +3,165 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة تحكم الأدمن | Artboard Studio</title>
+  <title>استوديو التصميم المتكامل | Artboard Studio</title>
   <style>
-    *{box-sizing:border-box;font-family:Tahoma,Arial,sans-serif}
-    body{background:#0f172a;color:#f8fafc;margin:0;padding:20px}
-    .box{max-width:850px;margin:0 auto}
-    .card{background:#1e293b;padding:20px;border-radius:12px;margin-bottom:16px;border:1px solid #334155}
-    h2,h3{margin-top:0;color:#38bdf8}
-    label{display:block;margin:10px 0 5px;font-weight:bold;color:#cbd5e1}
-    input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #475569;background:#0f172a;color:#fff;font-size:15px}
-    .btn{background:#0284c7;color:#fff;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:16px;font-weight:bold;margin-top:12px}
-    .btn-ok{background:#16a34a;width:100%}
-    .btn-out{background:#dc2626}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .hide{display:none}
-    .row{display:flex;gap:8px;align-items:center}
-    .up{background:#475569;padding:10px 14px;border-radius:8px;cursor:pointer;white-space:nowrap}
+    *{box-sizing:border-box;font-family:'Cairo',Tahoma,sans-serif}
+    body{background:#090b13;color:#f8fafc;margin:0;height:100vh;overflow:hidden}
+    .login-wrap{display:flex;align-items:center;justify-content:center;height:100vh}
+    .card{background:#151828;padding:24px;border-radius:14px;border:1px solid #2b2f48;width:100%;max-width:400px}
+    .workspace{display:grid;grid-template-columns:450px 1fr;height:100vh}
+    .sidebar{background:#111422;border-left:1px solid #262a40;display:flex;flex-direction:column;height:100vh}
+    .sb-head{padding:12px 16px;background:#171b2e;border-bottom:1px solid #262a40;display:flex;justify-content:space-between;align-items:center}
+    .tabs{display:grid;grid-template-columns:repeat(5,1fr);background:#0d0f1a;border-bottom:1px solid #262a40}
+    .tab{padding:10px 4px;text-align:center;cursor:pointer;font-size:11px;font-weight:bold;color:#94a3b8;border-bottom:2px solid transparent}
+    .tab.active{color:#a78bfa;border-bottom-color:#8b5cf6;background:#151828}
+    .sb-body{flex:1;overflow-y:auto;padding:15px}
+    .sb-foot{padding:12px;background:#171b2e;border-top:1px solid #262a40}
+    .preview-area{background:#05060a;display:flex;flex-direction:column;height:100vh}
+    .pv-bar{height:46px;background:#151828;border-bottom:1px solid #262a40;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:12px;color:#94a3b8}
+    iframe{flex:1;width:100%;border:none;background:#090b13;transition:width .3s}
+    label{display:block;margin:10px 0 4px;font-size:12px;font-weight:bold;color:#cbd5e1}
+    input,select,textarea{width:100%;padding:8px 10px;border-radius:8px;border:1px solid #333954;background:#0b0d17;color:#fff;font-size:13px}
+    input[type="color"]{height:36px;padding:2px;cursor:pointer}
+    input[type="range"]{padding:0;accent-color:#8b5cf6}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .btn{background:linear-gradient(120deg,#7954ec,#a17aff);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;width:100%}
+    .btn-save{background:linear-gradient(120deg,#16a34a,#22c55e)}
+    .btn-sm{padding:6px 10px;font-size:11px;width:auto;background:#262a40}
+    .btn-red{background:#dc2626}
+    .hide{display:none!important}
+    .row{display:flex;gap:6px;align-items:center}
+    .up{background:#2e3452;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:11px;white-space:nowrap}
+    .val{float:left;color:#a78bfa;font-size:11px}
+    .ico-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:6px}
+    .ico-btn{background:#1b2036;border:1px solid #2e3556;border-radius:6px;padding:6px;text-align:center;cursor:pointer;font-size:16px}
+    .ico-btn:hover{border-color:#8b5cf6;background:#262d4d}
+    .sec-box{background:#171b2e;border:1px solid #2b3252;padding:10px;border-radius:10px;margin-top:10px}
+    .item-card{background:#0d101d;border:1px solid #262c47;padding:8px;border-radius:8px;margin-top:8px;font-size:12px}
+    @media(max-width:950px){.workspace{grid-template-columns:1fr;overflow-y:auto;height:auto}.sidebar{height:auto}.preview-area{height:75vh}}
   </style>
 </head>
 <body>
-<div class="box">
-  <div id="login-box" class="card" style="max-width:400px;margin:60px auto">
-    <h2 style="text-align:center">تسجيل دخول الأدمن</h2>
+
+<div id="login-box" class="login-wrap">
+  <div class="card">
+    <h2 style="text-align:center;color:#a78bfa;margin-top:0">استوديو التحكم المتكامل</h2>
     <label>البريد الإلكتروني</label>
     <input type="email" id="em" value="rafathamed9@gmail.com">
     <label>كلمة المرور</label>
-    <input type="password" id="pw" placeholder="اكتب كلمة المرور">
-    <button type="button" id="go" class="btn" style="width:100%">دخول للوحة التحكم</button>
-    <p id="msg" style="color:#fbbf24;text-align:center;margin-top:10px"></p>
-  </div>
-
-  <div id="panel" class="hide">
-    <div class="card" style="display:flex;justify-content:space-between;align-items:center">
-      <h2 style="margin:0">لوحة تحكم الموقع</h2>
-      <div>
-        <a href="../index.html" target="_blank" style="color:#38bdf8;margin-left:15px">معاينة الموقع ↗</a>
-        <button type="button" id="out" class="btn btn-out" style="margin:0">خروج</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>1. الخطوط والأحجام والألوان</h3>
-      <div class="grid">
-        <div><label>نوع الخط</label><select id="f-font"><option value="'Cairo',sans-serif">Cairo</option><option value="'Tajawal',sans-serif">Tajawal</option><option value="'IBM Plex Sans Arabic',sans-serif">IBM Plex Sans Arabic</option></select></div>
-        <div><label>حجم الخط الأساسي (px)</label><input type="number" id="f-size" value="16"></div>
-        <div><label>حجم العنوان الرئيسي (px)</label><input type="number" id="h-size" value="48"></div>
-        <div><label>اللون الرئيسي</label><input type="color" id="p-col" value="#9877ff" style="height:42px"></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>2. النصوص والروابط</h3>
-      <label>العنوان الرئيسي</label><input type="text" id="h-title" value="ARTBOARD STUDIO">
-      <label>الوصف التعريفي</label><textarea id="h-desc" rows="4"></textarea>
-      <div class="grid">
-        <div><label>نص زر التحميل</label><input type="text" id="b-txt" value="تحميل الإضافة الآن"></div>
-        <div><label>رقم الواتساب</label><input type="text" id="wa-num" value="201127502899"></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>3. الصور والمرفقات</h3>
-      <label>رابط ملف الإضافة</label>
-      <div class="row"><input type="url" id="dl-url"><label class="up">رفع 📎<input type="file" id="u-dl" hidden></label></div>
-      <label>صورة 1</label>
-      <div class="row"><input type="url" id="im-1"><label class="up">رفع 🖼<input type="file" id="u-1" accept="image/*" hidden></label></div>
-      <label>صورة 2</label>
-      <div class="row"><input type="url" id="im-2"><label class="up">رفع 🖼<input type="file" id="u-2" accept="image/*" hidden></label></div>
-      <label>صورة 3</label>
-      <div class="row"><input type="url" id="im-3"><label class="up">رفع 🖼<input type="file" id="u-3" accept="image/*" hidden></label></div>
-      <p id="u-msg" style="color:#38bdf8"></p>
-    </div>
-
-    <button type="button" id="sv" class="btn btn-ok">💾 حفظ ونشر التعديلات</button>
-    <p id="s-msg" style="text-align:center;font-weight:bold"></p>
+    <input type="password" id="pw" placeholder="••••••••">
+    <button type="button" id="go" class="btn" style="margin-top:16px">دخول للاستوديو</button>
+    <p id="msg" style="color:#fbbf24;text-align:center;font-size:13px;margin-top:10px"></p>
   </div>
 </div>
 
-<script>
-const p = ['ht','tp','s:','/','/'].join('');
-const fb = p + ['ww','w.','gst','atic','.com/firebasejs/10.8.0/'].join('');
-const upApi = p + ['tm','pfi','les.','org/api/v1/upload'].join('');
-const msg = document.getElementById('msg');
+<div id="panel" class="workspace hide">
+  <div class="sidebar">
+    <div class="sb-head">
+      <strong style="color:#a78bfa;font-size:14px">🎨 Artboard Studio Builder</strong>
+      <button type="button" id="out" class="btn btn-sm btn-red">خروج</button>
+    </div>
 
-function loadS(u){return new Promise((r,j)=>{const s=document.createElement('script');s.src=u;s.onload=r;s.onerror=j;document.head.appendChild(s)})}
+    <div class="tabs">
+      <div class="tab active" onclick="swTab('t-text',this)">النصوص</div>
+      <div class="tab" onclick="swTab('t-color',this)">الألوان والتدرج</div>
+      <div class="tab" onclick="swTab('t-anim',this)">الخط والحركة</div>
+      <div class="tab" onclick="swTab('t-layout',this)">الأماكن والإضافة</div>
+      <div class="tab" onclick="swTab('t-media',this)">الصور والملفات</div>
+    </div>
 
-(async()=>{
-  try{
-    msg.innerText='جاري الاتصال...';
-    await loadS(fb+'firebase-app-compat.js');
-    await loadS(fb+'firebase-auth-compat.js');
-    await loadS(fb+'firebase-firestore-compat.js');
-    firebase.initializeApp({
-      apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zkKCE83xWErxg",
-      authDomain:["artboardstudio-117a6",".firebaseapp",".com"].join(''),
-      projectId:"artboardstudio-117a6"
-    });
-    const auth=firebase.auth(), db=firebase.firestore();
-    msg.innerText='';
+    <div class="sb-body">
+      <!-- 1. النصوص والأيقونات -->
+      <div id="t-text" class="tab-pane">
+        <label>أيقونة الشارة العلوية (اختر أو اكتب)</label>
+        <div class="row">
+          <input type="text" id="tag-ico" value="✨" oninput="liveSync()" style="width:65px;text-align:center;font-size:18px">
+          <input type="text" id="h-tag" oninput="liveSync()" placeholder="نص الشارة العلوية">
+        </div>
+        <div class="ico-grid">
+          <div class="ico-btn" onclick="setIco('tag-ico','✨')">✨</div>
+          <div class="ico-btn" onclick="setIco('tag-ico','🚀')">🚀</div>
+          <div class="ico-btn" onclick="setIco('tag-ico','🎨')">🎨</div>
+          <div class="ico-btn" onclick="setIco('tag-ico','⚡')">⚡</div>
+          <div class="ico-btn" onclick="setIco('tag-ico','🔥')">🔥</div>
+          <div class="ico-btn" onclick="setIco('tag-ico','💎')">💎</div>
+        </div>
 
-    auth.onAuthStateChanged(async u=>{
-      document.getElementById('login-box').classList.toggle('hide',!!u);
-      document.getElementById('panel').classList.toggle('hide',!u);
-      if(u){
-        const s=await db.collection('site').doc('content').get();
-        if(s.exists){
-          const d=s.data();
-          if(d.siteFont)document.getElementById('f-font').value=d.siteFont;
-          if(d.baseFontSize)document.getElementById('f-size').value=d.baseFontSize;
-          if(d.heroTitleSize)document.getElementById('h-size').value=d.heroTitleSize;
-          if(d.primaryColor)document.getElementById('p-col').value=d.primaryColor;
-          if(d.heroTitle)document.getElementById('h-title').value=d.heroTitle;
-          if(d.heroDescHtml)document.getElementById('h-desc').value=d.heroDescHtml.replace(/<[^>]*>/g,'');
-          if(d.downloadBtnText)document.getElementById('b-txt').value=d.downloadBtnText;
-          if(d.whatsappNumber)document.getElementById('wa-num').value=d.whatsappNumber;
-          if(d.downloadFileUrl)document.getElementById('dl-url').value=d.downloadFileUrl;
-          if(d.galleryImg1)document.getElementById('im-1').value=d.galleryImg1;
-          if(d.galleryImg2)document.getElementById('im-2').value=d.galleryImg2;
-          if(d.galleryImg3)document.getElementById('im-3').value=d.galleryImg3;
-        }
-      }
-    });
+        <label>العنوان الرئيسي (Hero Title)</label>
+        <input type="text" id="h-title" oninput="liveSync()" value="ARTBOARD STUDIO">
 
-    document.getElementById('go').onclick=async()=>{
-      msg.innerText='جاري الدخول...';
-      try{
-        await auth.signInWithEmailAndPassword(document.getElementById('em').value.trim(),document.getElementById('pw').value);
-        msg.innerText='';
-      }catch(e){msg.innerText='خطأ: '+e.message}
-    };
-    document.getElementById('out').onclick=()=>auth.signOut();
+        <label>الوصف التعريفي أسفل العنوان</label>
+        <textarea id="h-desc" rows="3" oninput="liveSync()"></textarea>
 
-    document.getElementById('sv').onclick=async()=>{
-      const sm=document.getElementById('s-msg');sm.innerText='جاري الحفظ...';
-      try{
-        await db.collection('site').doc('content').set({
-          siteFont:document.getElementById('f-font').value,
-          baseFontSize:document.getElementById('f-size').value,
-          heroTitleSize:document.getElementById('h-size').value,
-          primaryColor:document.getElementById('p-col').value,
-          heroTitle:document.getElementById('h-title').value,
-          heroDescHtml:document.getElementById('h-desc').value,
-          downloadBtnText:document.getElementById('b-txt').value,
-          whatsappNumber:document.getElementById('wa-num').value,
-          downloadFileUrl:document.getElementById('dl-url').value,
-          galleryImg1:document.getElementById('im-1').value,
-          galleryImg2:document.getElementById('im-2').value,
-          galleryImg3:document.getElementById('im-3').value
-        });
-        sm.innerText='✅ تم الحفظ بنجاح!';
-      }catch(e){sm.innerText='❌ خطأ: '+e.message}
-    };
+        <label>أيقونة ونص زر التحميل</label>
+        <div class="row">
+          <input type="text" id="btn-ico" value="⬇️" oninput="liveSync()" style="width:65px;text-align:center;font-size:18px">
+          <input type="text" id="b-txt" oninput="liveSync()" value="تحميل الإضافة الآن">
+        </div>
+        <div class="ico-grid">
+          <div class="ico-btn" onclick="setIco('btn-ico','⬇️')">⬇️</div>
+          <div class="ico-btn" onclick="setIco('btn-ico','📥')">📥</div>
+          <div class="ico-btn" onclick="setIco('btn-ico','⚡')">⚡</div>
+          <div class="ico-btn" onclick="setIco('btn-ico','🎁')">🎁</div>
+          <div class="ico-btn" onclick="setIco('btn-ico','📦')">📦</div>
+          <div class="ico-btn" onclick="setIco('btn-ico','✅')">✅</div>
+        </div>
 
-    [['u-dl','dl-url'],['u-1','im-1'],['u-2','im-2'],['u-3','im-3']].forEach(([f,t])=>{
-      document.getElementById(f).onchange=async e=>{
-        const file=e.target.files[0];if(!file)return;
-        const um=document.getElementById('u-msg');um.innerText='جاري الرفع...';
-        const fd=new FormData();fd.append('file',file);
-        const r=await fetch(upApi,{method:'POST',body:fd});const j=await r.json();
-        if(j.status==='success'){document.getElementById(t).value=j.data.url.replace('tmpfiles.org/','tmpfiles.org/dl/');um.innerText='✅ تم الرفع، اضغط حفظ!';}
-      };
-    });
-  }catch(e){msg.innerText='فشل التحميل: '+e.message}
-})();
-</script>
-</body>
-</html>
+        <label>رقم الواتساب للتواصل (بدون +)</label>
+        <input type="text" id="wa-num" oninput="liveSync()" value="201127502899">
+      </div>
+
+      <!-- 2. الألوان والتدرجات -->
+      <div id="t-color" class="tab-pane hide">
+        <div class="sec-box">
+          <strong style="color:#a78bfa;font-size:12px">تدرج الأزرار والعناصر المميزة</strong>
+          <div class="grid-3" style="margin-top:6px">
+            <div><label>لون 1</label><input type="color" id="grad-c1" value="#7954ec" oninput="liveSync()"></div>
+            <div><label>لون 2</label><input type="color" id="grad-c2" value="#a17aff" oninput="liveSync()"></div>
+            <div><label>الزاوية <span id="v-ang" class="val">120°</span></label><input type="range" id="grad-ang" min="0" max="360" value="120" oninput="liveSync()"></div>
+          </div>
+        </div>
+
+        <div class="sec-box">
+          <strong style="color:#38bdf8;font-size:12px">خلفية الموقع وتدرج الواجهة</strong>
+          <div class="grid-3" style="margin-top:6px">
+            <div><label>خلفية عامة</label><input type="color" id="bg-col" value="#090b13" oninput="liveSync()"></div>
+            <div><label>توهج يمين</label><input type="color" id="hero-g1" value="#30205a" oninput="liveSync()"></div>
+            <div><label>توهج يسار</label><input type="color" id="hero-g2" value="#102d4b" oninput="liveSync()"></div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:8px">
+          <div><label>لون النصوص الأساسية</label><input type="color" id="txt-col" value="#f5f6ff" oninput="liveSync()"></div>
+          <div><label>لون النص الثانوي</label><input type="color" id="sub-col" value="#b9bdd0" oninput="liveSync()"></div>
+        </div>
+      </div>
+
+      <!-- 3. الخطوط والأنميشن -->
+      <div id="t-anim" class="tab-pane hide">
+        <label>نوع الخط العربي</label>
+        <select id="f-font" onchange="liveSync()">
+          <option value="'Cairo',sans-serif">Cairo (كايرو - عصري)</option>
+          <option value="'Tajawal',sans-serif">Tajawal (تجوّل - ناعم)</option>
+          <option value="'IBM Plex Sans Arabic',sans-serif">IBM Plex Sans Arabic (تقني)</option>
+          <option value="'Almarai',sans-serif">Almarai (المراعي - واضح)</option>
+          <option value="'Readex Pro',sans-serif">Readex Pro (هندسي)</option>
+        </select>
+
+        <label>حجم خط الفقرات <span id="v-fsize" class="val">16px</span></label>
+        <input type="range" id="f-size" min="13" max="24" value="16" oninput="liveSync()">
+
+        <label>حجم العنوان الرئيسي <span id="v-hsize" class="val">54px</span></label>
+        <input type="range" id="h-size" min="28" max="82" value="54" oninput="liveSync()">
+
+        <label>استدارة حواف الأزرار <span id="v-rad" class="val">12px</span></label>
+        <input type="range" id="btn-rad" min="0" max="40" value="12" oninput="liveSync()">
+
+        <div class="sec-box">
+          <strong style="color:#4ade80;font-size:12px">إعدادات الحركة (Animations)</strong>
+          <label>نوع حركة ظهور المحتوى</label>
+          <select id="anim-type" onchange="liveSync()">
+            <option value="none">بدون حركة إضافية</option>
+            <option value="fadeUp">انزلاق ناعم لأعلى (Fade Up)</option>
+            <option value="zoomIn">تكبير تدريجي (Zoom In)</option>
