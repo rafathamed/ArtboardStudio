@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة تحكم الأدمن | Artboard Studio</title>
-  <link id="g-fonts" rel="stylesheet">
-  <link id="q-css" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+    * { box-sizing: border-box; font-family: 'Cairo', Tahoma, sans-serif; }
     body { background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
     .container { max-width: 900px; margin: 0 auto; }
     .card { background: #1e293b; padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #334155; }
@@ -33,25 +31,22 @@
     .upload-btn { background: #475569; padding: 10px 15px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
     @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
   </style>
-  <script>
-    const h = 'https://';
-    document.getElementById('g-fonts').href = h + '://googleapis.com';
-    document.getElementById('q-css').href = h + '://quilljs.com';
-  </script>
 </head>
 <body>
 
 <div class="container">
+  <!-- شاشة تسجيل الدخول -->
   <div id="login-section" class="card" style="max-width: 420px; margin: 80px auto;">
     <h2 style="text-align: center;">تسجيل دخول الأدمن</h2>
     <label>البريد الإلكتروني</label>
     <input type="email" id="admin-email" placeholder="admin@example.com">
     <label>كلمة المرور</label>
     <input type="password" id="admin-password" placeholder="••••••••">
-    <button class="btn" style="width: 100%;" onclick="loginAdmin()">دخول للوحة التحكم</button>
-    <div id="login-error" style="color: #f87171; margin-top: 10px; text-align: center;"></div>
+    <button id="login-btn" class="btn" style="width: 100%;">دخول للوحة التحكم</button>
+    <div id="login-error" style="color: #fbbf24; margin-top: 12px; text-align: center; font-size: 14px;"></div>
   </div>
 
+  <!-- لوحة التحكم الرئيسية -->
   <div id="dashboard-section" class="hidden">
     <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
@@ -60,7 +55,7 @@
       </div>
       <div>
         <a href="../index.html" target="_blank" style="color: #38bdf8; margin-left: 15px; text-decoration: none;">معاينة الموقع ↗</a>
-        <button class="btn btn-danger" style="margin:0;" onclick="logoutAdmin()">خروج</button>
+        <button id="logout-btn" class="btn btn-danger" style="margin:0;">خروج</button>
       </div>
     </div>
 
@@ -117,110 +112,117 @@
       <label>رابط ملف تحميل الإضافة (ZIP / RAR / MediaFire)</label>
       <div class="upload-row">
         <input type="url" id="download-file-url" placeholder="أدخل رابط الملف">
-        <label class="upload-btn">رفع ملف 📎<input type="file" hidden onchange="uploadFile(this, 'download-file-url')"></label>
+        <label class="upload-btn">رفع ملف 📎<input type="file" id="file-dl" hidden></label>
       </div>
 
       <label>صورة المعرض 1</label>
       <div class="upload-row">
         <input type="url" id="gallery-img-1" placeholder="رابط الصورة الأولى">
-        <label class="upload-btn">رفع صورة 🖼<input type="file" accept="image/*" hidden onchange="uploadFile(this, 'gallery-img-1')"></label>
+        <label class="upload-btn">رفع صورة 🖼<input type="file" id="file-img1" accept="image/*" hidden></label>
       </div>
 
       <label>صورة المعرض 2</label>
       <div class="upload-row">
         <input type="url" id="gallery-img-2" placeholder="رابط الصورة الثانية">
-        <label class="upload-btn">رفع صورة 🖼<input type="file" accept="image/*" hidden onchange="uploadFile(this, 'gallery-img-2')"></label>
+        <label class="upload-btn">رفع صورة 🖼<input type="file" id="file-img2" accept="image/*" hidden></label>
       </div>
 
       <label>صورة المعرض 3</label>
       <div class="upload-row">
         <input type="url" id="gallery-img-3" placeholder="رابط الصورة الثالثة">
-        <label class="upload-btn">رفع صورة 🖼<input type="file" accept="image/*" hidden onchange="uploadFile(this, 'gallery-img-3')"></label>
+        <label class="upload-btn">رفع صورة 🖼<input type="file" id="file-img3" accept="image/*" hidden></label>
       </div>
       <div id="upload-status" style="color: #38bdf8; margin-top: 8px; font-size: 14px;"></div>
     </div>
 
-    <button class="btn btn-success" onclick="saveSettings()">💾 حفظ ونشر التعديلات على الموقع</button>
+    <button id="save-btn" class="btn btn-success">💾 حفظ ونشر التعديلات على الموقع</button>
     <div id="save-status" class="status hidden"></div>
   </div>
 </div>
 
-<script type="module">
-  const proto = 'https://';
-  const fbBase = proto + '://gstatic.com';
-  const { initializeApp } = await import(fbBase + 'firebase-app.js');
-  const { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } = await import(fbBase + 'firebase-auth.js');
-  const { getFirestore, doc, getDoc, setDoc } = await import(fbBase + 'firebase-firestore.js');
+<script>
+  // تحميل الخطوط وتنسيق المحرر بأمان
+  const p = 'https:/' + '/';
+  function addCss(u) {
+    const l = document.createElement('link');
+    l.rel = 'stylesheet'; l.href = u;
+    document.head.appendChild(l);
+  }
+  addCss(p + '://googleapis.com');
+  addCss(p + '://quilljs.com');
 
-  const qScript = document.createElement('script');
-  qScript.src = proto + '://quilljs.com';
-  document.head.appendChild(qScript);
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zKKCE83xWeRxg",
-    authDomain: "://firebaseapp.com",
-    projectId: "artboardstudio-117a6",
-    storageBucket: "artboardstudio-117a6.firebasestorage.app",
-    messagingSenderId: "26311402131",
-    appId: "1:26311402131:web:7c2950a172814b2ba0e366",
-    measurementId: "G-E2Z3V238QJ"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  let quill;
-  qScript.onload = () => {
-    quill = new Quill('#editor-desc', {
-      theme: 'snow',
-      modules: {
-        toolbar: [
-          [{ 'size': ['small', false, 'large', 'huge'] }],
-          ['bold', 'italic', 'underline'],
-          [{ 'color': [] }, { 'background': [] }],
-          [{ 'align': [] }],
-          ['clean']
-        ]
-      }
+  function addJs(u) {
+    return new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = u; s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
     });
-  };
+  }
 
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('dashboard-section').classList.remove('hidden');
-      await loadCurrentData();
-    } else {
-      document.getElementById('login-section').classList.remove('hidden');
-      document.getElementById('dashboard-section').classList.add('hidden');
-    }
-  });
+  const errBox = document.getElementById('login-error');
 
-  window.loginAdmin = async () => {
-    const email = document.getElementById('admin-email').value.trim();
-    const pass = document.getElementById('admin-password').value;
-    const errBox = document.getElementById('login-error');
-    errBox.innerText = 'جاري التحقق...';
+  (async function startAdmin() {
     try {
-      await signInWithEmailAndPassword(auth, email, pass);
+      errBox.innerText = 'جاري تجهيز النظام...';
+      const fb = p + '://gstatic.com';
+      await addJs(fb + 'firebase-app-compat.js');
+      await addJs(fb + 'firebase-auth-compat.js');
+      await addJs(fb + 'firebase-firestore-compat.js');
+      await addJs(p + '://quilljs.com');
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zKKCE83xWeRxg",
+        authDomain: "://firebaseapp.com",
+        projectId: "artboardstudio-117a6",
+        storageBucket: "artboardstudio-117a6.firebasestorage.app",
+        messagingSenderId: "26311402131",
+        appId: "1:26311402131:web:7c2950a172814b2ba0e366"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
+      const quill = new Quill('#editor-desc', {
+        theme: 'snow',
+        modules: {
+          toolbar: [
+            [{ 'size': ['small', false, 'large', 'huge'] }],
+            ['bold', 'italic', 'underline'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'align': [] }],
+            ['clean']
+          ]
+        }
+      });
+
       errBox.innerText = '';
-    } catch (err) {
-      errBox.innerText = "خطأ في الدخول: " + err.message;
-    }
-  };
 
-  window.logoutAdmin = () => signOut(auth);
+      // مراقبة تسجيل الدخول
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          document.getElementById('login-section').classList.add('hidden');
+          document.getElementById('dashboard-section').classList.remove('hidden');
+          const snap = await db.collection("site").doc("content").get();
+          if (snap.exists) {
+            const d = snap.data();
+            if (d.siteFont) document.getElementById('site-font').value = d.siteFont;
+            if (d.baseFontSize) document.getElementById('base-font-size').value = d.baseFontSize;
+            if (d.heroTitleSize) document.getElementById('hero-title-size').value = d.heroTitleSize;
+            if (d.primaryColor) document.getElementById('primary-color').value = d.primaryColor;
+            if (d.heroTitle) document.getElementById('hero-title').value = d.heroTitle;
+            if (d.heroDescHtml) quill.root.innerHTML = d.heroDescHtml;
+            if (d.downloadBtnText) document.getElementById('download-btn-text').value = d.downloadBtnText;
+            if (d.whatsappNumber) document.getElementById('whatsapp-number').value = d.whatsappNumber;
+            if (d.downloadFileUrl) document.getElementById('download-file-url').value = d.downloadFileUrl;
+            if (d.galleryImg1) document.getElementById('gallery-img-1').value = d.galleryImg1;
+            if (d.galleryImg2) document.getElementById('gallery-img-2').value = d.galleryImg2;
+            if (d.galleryImg3) document.getElementById('gallery-img-3').value = d.galleryImg3;
+          }
+        } else {
+          document.getElementById('login-section').classList.remove('hidden');
+          document.getElementById('dashboard-section').classList.add('hidden');
+        }
+      });
 
-  async function loadCurrentData() {
-    const docSnap = await getDoc(doc(db, "site", "content"));
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      if (data.siteFont) document.getElementById('site-font').value = data.siteFont;
-      if (data.baseFontSize) document.getElementById('base-font-size').value = data.baseFontSize;
-      if (data.heroTitleSize) document.getElementById('hero-title-size').value = data.heroTitleSize;
-      if (data.primaryColor) document.getElementById('primary-color').value = data.primaryColor;
-      if (data.heroTitle) document.getElementById('hero-title').value = data.heroTitle;
-      if (data.heroDescHtml && quill) quill.root.innerHTML = data.heroDescHtml;
-      if (data.downloadBtnText) document.getElementById('download-btn-text').value = data.downloadBtnText;
-      if (data.whatsappNumber) document.getElementById('whatsapp-number').value = data.whatsappNumber;
+      // زر الدخول
