@@ -568,29 +568,37 @@ footer{
  document.addEventListener('keydown',function(e){if(e.key==='Escape')lb.classList.remove('open')});
 })();
 </script>
-</body>
- <!-- ربط موقع Artboard Studio بلوحة تحكم الأدمن -->
-<script type="module">
-  import { initializeApp } from "https://gstatic.com";
-  import { getFirestore, doc, getDoc } from "https://gstatic.com";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zKKCE83xWeRxg",
-    authDomain: "://firebaseapp.com",
-    projectId: "artboardstudio-117a6",
-    storageBucket: "artboardstudio-117a6.firebasestorage.app",
-    messagingSenderId: "26311402131",
-    appId: "1:26311402131:web:7c2950a172814b2ba0e366",
-    measurementId: "G-E2Z3V238QJ"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  async function applyAdminSettings() {
+<!-- ربط موقع Artboard Studio بلوحة تحكم الأدمن -->
+<script>
+  (async function syncAdminData() {
+    const p = 'https:/' + '/';
+    function loadJs(u) {
+      return new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = u; s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
     try {
-      const snap = await getDoc(doc(db, "site", "content"));
-      if (!snap.exists()) return;
+      const fb = p + '://gstatic.com';
+      await loadJs(fb + 'firebase-app-compat.js');
+      await loadJs(fb + 'firebase-firestore-compat.js');
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zKKCE83xWeRxg",
+        authDomain: "artboardstudio-117a6.firebaseapp.com",
+        projectId: "artboardstudio-117a6",
+        storageBucket: "artboardstudio-117a6.firebasestorage.app",
+        messagingSenderId: "26311402131",
+        appId: "1:26311402131:web:7c2950a172814b2ba0e366"
+      };
+
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      const snap = await db.collection("site").doc("content").get();
+      if (!snap.exists) return;
       const d = snap.data();
 
       // 1. التحكم في الخطوط والأحجام واللون الرئيسي
@@ -623,7 +631,7 @@ footer{
       // 4. تحديث رقم الواتساب في جميع أزرار الواتساب
       if (d.whatsappNumber) {
         document.querySelectorAll('a[href*="wa.me"]').forEach(wa => {
-          wa.href = `https://wa.me{d.whatsappNumber}`;
+          wa.href = p + 'wa.me/' + d.whatsappNumber;
         });
       }
 
@@ -636,7 +644,7 @@ footer{
     } catch (e) {
       console.error("Admin sync error:", e);
     }
-  }
-  applyAdminSettings();
+  })();
 </script>
+</body>
 </html>
