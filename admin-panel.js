@@ -24,7 +24,7 @@
   function addStyles() {
     if (document.getElementById("as-admin-styles")) return;
     var css = [
-      "#open-admin-fab{position:fixed;bottom:18px;left:18px;z-index:9998;background:#171827ee;color:#a78bfa;border:1px solid #5a4c93;padding:10px 15px;border-radius:30px;cursor:pointer;font:700 12px Cairo,Tahoma,sans-serif;backdrop-filter:blur(8px);box-shadow:0 8px 25px #0008}",
+      "#open-admin-fab{position:fixed;bottom:90px;left:18px;z-index:9998;background:#171827ee;color:#a78bfa;border:1px solid #5a4c93;padding:10px 15px;border-radius:30px;cursor:pointer;font:700 12px Cairo,Tahoma,sans-serif;backdrop-filter:blur(8px);box-shadow:0 8px 25px #0008}",
       "#studio-overlay{display:none;position:fixed;top:0;right:0;width:410px;max-width:96vw;height:100vh;height:100dvh;z-index:9999;flex-direction:column;background:#111422;color:#f8fafc;border-left:1px solid #2e3452;box-shadow:-15px 0 50px #000c;font-family:Cairo,Tahoma,sans-serif;text-align:right}",
       "#studio-overlay *{box-sizing:border-box}#studio-overlay input,#studio-overlay textarea,#studio-overlay select{width:100%;min-width:0;padding:9px 10px;border-radius:8px;border:1px solid #333954;background:#0b0d17;color:#fff;font:12px Cairo,Tahoma,sans-serif}",
       "#studio-overlay input[type=color]{height:38px;padding:3px;background:#0b0d17}#studio-overlay label{display:block;margin:10px 0 5px;font-size:12px;color:#d8def0}",
@@ -109,7 +109,16 @@
   function digits(value) { return String(value || "").replace(/\D/g, "").slice(0, 18); }
 
   function apply(data) {
-    var d = Object.assign({}, defaults, data || {});
+    data = data || {};
+    var d = Object.assign({}, defaults, data);
+    // Compatibility with the older Firebase fields already used by this website.
+    if (data.primaryColor && !data.buttonColor1 && !data.buttonColor2) {
+      d.buttonColor1 = data.primaryColor;
+      d.buttonColor2 = data.primaryColor;
+    }
+    if (!data.heroDesc && typeof data.heroDescHtml === "string") {
+      d.heroDesc = data.heroDescHtml.replace(/<br\\s*\\/?\\s*>/gi, " ").replace(/<\\/p>/gi, " ").replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim();
+    }
     var tag = document.querySelector(".hero .tag");
     if (tag) tag.textContent = (d.tagIcon || "") + (d.tagText ? " " + d.tagText : "");
     var h1 = document.querySelector(".hero h1");
@@ -281,6 +290,15 @@
       if (!window.firebase) throw new Error("Firebase SDK غير متاح.");
       if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
       db = firebase.firestore(); auth = firebase.auth();
+      // Keep every open visitor tab synchronized with published site content.
+      db.collection("site").doc("content").onSnapshot(function (snap) {
+        if (!snap.exists) return;
+        var published = snap.data();
+        apply(published);
+        if (currentUser) fill(published);
+      }, function (error) {
+        console.error("Artboard Studio live content listener failed:", error);
+      });
       auth.onAuthStateChanged(function (user) {
         if (user && user.email && user.email.toLowerCase() === ADMIN_EMAIL && user.emailVerified) { currentUser = user; showAdmin(); }
         else { currentUser = null; if (user) auth.signOut(); showLogin("سجّل الدخول باستخدام بريد الإدارة الموثّق.",false); }
