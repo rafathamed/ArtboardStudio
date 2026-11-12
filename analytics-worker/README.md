@@ -89,3 +89,19 @@ If Cloudflare prints a different URL, update `ANALYTICS_API_URL` near the top of
 The exact IP is personal data. Add a clear privacy notice on the website explaining analytics, IP and approximate-location collection, the 30-day retention period and the purpose of collection. Restrict access to the GitHub repository and Cloudflare account, and do not share exported visit logs publicly.
 
 Cloudflare request geolocation is approximate and may be unavailable for some requests. The map displays only records for which Cloudflare supplies coordinates. Browser privacy tools, ad blockers and network settings may prevent an event from being recorded.
+
+
+## Cloudinary image uploads
+
+The visual admin editor uses Cloudinary for image storage; Firebase Storage billing is not required. The browser requests signed upload authorization from `POST /admin/cloudinary-signature`. The Worker verifies the Firebase admin ID token, signs a fixed Cloudinary folder and timestamp using SHA-1, and returns only the signature and public upload configuration. The Cloudinary API secret remains a Cloudflare Worker secret and is never sent to the browser.
+
+Configure these Worker secrets from the `analytics-worker` directory:
+
+```powershell
+npx.cmd wrangler secret put CLOUDINARY_CLOUD_NAME
+npx.cmd wrangler secret put CLOUDINARY_API_KEY
+npx.cmd wrangler secret put CLOUDINARY_API_SECRET
+npx.cmd wrangler deploy
+```
+
+Generate a new Cloudinary API key/secret pair before enabling this feature because the previously shared API secret must be considered compromised. Enter the new secret directly at the Wrangler prompt; do not paste it into chat or commit it to GitHub. The admin editor limits uploads to PNG/JPG/WEBP/GIF and 5 MB.
