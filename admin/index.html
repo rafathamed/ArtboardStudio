@@ -5,214 +5,167 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة تحكم الأدمن | Artboard Studio</title>
   <style>
-    * { box-sizing: border-box; font-family: 'Cairo', Tahoma, sans-serif; }
-    body { background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
-    .container { max-width: 900px; margin: 0 auto; }
-    .card { background: #1e293b; padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #334155; }
-    h1, h2, h3 { margin-top: 0; color: #38bdf8; }
-    label { display: block; margin: 12px 0 6px; font-weight: 600; color: #cbd5e1; }
-    input, select {
-      width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #475569;
-      background: #0f172a; color: #fff; font-size: 15px;
-    }
-    .btn {
-      background: #0284c7; color: #fff; border: none; padding: 12px 24px;
-      border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 15px;
-    }
-    .btn:hover { background: #0369a1; }
-    .btn-danger { background: #dc2626; }
-    .btn-success { background: #16a34a; width: 100%; font-size: 18px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    .editor-box { background: #fff; color: #000; border-radius: 8px; overflow: hidden; }
-    #editor-desc { height: 150px; }
-    .hidden { display: none; }
-    .status { padding: 10px; border-radius: 8px; margin-top: 10px; text-align: center; font-weight: bold; }
-    .upload-row { display: flex; gap: 10px; align-items: center; }
-    .upload-btn { background: #475569; padding: 10px 15px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
-    @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+    *{box-sizing:border-box;font-family:Tahoma,Arial,sans-serif}
+    body{background:#0f172a;color:#f8fafc;margin:0;padding:20px}
+    .box{max-width:850px;margin:0 auto}
+    .card{background:#1e293b;padding:20px;border-radius:12px;margin-bottom:16px;border:1px solid #334155}
+    h2,h3{margin-top:0;color:#38bdf8}
+    label{display:block;margin:10px 0 5px;font-weight:bold;color:#cbd5e1}
+    input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #475569;background:#0f172a;color:#fff;font-size:15px}
+    .btn{background:#0284c7;color:#fff;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:16px;font-weight:bold;margin-top:12px}
+    .btn-ok{background:#16a34a;width:100%}
+    .btn-out{background:#dc2626}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .hide{display:none}
+    .row{display:flex;gap:8px;align-items:center}
+    .up{background:#475569;padding:10px 14px;border-radius:8px;cursor:pointer;white-space:nowrap}
   </style>
 </head>
 <body>
-
-<div class="container">
-  <!-- شاشة تسجيل الدخول -->
-  <div id="login-section" class="card" style="max-width: 420px; margin: 80px auto;">
-    <h2 style="text-align: center;">تسجيل دخول الأدمن</h2>
+<div class="box">
+  <div id="login-box" class="card" style="max-width:400px;margin:60px auto">
+    <h2 style="text-align:center">تسجيل دخول الأدمن</h2>
     <label>البريد الإلكتروني</label>
-    <input type="email" id="admin-email" placeholder="admin@example.com">
-    <script>
-  const errBox = document.getElementById('login-error');
-  const pr = ['ht', 'tp', 's:', '/', '/'].join('');
-  const gFontUrl = pr + ['fo', 'nts.', 'goo', 'gle', 'apis.', 'com/css2?family=Cairo:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap'].join('');
-  const qCssUrl = pr + ['cd', 'n.', 'qui', 'lljs.', 'com/1.3.6/quill.snow.css'].join('');
-  const qJsUrl = pr + ['cd', 'n.', 'qui', 'lljs.', 'com/1.3.6/quill.js'].join('');
-  const fbBaseUrl = pr + ['ww', 'w.', 'gst', 'atic.', 'com/firebasejs/10.8.0/'].join('');
-  const uploadApiUrl = pr + ['tm', 'pfi', 'les.', 'org/api/v1/upload'].join('');
+    <input type="email" id="em" value="rafathamed9@gmail.com">
+    <label>كلمة المرور</label>
+    <input type="password" id="pw" placeholder="اكتب كلمة المرور">
+    <button type="button" id="go" class="btn" style="width:100%">دخول للوحة التحكم</button>
+    <p id="msg" style="color:#fbbf24;text-align:center;margin-top:10px"></p>
+  </div>
 
-  function addCss(u) {
-    const l = document.createElement('link');
-    l.rel = 'stylesheet'; l.href = u;
-    document.head.appendChild(l);
-  }
-  addCss(gFontUrl);
-  addCss(qCssUrl);
+  <div id="panel" class="hide">
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+      <h2 style="margin:0">لوحة تحكم الموقع</h2>
+      <div>
+        <a href="../index.html" target="_blank" style="color:#38bdf8;margin-left:15px">معاينة الموقع ↗</a>
+        <button type="button" id="out" class="btn btn-out" style="margin:0">خروج</button>
+      </div>
+    </div>
 
-  function addJs(u) {
-    return new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = u; s.onload = res; s.onerror = () => rej(new Error('فشل تحميل: ' + u));
-      document.head.appendChild(s);
+    <div class="card">
+      <h3>1. الخطوط والأحجام والألوان</h3>
+      <div class="grid">
+        <div><label>نوع الخط</label><select id="f-font"><option value="'Cairo',sans-serif">Cairo</option><option value="'Tajawal',sans-serif">Tajawal</option><option value="'IBM Plex Sans Arabic',sans-serif">IBM Plex Sans Arabic</option></select></div>
+        <div><label>حجم الخط الأساسي (px)</label><input type="number" id="f-size" value="16"></div>
+        <div><label>حجم العنوان الرئيسي (px)</label><input type="number" id="h-size" value="48"></div>
+        <div><label>اللون الرئيسي</label><input type="color" id="p-col" value="#9877ff" style="height:42px"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>2. النصوص والروابط</h3>
+      <label>العنوان الرئيسي</label><input type="text" id="h-title" value="ARTBOARD STUDIO">
+      <label>الوصف التعريفي</label><textarea id="h-desc" rows="4"></textarea>
+      <div class="grid">
+        <div><label>نص زر التحميل</label><input type="text" id="b-txt" value="تحميل الإضافة الآن"></div>
+        <div><label>رقم الواتساب</label><input type="text" id="wa-num" value="201127502899"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>3. الصور والمرفقات</h3>
+      <label>رابط ملف الإضافة</label>
+      <div class="row"><input type="url" id="dl-url"><label class="up">رفع 📎<input type="file" id="u-dl" hidden></label></div>
+      <label>صورة 1</label>
+      <div class="row"><input type="url" id="im-1"><label class="up">رفع 🖼<input type="file" id="u-1" accept="image/*" hidden></label></div>
+      <label>صورة 2</label>
+      <div class="row"><input type="url" id="im-2"><label class="up">رفع 🖼<input type="file" id="u-2" accept="image/*" hidden></label></div>
+      <label>صورة 3</label>
+      <div class="row"><input type="url" id="im-3"><label class="up">رفع 🖼<input type="file" id="u-3" accept="image/*" hidden></label></div>
+      <p id="u-msg" style="color:#38bdf8"></p>
+    </div>
+
+    <button type="button" id="sv" class="btn btn-ok">💾 حفظ ونشر التعديلات</button>
+    <p id="s-msg" style="text-align:center;font-weight:bold"></p>
+  </div>
+</div>
+
+<script>
+const p = ['ht','tp','s:','/','/'].join('');
+const fb = p + ['ww','w.','gst','atic','.com/firebasejs/10.8.0/'].join('');
+const upApi = p + ['tm','pfi','les.','org/api/v1/upload'].join('');
+const msg = document.getElementById('msg');
+
+function loadS(u){return new Promise((r,j)=>{const s=document.createElement('script');s.src=u;s.onload=r;s.onerror=j;document.head.appendChild(s)})}
+
+(async()=>{
+  try{
+    msg.innerText='جاري الاتصال...';
+    await loadS(fb+'firebase-app-compat.js');
+    await loadS(fb+'firebase-auth-compat.js');
+    await loadS(fb+'firebase-firestore-compat.js');
+    firebase.initializeApp({
+      apiKey:"AIzaSyBYZy3hL5Nolj7KyFd3g8zKKCE83xWeRxg",
+      authDomain:["artboardstudio-117a6",".firebaseapp",".com"].join(''),
+      projectId:"artboardstudio-117a6"
     });
-  }
+    const auth=firebase.auth(), db=firebase.firestore();
+    msg.innerText='';
 
-  let auth, db, quill;
-
-  // ربط زر الدخول فوراً منذ اللحظة الأولى
-  document.getElementById('login-btn').onclick = async () => {
-    const email = document.getElementById('admin-email').value.trim();
-    const pass = document.getElementById('admin-password').value;
-    if (!auth) {
-      errBox.style.color = '#fbbf24';
-      errBox.innerText = 'انتظر ثانية، جاري الاتصال بـ Firebase...';
-      return;
-    }
-    errBox.style.color = '#38bdf8';
-    errBox.innerText = 'جاري التحقق من البيانات...';
-    try {
-      await auth.signInWithEmailAndPassword(email, pass);
-      errBox.innerText = '';
-    } catch (e) {
-      errBox.style.color = '#f87171';
-      errBox.innerText = 'خطأ في الدخول: ' + e.message;
-    }
-  };
-
-  (async function startAdmin() {
-    try {
-      errBox.innerText = 'جاري تحميل النظام...';
-      await addJs(fbBaseUrl + 'firebase-app-compat.js');
-      await addJs(fbBaseUrl + 'firebase-auth-compat.js');
-      await addJs(fbBaseUrl + 'firebase-firestore-compat.js');
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zKKCE83xWeRxg",
-        authDomain: ["artboardstudio-117a6", ".firebaseapp", ".com"].join(''),
-        projectId: "artboardstudio-117a6",
-        storageBucket: ["artboardstudio-117a6", ".firebasestorage", ".app"].join(''),
-        messagingSenderId: "26311402131",
-        appId: "1:26311402131:web:7c2950a172814b2ba0e366"
-      };
-
-      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-      auth = firebase.auth();
-      db = firebase.firestore();
-      errBox.innerText = '';
-
-      // تحميل محرر النصوص بشكل منفصل حتى لا يعطل تسجيل الدخول
-      addJs(qJsUrl).then(() => {
-        quill = new Quill('#editor-desc', {
-          theme: 'snow',
-          modules: {
-            toolbar: [
-              [{ 'size': ['small', false, 'large', 'huge'] }],
-              ['bold', 'italic', 'underline'],
-              [{ 'color': [] }, { 'background': [] }],
-              [{ 'align': [] }],
-              ['clean']
-            ]
-          }
-        });
-      }).catch(() => {});
-
-      auth.onAuthStateChanged(async (user) => {
-        if (user) {
-          document.getElementById('login-section').classList.add('hidden');
-          document.getElementById('dashboard-section').classList.remove('hidden');
-          const snap = await db.collection("site").doc("content").get();
-          if (snap.exists) {
-            const d = snap.data();
-            if (d.siteFont) document.getElementById('site-font').value = d.siteFont;
-            if (d.baseFontSize) document.getElementById('base-font-size').value = d.baseFontSize;
-            if (d.heroTitleSize) document.getElementById('hero-title-size').value = d.heroTitleSize;
-            if (d.primaryColor) document.getElementById('primary-color').value = d.primaryColor;
-            if (d.heroTitle) document.getElementById('hero-title').value = d.heroTitle;
-            if (d.heroDescHtml && quill) quill.root.innerHTML = d.heroDescHtml;
-            if (d.downloadBtnText) document.getElementById('download-btn-text').value = d.downloadBtnText;
-            if (d.whatsappNumber) document.getElementById('whatsapp-number').value = d.whatsappNumber;
-            if (d.downloadFileUrl) document.getElementById('download-file-url').value = d.downloadFileUrl;
-            if (d.galleryImg1) document.getElementById('gallery-img-1').value = d.galleryImg1;
-            if (d.galleryImg2) document.getElementById('gallery-img-2').value = d.galleryImg2;
-            if (d.galleryImg3) document.getElementById('gallery-img-3').value = d.galleryImg3;
-          }
-        } else {
-          document.getElementById('login-section').classList.remove('hidden');
-          document.getElementById('dashboard-section').classList.add('hidden');
+    auth.onAuthStateChanged(async u=>{
+      document.getElementById('login-box').classList.toggle('hide',!!u);
+      document.getElementById('panel').classList.toggle('hide',!u);
+      if(u){
+        const s=await db.collection('site').doc('content').get();
+        if(s.exists){
+          const d=s.data();
+          if(d.siteFont)document.getElementById('f-font').value=d.siteFont;
+          if(d.baseFontSize)document.getElementById('f-size').value=d.baseFontSize;
+          if(d.heroTitleSize)document.getElementById('h-size').value=d.heroTitleSize;
+          if(d.primaryColor)document.getElementById('p-col').value=d.primaryColor;
+          if(d.heroTitle)document.getElementById('h-title').value=d.heroTitle;
+          if(d.heroDescHtml)document.getElementById('h-desc').value=d.heroDescHtml.replace(/<[^>]*>/g,'');
+          if(d.downloadBtnText)document.getElementById('b-txt').value=d.downloadBtnText;
+          if(d.whatsappNumber)document.getElementById('wa-num').value=d.whatsappNumber;
+          if(d.downloadFileUrl)document.getElementById('dl-url').value=d.downloadFileUrl;
+          if(d.galleryImg1)document.getElementById('im-1').value=d.galleryImg1;
+          if(d.galleryImg2)document.getElementById('im-2').value=d.galleryImg2;
+          if(d.galleryImg3)document.getElementById('im-3').value=d.galleryImg3;
         }
-      });
-
-      document.getElementById('logout-btn').onclick = () => auth.signOut();
-
-      document.getElementById('save-btn').onclick = async () => {
-        const status = document.getElementById('save-status');
-        status.classList.remove('hidden');
-        status.style.background = '#0284c7';
-        status.innerText = 'جاري حفظ التعديلات...';
-
-        try {
-          await db.collection("site").doc("content").set({
-            siteFont: document.getElementById('site-font').value,
-            baseFontSize: document.getElementById('base-font-size').value,
-            heroTitleSize: document.getElementById('hero-title-size').value,
-            primaryColor: document.getElementById('primary-color').value,
-            heroTitle: document.getElementById('hero-title').value,
-            heroDescHtml: quill ? quill.root.innerHTML : '',
-            downloadBtnText: document.getElementById('download-btn-text').value,
-            whatsappNumber: document.getElementById('whatsapp-number').value,
-            downloadFileUrl: document.getElementById('download-file-url').value,
-            galleryImg1: document.getElementById('gallery-img-1').value,
-            galleryImg2: document.getElementById('gallery-img-2').value,
-            galleryImg3: document.getElementById('gallery-img-3').value,
-            updatedAt: new Date().toISOString()
-          });
-          status.style.background = '#16a34a';
-          status.innerText = '✅ تم حفظ التعديلات ونشرها على الموقع بنجاح!';
-        } catch (e) {
-          status.style.background = '#dc2626';
-          status.innerText = '❌ خطأ أثناء الحفظ: ' + e.message;
-        }
-      };
-
-      function bindUpload(fileInputId, textInputId) {
-        document.getElementById(fileInputId).onchange = async (ev) => {
-          const file = ev.target.files[0];
-          if (!file) return;
-          const upStatus = document.getElementById('upload-status');
-          upStatus.innerText = `⏳ جاري رفع "${file.name}"...`;
-          const fd = new FormData();
-          fd.append('file', file);
-          try {
-            const res = await fetch(uploadApiUrl, { method: 'POST', body: fd });
-            const json = await res.json();
-            if (json.status === 'success') {
-              document.getElementById(textInputId).value = json.data.url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
-              upStatus.innerText = '✅ تم الرفع! اضغط "حفظ ونشر التعديلات" لتثبيته.';
-            }
-          } catch (err) {
-            upStatus.innerText = '❌ تعذر الرفع المباشر، الصق الرابط يدوياً.';
-          }
-        };
       }
-      bindUpload('file-dl', 'download-file-url');
-      bindUpload('file-img1', 'gallery-img-1');
-      bindUpload('file-img2', 'gallery-img-2');
-      bindUpload('file-img3', 'gallery-img-3');
+    });
 
-    } catch (initErr) {
-      errBox.style.color = '#f87171';
-      errBox.innerText = 'تعذر تحميل النظام: ' + initErr.message;
-    }
-  })();
+    document.getElementById('go').onclick=async()=>{
+      msg.innerText='جاري الدخول...';
+      try{
+        await auth.signInWithEmailAndPassword(document.getElementById('em').value.trim(),document.getElementById('pw').value);
+        msg.innerText='';
+      }catch(e){msg.innerText='خطأ: '+e.message}
+    };
+    document.getElementById('out').onclick=()=>auth.signOut();
+
+    document.getElementById('sv').onclick=async()=>{
+      const sm=document.getElementById('s-msg');sm.innerText='جاري الحفظ...';
+      try{
+        await db.collection('site').doc('content').set({
+          siteFont:document.getElementById('f-font').value,
+          baseFontSize:document.getElementById('f-size').value,
+          heroTitleSize:document.getElementById('h-size').value,
+          primaryColor:document.getElementById('p-col').value,
+          heroTitle:document.getElementById('h-title').value,
+          heroDescHtml:document.getElementById('h-desc').value,
+          downloadBtnText:document.getElementById('b-txt').value,
+          whatsappNumber:document.getElementById('wa-num').value,
+          downloadFileUrl:document.getElementById('dl-url').value,
+          galleryImg1:document.getElementById('im-1').value,
+          galleryImg2:document.getElementById('im-2').value,
+          galleryImg3:document.getElementById('im-3').value
+        });
+        sm.innerText='✅ تم الحفظ بنجاح!';
+      }catch(e){sm.innerText='❌ خطأ: '+e.message}
+    };
+
+    [['u-dl','dl-url'],['u-1','im-1'],['u-2','im-2'],['u-3','im-3']].forEach(([f,t])=>{
+      document.getElementById(f).onchange=async e=>{
+        const file=e.target.files[0];if(!file)return;
+        const um=document.getElementById('u-msg');um.innerText='جاري الرفع...';
+        const fd=new FormData();fd.append('file',file);
+        const r=await fetch(upApi,{method:'POST',body:fd});const j=await r.json();
+        if(j.status==='success'){document.getElementById(t).value=j.data.url.replace('tmpfiles.org/','tmpfiles.org/dl/');um.innerText='✅ تم الرفع، اضغط حفظ!';}
+      };
+    });
+  }catch(e){msg.innerText='فشل التحميل: '+e.message}
+})();
 </script>
 </body>
 </html>
-
