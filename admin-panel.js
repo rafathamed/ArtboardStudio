@@ -97,6 +97,9 @@
     document.getElementById("st-save").addEventListener("click", save);
     document.getElementById("st-refresh").addEventListener("click", loadContent);
     document.getElementById("nb-add").addEventListener("click", addCard);
+    document.getElementById("bt-add").addEventListener("click", addButton);
+    document.getElementById("pg-add").addEventListener("click", addPage);
+    document.getElementById("el-add").addEventListener("click", addElement);
   }
 
   function status(id, message, type) {
@@ -161,6 +164,9 @@
     if (grid) { grid.style.direction = d.heroOrder === "reverse" ? "ltr" : "rtl"; var intro = grid.querySelector(":scope > div:first-child"); if (intro) intro.style.direction = "rtl"; }
     applyMotion(d.animation);
     renderCards(Array.isArray(d.customCards) ? d.customCards : []);
+    renderCustomButtons(Array.isArray(d.customButtons) ? d.customButtons : []);
+    renderSidePages(Array.isArray(d.sidePages) ? d.sidePages : []);
+    renderElements(Array.isArray(d.customElements) ? d.customElements : [], Array.isArray(d.sidePages) ? d.sidePages : []);
   }
 
   function applyMotion(mode) {
@@ -467,6 +473,10 @@
     var map = {"f-tico":"tagIcon","f-tag":"tagText","f-title":"heroTitle","f-desc":"heroDesc","f-bico":"downloadIcon","f-btxt":"downloadBtnText","f-download":"downloadFileUrl","f-wa":"whatsappNumber","f-c1":"buttonColor1","f-c2":"buttonColor2","f-ang":"buttonAngle","f-bg":"pageBg","f-g1":"glow1","f-g2":"glow2","f-tc":"textColor","f-sc":"secondaryTextColor","f-font":"siteFont","f-fs":"baseFontSize","f-hs":"heroTitleSize","f-anm":"animation","f-ord":"heroOrder"};
     Object.keys(map).forEach(function (id) { var el = document.getElementById(id); if (el) el.value = d[map[id]] == null ? "" : d[map[id]]; });
     draftCards = Array.isArray(d.customCards) ? d.customCards.slice(0, 60) : []; renderDraftCards();
+    draftButtons = Array.isArray(d.customButtons) ? d.customButtons.slice(0, 100) : [];
+    draftPages = Array.isArray(d.sidePages) ? d.sidePages.slice(0, 50) : [];
+    draftElements = Array.isArray(d.customElements) ? d.customElements.slice(0, 150) : [];
+    renderDraftButtons(); renderDraftPages(); renderDraftElements();
   }
   function renderDraftCards() {
     var list = document.getElementById("nb-list"); if (!list) return; list.textContent = "";
@@ -506,7 +516,7 @@
       siteFont:document.getElementById("f-font").value,baseFontSize:Math.max(12,Math.min(30,parseInt(document.getElementById("f-fs").value,10)||16)),
       heroTitleSize:Math.max(28,Math.min(90,parseInt(document.getElementById("f-hs").value,10)||54)),
       animation:document.getElementById("f-anm").value,heroOrder:document.getElementById("f-ord").value,
-      customCards:draftCards.slice(0,60),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:currentUser.email
+      customCards:draftCards.slice(0,60),customButtons:draftButtons.slice(0,100),sidePages:draftPages.slice(0,50),customElements:draftElements.slice(0,150),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:currentUser.email
     };
   }
 
