@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم الأدمن | Artboard Studio</title>
+  <link href="https://googleapis.com" rel="stylesheet">
+  <link href="https://quilljs.com" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+    body { background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .card { background: #1e293b; padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #334155; }
+    h1, h2, h3 { margin-top: 0; color: #38bdf8; }
+    label { display: block; margin: 12px 0 6px; font-weight: 600; color: #cbd5e1; }
+    input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="number"], select {
+      width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #475569;
+      background: #0f172a; color: #fff; font-size: 15px;
+    }
+    .btn {
+      background: #0284c7; color: #fff; border: none; padding: 12px 24px;
+      border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 15px;
+    }
+    .btn:hover { background: #0369a1; }
+    .btn-danger { background: #dc2626; }
+    .btn-success { background: #16a34a; width: 100%; font-size: 18px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .editor-box { background: #fff; color: #000; border-radius: 8px; overflow: hidden; }
+    #editor-desc { height: 150px; }
+    .hidden { display: none; }
+    .status { padding: 10px; border-radius: 8px; margin-top: 10px; text-align: center; font-weight: bold; }
+    .upload-row { display: flex; gap: 10px; align-items: center; }
+    .upload-btn { background: #475569; padding: 10px 15px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+    @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div id="login-section" class="card" style="max-width: 420px; margin: 80px auto;">
+    <h2 style="text-align: center;">تسجيل دخول الأدمن</h2>
+    <label>البريد الإلكتروني</label>
+    <input type="email" id="admin-email" placeholder="admin@example.com">
+    <label>كلمة المرور</label>
+    <input type="password" id="admin-password" placeholder="••••••••">
+    <button class="btn" style="width: 100%;" onclick="loginAdmin()">دخول للوحة التحكم</button>
+    <div id="login-error" style="color: #f87171; margin-top: 10px; text-align: center;"></div>
+  </div>
+
+  <div id="dashboard-section" class="hidden">
+    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h2 style="margin:0;">لوحة تحكم Artboard Studio</h2>
+        <small style="color: #94a3b8;">تعديل النصوص، الخطوط، الصور، والمرفقات مباشرة</small>
+      </div>
+      <div>
+        <a href="../index.html" target="_blank" style="color: #38bdf8; margin-left: 15px; text-decoration: none;">معاينة الموقع ↗</a>
+        <button class="btn btn-danger" style="margin:0;" onclick="logoutAdmin()">خروج</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>1. إعدادات الخطوط والأحجام العامة</h3>
+      <div class="grid-2">
+        <div>
+          <label>نوع خط الموقع الرئيسي</label>
+          <select id="site-font">
+            <option value="'Cairo', sans-serif">Cairo (كايرو - افتراضي)</option>
+            <option value="'Tajawal', sans-serif">Tajawal (تجوّل)</option>
+            <option value="'IBM Plex Sans Arabic', sans-serif">IBM Plex Sans Arabic</option>
+          </select>
+        </div>
+        <div>
+          <label>حجم خط الفقرات الأساسي (بالبكسل px)</label>
+          <input type="number" id="base-font-size" value="16" min="12" max="24">
+        </div>
+        <div>
+          <label>حجم العنوان الرئيسي Hero (بالبكسل px)</label>
+          <input type="number" id="hero-title-size" value="48" min="24" max="80">
+        </div>
+        <div>
+          <label>اللون الرئيسي للموقع (Accent Color)</label>
+          <input type="color" id="primary-color" value="#9877ff" style="height: 42px; width: 100%; cursor: pointer;">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>2. تعديل النصوص الرئيسية</h3>
+      <label>العنوان الرئيسي للموقع (Hero Title)</label>
+      <input type="text" id="hero-title" value="ARTBOARD STUDIO">
+
+      <label>الوصف التعريفي أسفل العنوان (محرر مرئي يدعم الألوان والأحجام والتنسيق)</label>
+      <div class="editor-box">
+        <div id="editor-desc"></div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <label>نص زر التحميل الرئيسي</label>
+          <input type="text" id="download-btn-text" value="تحميل الإضافة الآن">
+        </div>
+        <div>
+          <label>رقم الواتساب للتواصل (بدون +)</label>
+          <input type="text" id="whatsapp-number" value="201127502899">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>3. إدارة الصور وملف تحميل الإضافة</h3>
+      <label>رابط ملف تحميل الإضافة (ZIP / RAR / MediaFire)</label>
+      <div class="upload-row">
+        <input type="url" id="download-file-url" placeholder="https://...">
+        <label class="upload-btn">رفع ملف 📎<input type="file" hidden onchange="uploadFile(this, 'download-file-url')"></label>
+      </div>
+
+      <label>صورة المعرض 1</label>
+      <div class="upload-row">
+        <input type="url" id="gallery-img-1" placeholder="رابط الصورة الأولى">
+        <label class="upload-btn">رفع صورة 🖼<input type="file" accept="image/*" hidden onchange="uploadFile(this, 'gallery-img-1')"></label>
+      </div>
+
+      <label>صورة المعرض 2</label>
+      <div class="upload-row">
+        <input type="url" id="gallery-img-2" placeholder="رابط الصورة الثانية">
+        <label class="upload-btn">رفع صورة 🖼<input type="file" accept="image/*" hidden onchange="uploadFile(this, 'gallery-img-2')"></label>
+      </div>
+
+      <label>صورة المعرض 3</label>
+      <div class="upload-row">
+        <input type="url" id="gallery-img-3" placeholder="رابط الصورة الثالثة">
+        <label class="upload-btn">رفع صورة 🖼<input type="file" accept="image/*" hidden onchange="uploadFile(this, 'gallery-img-3')"></label>
+      </div>
+      <div id="upload-status" style="color: #38bdf8; margin-top: 8px; font-size: 14px;"></div>
+    </div>
+
+    <button class="btn btn-success" onclick="saveSettings()">💾 حفظ ونشر التعديلات على الموقع</button>
+    <div id="save-status" class="status hidden"></div>
+  </div>
+</div>
+
+<script src="https://quilljs.com"></script>
+<script type="module">
+  import { initializeApp } from "https://gstatic.com";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://gstatic.com";
+  import { getFirestore, doc, getDoc, setDoc } from "https://gstatic.com";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zKKCE83xWeRxg",
+    authDomain: "://firebaseapp.com",
+    projectId: "artboardstudio-117a6",
+    storageBucket: "artboardstudio-117a6.firebasestorage.app",
+    messagingSenderId: "26311402131",
+    appId: "1:26311402131:web:7c2950a172814b2ba0e366",
+    measurementId: "G-E2Z3V238QJ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const quill = new Quill('#editor-desc', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        ['bold', 'italic', 'underline'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'align': [] }],
+        ['clean']
+      ]
+    }
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('dashboard-section').classList.remove('hidden');
+      await loadCurrentData();
+    } else {
+      document.getElementById('login-section').classList.remove('hidden');
+      document.getElementById('dashboard-section').classList.add('hidden');
+    }
+  });
+
+  window.loginAdmin = async () => {
+    const email = document.getElementById('admin-email').value;
+    const pass = document.getElementById('admin-password').value;
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (err) {
+      document.getElementById('login-error').innerText = "خطأ في البريد الإلكتروني أو كلمة المرور";
+    }
+  };
+
+  window.logoutAdmin = () => signOut(auth);
+
+  async function loadCurrentData() {
+    const docSnap = await getDoc(doc(db, "site", "content"));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (data.siteFont) document.getElementById('site-font').value = data.siteFont;
+      if (data.baseFontSize) document.getElementById('base-font-size').value = data.baseFontSize;
+      if (data.heroTitleSize) document.getElementById('hero-title-size').value = data.heroTitleSize;
+      if (data.primaryColor) document.getElementById('primary-color').value = data.primaryColor;
+      if (data.heroTitle) document.getElementById('hero-title').value = data.heroTitle;
+      if (data.heroDescHtml) quill.root.innerHTML = data.heroDescHtml;
+      if (data.downloadBtnText) document.getElementById('download-btn-text').value = data.downloadBtnText;
+      if (data.whatsappNumber) document.getElementById('whatsapp-number').value = data.whatsappNumber;
+      if (data.downloadFileUrl) document.getElementById('download-file-url').value = data.downloadFileUrl;
+      if (data.galleryImg1) document.getElementById('gallery-img-1').value = data.galleryImg1;
+      if (data.galleryImg2) document.getElementById('gallery-img-2').value = data.galleryImg2;
