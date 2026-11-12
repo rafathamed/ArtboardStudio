@@ -12,7 +12,7 @@
     messagingSenderId: "26311402131",
     appId: "1:26311402131:web:7c2950a172814b2ba0e366"
   };
-  var db, auth, storage, currentUser = null, draftCards = [], draftButtons = [], draftPages = [], draftElements = [], draftVisualItems = [], activeVisualItemId = null, visualEditMode = false, publishedPages = [];
+  var db, auth, currentUser = null, draftCards = [], draftButtons = [], draftPages = [], draftElements = [], draftVisualItems = [], activeVisualItemId = null, visualEditMode = false, publishedPages = [];
   var defaults = {
     tagIcon:"✨", tagText:"إضافة احترافية للمصممين", heroTitle:"ARTBOARD STUDIO",
     heroDesc:"ارتقِ بتجربتك داخل Adobe Illustrator مع مجموعة من الأدوات العملية المصممة لتسهيل التعامل مع لوحات الرسم والصور والعناصر، وتعديل الصور وتحويلها مباشرة على لوحة العمل، وإنشاء رموز QR متجهية قابلة للتحرير.",
@@ -664,26 +664,49 @@
     if (button) button.textContent = visualEditMode ? "✓ إيقاف السحب" : "✥ تفعيل السحب";
     renderVisualItems(draftVisualItems);
   }
+
   async function uploadVisualImage() {
     var input = document.getElementById("as-v-file"), file = input && input.files && input.files[0]; if (!file) return;
     var hint = document.getElementById("as-v-upload-status");
     try {
-      if (!currentUser || !storage) throw new Error("سجّل الدخول وتأكد من تحميل Firebase Storage أولًا.");
+      if (!currentUser) throw new Error("سجّل الدخول بحساب الإدارة أولًا.");
       if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) throw new Error("الصيغ المدعومة: PNG وJPG وWEBP وGIF.");
       if (file.size > 5 * 1024 * 1024) throw new Error("حجم الصورة يجب ألا يتجاوز 5 ميجابايت.");
-      if (hint) hint.textContent = "جارٍ رفع الصورة إلى التخزين السحابي...";
-      var safeName = file.name.replace(/[^\w.-]+/g, "-").slice(-80) || "image";
-      var ref = storage.ref().child("site-assets/" + currentUser.uid + "/" + Date.now() + "-" + safeName);
-      var task = await ref.put(file, { contentType: file.type, cacheControl: "public,max-age=31536000" });
-      var imageUrl = await task.ref.getDownloadURL();
-      addVisualItem("image", { imageUrl: imageUrl, text: file.name, width: 300 });
-      if (hint) hint.textContent = "تم رفع الصورة بنجاح. يمكنك سحبها وتغيير حجمها.";
+      if (hint) hint.textContent = "جارٍ طلب إذن رفع آمن من الخادم...";
+      var token = await currentUser.getIdToken(true);
+      var signatureResponse = await fetch(ANALYTICS_API_URL.replace(/\/$/, "") + "/admin/cloudinary-signature", {
+        method: "POST", mode: "cors", cache: "no-store",
+        headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+        body: "{}"
+      });
+      var signed = await signatureResponse.json();
+      if (!signatureResponse.ok || !signed.ok) {
+        if (signatureResponse.status === 401) throw new Error("انتهت جلسة الإدارة أو تعذر التحقق من حسابك.");
+        if (signatureResponse.status === 404) throw new Error("خدمة Cloudflare Worker غير منشورة أو قديمة. أعد نشر Worker.");
+        if (signatureResponse.status === 503) throw new Error("لم تُضف مفاتيح Cloudinary إلى Cloudflare Worker بعد.");
+        throw new Error(signed.error || "تعذر الحصول على تصريح رفع الصورة.");
+      }
+      if (hint) hint.textContent = "جارٍ رفع الصورة إلى Cloudinary...";
+      var form = new FormData();
+      form.append("file", file, file.name);
+      form.append("api_key", signed.apiKey);
+      form.append("timestamp", String(signed.timestamp));
+      form.append("folder", signed.folder);
+      form.append("signature", signed.signature);
+      var uploadResponse = await fetch("https://api.cloudinary.com/v1_1/" + encodeURIComponent(signed.cloudName) + "/image/upload", {
+        method: "POST", body: form
+      });
+      var uploaded = await uploadResponse.json();
+      if (!uploadResponse.ok || !uploaded.secure_url) throw new Error(uploaded && uploaded.error && uploaded.error.message ? uploaded.error.message : "رفض Cloudinary رفع الصورة.");
+      addVisualItem("image", { imageUrl: uploaded.secure_url, text: file.name, width: 300 });
+      if (hint) hint.textContent = "تم رفع الصورة إلى Cloudinary بنجاح. يمكنك سحبها وتغيير حجمها.";
       input.value = "";
     } catch (error) {
       if (hint) hint.textContent = error.message || "تعذر رفع الصورة.";
-      status("st-msg", error.message || "تعذر رفع الصورة. راجع قواعد Firebase Storage.", "error");
+      status("st-msg", error.message || "تعذر رفع الصورة. راجع إعدادات Cloudinary وCloudflare.", "error");
     }
   }
+
   function deleteActiveVisualItem() {
     if (!activeVisualItemId) return;
     draftVisualItems = draftVisualItems.filter(function (item) { return item.id !== activeVisualItemId; });
@@ -999,7 +1022,7 @@
     try {
       if (!window.firebase) throw new Error("Firebase SDK غير متاح.");
       if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-      db = firebase.firestore(); auth = firebase.auth(); storage = firebase.storage();
+      db = firebase.firestore(); auth = firebase.auth();
       // Keep every open visitor tab synchronized with published site content.
       db.collection("site").doc("content").onSnapshot({ includeMetadataChanges: true }, function (snap) {
         if (snap.metadata && snap.metadata.fromCache) return;
