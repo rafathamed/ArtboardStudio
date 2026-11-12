@@ -117,7 +117,7 @@
       d.buttonColor2 = data.primaryColor;
     }
     if (!data.heroDesc && typeof data.heroDescHtml === "string") {
-      d.heroDesc = data.heroDescHtml.replace(/<br\\s*\\/?\\s*>/gi, " ").replace(/<\\/p>/gi, " ").replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim();
+      d.heroDesc = data.heroDescHtml.replace(/<br\s*\/?\s*>/gi, " ").replace(/<\/p>/gi, " ").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
     }
     var tag = document.querySelector(".hero .tag");
     if (tag) tag.textContent = (d.tagIcon || "") + (d.tagText ? " " + d.tagText : "");
