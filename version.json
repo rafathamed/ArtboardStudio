@@ -1,0 +1,18 @@
+{
+  "version": "1.10.1",
+  "released": "2026-11-12",
+  "minVersion": "1.4.0",
+  "notes": [
+    "إصلاح: الإضافة المفعّلة تعمل الآن بدون إنترنت (حتى 14 يومًا) بدل التوقف عند شاشة التفعيل"
+  ],
+  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/",
+  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/",
+  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/",
+  "package": {
+    "url": "https://rafathamed.github.io/ArtboardStudio/updates/ArtboardStudio-update-1.10.1.zip",
+    "size": 1584377,
+    "sha256": "efc0abc4af841b16599209bd385a3e95b1e5eab7c81f0459b865815e91aa9bd4",
+    "signature": "SRSCJYNhAFmgzM22LSTut8wzsrLVjSwdY0Cg+1zEEgUhFqrzttukySP4TjMON0Y/Es6HSRx1YSZfKSv836lYtw==",
+    "format": "zip-stored-v1"
+  }
+}
