@@ -1,168 +1,684 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>استوديو التصميم المتكامل | Artboard Studio</title>
-  <style>
-    *{box-sizing:border-box;font-family:'Cairo',Tahoma,sans-serif}
-    body{background:#090b13;color:#f8fafc;margin:0;height:100vh;overflow:hidden}
-    .login-wrap{display:flex;align-items:center;justify-content:center;height:100vh}
-    .card{background:#151828;padding:24px;border-radius:14px;border:1px solid #2b2f48;width:100%;max-width:400px}
-    .workspace{display:grid;grid-template-columns:450px 1fr;height:100vh}
-    .sidebar{background:#111422;border-left:1px solid #262a40;display:flex;flex-direction:column;height:100vh}
-    .sb-head{padding:12px 16px;background:#171b2e;border-bottom:1px solid #262a40;display:flex;justify-content:space-between;align-items:center}
-    .tabs{display:grid;grid-template-columns:repeat(5,1fr);background:#0d0f1a;border-bottom:1px solid #262a40}
-    .tab{padding:10px 4px;text-align:center;cursor:pointer;font-size:11px;font-weight:bold;color:#94a3b8;border-bottom:2px solid transparent}
-    .tab.active{color:#a78bfa;border-bottom-color:#8b5cf6;background:#151828}
-    .sb-body{flex:1;overflow-y:auto;padding:15px}
-    .sb-foot{padding:12px;background:#171b2e;border-top:1px solid #262a40}
-    .preview-area{background:#05060a;display:flex;flex-direction:column;height:100vh}
-    .pv-bar{height:46px;background:#151828;border-bottom:1px solid #262a40;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:12px;color:#94a3b8}
-    iframe{flex:1;width:100%;border:none;background:#090b13;transition:width .3s}
-    label{display:block;margin:10px 0 4px;font-size:12px;font-weight:bold;color:#cbd5e1}
-    input,select,textarea{width:100%;padding:8px 10px;border-radius:8px;border:1px solid #333954;background:#0b0d17;color:#fff;font-size:13px}
-    input[type="color"]{height:36px;padding:2px;cursor:pointer}
-    input[type="range"]{padding:0;accent-color:#8b5cf6}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-    .btn{background:linear-gradient(120deg,#7954ec,#a17aff);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;width:100%}
-    .btn-save{background:linear-gradient(120deg,#16a34a,#22c55e)}
-    .btn-sm{padding:6px 10px;font-size:11px;width:auto;background:#262a40}
-    .btn-red{background:#dc2626}
-    .hide{display:none!important}
-    .row{display:flex;gap:6px;align-items:center}
-    .up{background:#2e3452;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:11px;white-space:nowrap}
-    .val{float:left;color:#a78bfa;font-size:11px}
-    .ico-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:6px}
-    .ico-btn{background:#1b2036;border:1px solid #2e3556;border-radius:6px;padding:6px;text-align:center;cursor:pointer;font-size:16px}
-    .ico-btn:hover{border-color:#8b5cf6;background:#262d4d}
-    .sec-box{background:#171b2e;border:1px solid #2b3252;padding:10px;border-radius:10px;margin-top:10px}
-    .item-card{background:#0d101d;border:1px solid #262c47;padding:8px;border-radius:8px;margin-top:8px;font-size:12px}
-    @media(max-width:950px){.workspace{grid-template-columns:1fr;overflow-y:auto;height:auto}.sidebar{height:auto}.preview-area{height:75vh}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Artboard Studio - إضافة احترافية لأدوات Adobe Illustrator">
+<title>Artboard Studio | أدوات احترافية لإليستريتور</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+ font-family:'Cairo',sans-serif;
+ background:#090b13;
+ color:#f5f6ff;
+ line-height:1.8;
+ overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+.container{width:min(1120px,92%);margin:auto}
+header{
+ position:sticky;top:0;z-index:20;
+ background:rgba(9,11,19,.94);
+ border-bottom:1px solid #25283a;
+ backdrop-filter:blur(14px);
+}
+.nav{
+ min-height:76px;display:flex;align-items:center;
+ justify-content:space-between;gap:20px;flex-wrap:wrap;
+}
+.logo{font-size:23px;font-weight:900;direction:ltr}
+.logo span{color:#9877ff}
+nav{display:flex;gap:20px;flex-wrap:wrap}
+nav a{font-size:13px;color:#c6c8d8}
+nav a:hover{color:#a58aff}
+.hero{
+ padding:95px 0 80px;
+ background:radial-gradient(ellipse at 15% 20%,#30205a 0,transparent 45%),
+ radial-gradient(ellipse at 85% 70%,#102d4b 0,transparent 40%);
+}
+.hero-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:45px;align-items:center}
+.tag{
+ display:inline-block;padding:7px 16px;border:1px solid #7054bb;
+ border-radius:30px;color:#c8b7ff;font-size:13px;margin-bottom:20px;
+}
+h1{font-size:clamp(38px,6vw,65px);line-height:1.3;font-weight:900;direction:ltr;text-align:right}
+h1 span{color:#a78bfa}
+.hero p{color:#b9bdd0;margin:20px 0 28px;max-width:580px}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{
+ display:inline-flex;align-items:center;justify-content:center;
+ padding:13px 23px;border-radius:12px;font-weight:800;
+ transition:.25s;border:1px solid transparent;font-size:14px;
+}
+.btn:hover{transform:translateY(-3px)}
+.primary{background:linear-gradient(120deg,#7954ec,#a17aff);color:white}
+.secondary{border-color:#55516f;background:#171827}
+.whatsapp{background:#168c58;color:white}
+
+/* ============ Illustrator showcase ============ */
+.showcase{
+ position:relative;perspective:1400px;
+ padding:10px 0 30px;
+}
+.showcase::before,.showcase::after{
+ content:"";position:absolute;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none;
+ animation:glow 7s ease-in-out infinite alternate;
+}
+.showcase::before{width:260px;height:260px;background:#7954ec55;top:-20px;right:-30px}
+.showcase::after{width:240px;height:240px;background:#1e90ff33;bottom:0;left:-30px;animation-delay:-3s}
+@keyframes glow{from{transform:scale(.9);opacity:.6}to{transform:scale(1.2);opacity:1}}
+
+.ai-window{
+ position:relative;z-index:1;direction:ltr;
+ border:1px solid #3d3a58;border-radius:18px;overflow:hidden;
+ background:#1b1b1f;
+ box-shadow:0 40px 90px #000a,0 0 0 1px #ffffff08 inset;
+ transform-style:preserve-3d;
+ transition:transform .25s ease-out;
+ will-change:transform;
+ animation:intro 1s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes intro{from{opacity:0;transform:translateY(40px) rotateX(10deg) scale(.96)}to{opacity:1}}
+.ai-titlebar{
+ height:34px;background:#2b2b30;display:flex;align-items:center;gap:8px;
+ padding:0 12px;border-bottom:1px solid #111;
+}
+.dots{display:flex;gap:6px}
+.dots i{width:10px;height:10px;border-radius:50%;background:#ff5f57}
+.dots i:nth-child(2){background:#febc2e}
+.dots i:nth-child(3){background:#28c840}
+.ai-logo{
+ width:20px;height:20px;border-radius:4px;background:#330000;border:1px solid #ff9a00;
+ color:#ff9a00;font:800 10px/18px Arial,sans-serif;text-align:center;margin-left:8px;
+}
+.ai-menu{display:flex;gap:12px;font:11px Arial,sans-serif;color:#b8b8c0;overflow:hidden;white-space:nowrap}
+.ai-doc{margin-left:auto;font:11px Arial,sans-serif;color:#888;white-space:nowrap}
+.ai-body{display:grid;grid-template-columns:34px 1fr;height:500px}
+.ai-tools{
+ background:#232327;border-right:1px solid #111;
+ display:flex;flex-direction:column;align-items:center;gap:9px;padding:12px 0;
+}
+.ai-tools i{
+ width:16px;height:16px;border-radius:4px;background:#3c3c44;display:block;
+ transition:.3s;
+}
+.ai-tools i.on{background:#7954ec;box-shadow:0 0 12px #7954ecaa}
+.ai-canvas{
+ position:relative;overflow:hidden;
+ background:
+  radial-gradient(circle at 50% 50%,#2c2c33 0,#222227 70%);
+}
+.ai-canvas::before{
+ content:"";position:absolute;inset:0;
+ background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);
+ background-size:26px 26px;
+}
+.artboard{
+ position:absolute;left:7%;top:14%;width:46%;height:70%;
+ background:#fff;border-radius:3px;box-shadow:0 10px 40px #000a;
+ overflow:hidden;
+}
+.artboard .shape{position:absolute}
+.s1{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#7954ec,#ff6ec7);top:12%;left:14%;animation:bob 5s ease-in-out infinite}
+.s2{width:70px;height:70px;background:#ffb703;bottom:16%;right:14%;border-radius:12px;transform:rotate(18deg);animation:bob 6s ease-in-out infinite reverse}
+.s3{width:120px;height:14px;background:#21243a;bottom:12%;left:12%;border-radius:8px}
+.s4{width:80px;height:14px;background:#cfd2e6;bottom:6%;left:12%;border-radius:8px}
+.qr{
+ position:absolute;top:45%;left:38%;width:62px;height:62px;
+ background:
+  conic-gradient(#111 25%,#fff 0 50%,#111 0 75%,#fff 0) 0 0/12px 12px;
+ border:5px solid #111;outline:4px solid #fff;
+ animation:bob 4.5s ease-in-out infinite;animation-delay:-1s;
+}
+@keyframes bob{50%{transform:translateY(-10px) rotate(4deg)}}
+.artboard-label{
+ position:absolute;left:7%;top:8%;font:10px Arial,sans-serif;color:#9a9aa8;
+}
+.selection{
+ position:absolute;left:7%;top:14%;width:46%;height:70%;
+ border:1.5px solid #4aa3ff;pointer-events:none;
+ animation:sel 3s ease-in-out infinite;
+}
+.selection::before,.selection::after{
+ content:"";position:absolute;width:7px;height:7px;background:#fff;border:1px solid #4aa3ff;
+}
+.selection::before{top:-4px;left:-4px}
+.selection::after{bottom:-4px;right:-4px}
+@keyframes sel{50%{border-color:#a78bfa;box-shadow:0 0 18px #7954ec66}}
+
+/* floating extension panel */
+.panel{
+ position:absolute;z-index:3;top:18px;bottom:18px;right:4%;
+ aspect-ratio:426/800;
+ border-radius:10px;overflow:hidden;background:#222;
+ border:1px solid #4a4a58;
+ box-shadow:-20px 30px 60px #000c,0 0 0 1px #ffffff10 inset,0 0 40px #7954ec44;
+ transform:translateZ(60px);
+ animation:float 6s ease-in-out infinite;
+}
+@keyframes float{50%{transform:translateZ(60px) translateY(-12px)}}
+.panel-head{
+ height:24px;background:#2b2b30;font:700 9px/24px Arial,sans-serif;color:#ddd;padding:0 10px;
+ border-bottom:1px solid #111;direction:ltr;
+}
+.panel-slides{position:absolute;inset:24px 0 0 0;background:#232323}
+.slide{
+ position:absolute;inset:0;opacity:0;
+ transform:translateX(30px) scale(.98);
+ transition:opacity .8s ease,transform .9s cubic-bezier(.2,.8,.2,1);
+}
+.slide.active{opacity:1;transform:none}
+.slide img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.slide.missing{display:flex;align-items:center;justify-content:center;color:#8f91a7;font-size:12px;text-align:center;padding:14px}
+.scan{
+ position:absolute;left:0;right:0;height:60px;z-index:4;pointer-events:none;
+ background:linear-gradient(180deg,transparent,#a78bfa33,transparent);
+ animation:scan 4.5s linear infinite;
+}
+@keyframes scan{from{top:-60px}to{top:100%}}
+.progress{position:absolute;bottom:0;left:0;height:3px;background:linear-gradient(90deg,#7954ec,#a78bfa);width:0;z-index:5}
+.progress.run{animation:prog var(--dur,4.5s) linear forwards}
+@keyframes prog{to{width:100%}}
+
+/* floating chips */
+.chip{
+ position:absolute;z-index:4;padding:7px 14px;border-radius:30px;
+ background:#171827ee;border:1px solid #5a4c93;color:#d9ccff;font-size:12px;font-weight:700;
+ box-shadow:0 10px 30px #0009;backdrop-filter:blur(8px);
+ animation:float2 5s ease-in-out infinite;direction:rtl;
+}
+.chip.a{left:2%;top:12%}
+.chip.b{left:8%;bottom:14%;animation-delay:-2s}
+.chip.c{left:34%;top:4%;animation-delay:-3.5s}
+@keyframes float2{50%{transform:translateY(-9px)}}
+
+.showcase-nav{
+ position:relative;z-index:2;margin-top:18px;
+ display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+}
+.showcase-nav button{
+ font:inherit;font-size:12px;font-weight:700;cursor:pointer;
+ padding:8px 16px;border-radius:30px;color:#b9bdd0;
+ background:#151827;border:1px solid #333857;transition:.25s;
+}
+.showcase-nav button:hover{border-color:#8062dc;color:#fff}
+.showcase-nav button.active{background:linear-gradient(120deg,#7954ec,#a17aff);border-color:transparent;color:#fff}
+
+section{padding:78px 0}
+.section-title{text-align:center;margin-bottom:42px}
+.section-title h2{font-size:32px;font-weight:900}
+.section-title p{color:#9fa4b9;margin-top:8px}
+.features{
+ display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+}
+.feature{
+ background:#131624;border:1px solid #282d42;
+ border-radius:17px;padding:24px;transition:.25s;
+}
+.feature:hover{transform:translateY(-5px);border-color:#8062dc}
+.feature .ico{font-size:27px;margin-bottom:12px}
+.feature h3{font-size:17px;margin-bottom:8px}
+.feature p{font-size:13px;color:#aeb3c6}
+
+/* gallery */
+.gallery{
+ display:grid;grid-template-columns:repeat(3,1fr);gap:22px;
+}
+.shot{
+ position:relative;border-radius:18px;padding:14px;cursor:zoom-in;
+ background:linear-gradient(145deg,#1c1c30,#101522);
+ border:1px solid #30344b;overflow:hidden;
+ transition:transform .35s,border-color .35s,box-shadow .35s;
+}
+.shot:hover{transform:translateY(-8px) scale(1.02);border-color:#8062dc;box-shadow:0 25px 60px #7954ec33}
+.shot .frame{height:380px;border-radius:12px;overflow:hidden;background:#222;position:relative}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;transition:transform 4s ease}
+.shot:hover img{transform:scale(1.06)}
+.shot .miss{display:none;height:100%;align-items:center;justify-content:center;color:#8f91a7;font-size:13px;text-align:center;padding:15px}
+.shot.err img{display:none}.shot.err .miss{display:flex}
+.shot figcaption{margin-top:12px;text-align:center;font-weight:700;font-size:14px}
+.shot figcaption small{display:block;color:#9fa4b9;font-weight:500;font-size:12px}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal:nth-child(2){transition-delay:.12s}
+.reveal:nth-child(3){transition-delay:.24s}
+
+.lightbox{
+ position:fixed;inset:0;z-index:100;background:#000d;backdrop-filter:blur(8px);
+ display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out;
+}
+.lightbox.open{display:flex;animation:fade .3s}
+.lightbox img{max-width:min(520px,95%);max-height:92vh;border-radius:14px;box-shadow:0 30px 100px #7954ec55}
+@keyframes fade{from{opacity:0}}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.step{
+ background:#151827;border:1px solid #292e43;
+ padding:20px;border-radius:15px;
+}
+.step b{color:#a88bff;font-size:23px}
+.step p{font-size:13px;color:#b6bbcc;margin-top:8px}
+.download-box{
+ background:linear-gradient(120deg,#21183d,#15253a);
+ border:1px solid #54447f;border-radius:24px;
+ padding:45px 25px;text-align:center;
+}
+.download-box p{color:#c1c3d3;margin:10px auto 25px}
+.faq{max-width:850px;margin:auto}
+details{
+ background:#151827;border:1px solid #2c3045;
+ padding:17px 20px;border-radius:12px;margin-bottom:12px;
+}
+summary{cursor:pointer;font-weight:700}
+details p{color:#b4b8ca;font-size:14px;margin-top:12px}
+.contact{text-align:center}
+.contact p{color:#b7bbcd;margin:12px 0 25px}
+footer{
+ padding:30px 0;border-top:1px solid #292d40;
+ color:#969bad;text-align:center;font-size:12px;
+}
+.float-wa{
+ position:fixed;bottom:20px;left:20px;z-index:30;
+ width:58px;height:58px;border-radius:50%;
+ background:#20bd68;color:white;display:flex;
+ align-items:center;justify-content:center;font-size:28px;
+ box-shadow:0 6px 25px #0008;
+}
+@media(max-width:900px){
+ .hero-grid{grid-template-columns:1fr}
+ .features{grid-template-columns:repeat(2,1fr)}
+ .steps{grid-template-columns:repeat(2,1fr)}
+ .gallery{grid-template-columns:repeat(2,1fr)}
+ nav{gap:12px}
+}
+@media(max-width:520px){
+ .features,.gallery,.steps{grid-template-columns:1fr}
+ .nav{justify-content:center;padding:14px 0}
+ nav{justify-content:center}
+ .hero{padding:60px 0}
+ section{padding:55px 0}
+ .ai-body{height:430px}
+ .ai-menu,.ai-doc{display:none}
+ .panel{right:3%}
+ .chip.c{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ *{animation:none!important;transition:none!important}
+ .reveal{opacity:1;transform:none}
+}
+</style>
 </head>
 <body>
 
-<div id="login-box" class="login-wrap">
-  <div class="card">
-    <h2 style="text-align:center;color:#a78bfa;margin-top:0">استوديو التحكم المتكامل</h2>
-    <label>البريد الإلكتروني</label>
-    <input type="email" id="em" value="rafathamed9@gmail.com">
-    <label>كلمة المرور</label>
-    <input type="password" id="pw" placeholder="••••••••">
-    <button type="button" id="go" class="btn" style="margin-top:16px">دخول للاستوديو</button>
-    <p id="msg" style="color:#fbbf24;text-align:center;font-size:13px;margin-top:10px"></p>
+<header>
+ <div class="container nav">
+  <div class="logo">ARTBOARD <span>STUDIO</span></div>
+  <nav>
+   <a href="#home">الرئيسية</a>
+   <a href="#features">المميزات</a>
+   <a href="#gallery">معرض الصور</a>
+   <a href="#install">التثبيت</a>
+   <a href="#contact">تواصل معنا</a>
+  </nav>
+ </div>
+</header>
+
+<main>
+<section class="hero" id="home">
+ <div class="container hero-grid">
+  <div>
+   <span class="tag">إضافة احترافية للمصممين</span>
+   <h1>ARTBOARD <span>STUDIO</span></h1>
+   <p>
+    ارتقِ بتجربتك داخل Adobe Illustrator مع مجموعة من الأدوات
+    العملية المصممة لتسهيل التعامل مع لوحات الرسم والصور
+    والعناصر وإنشاء رموز QR متجهية قابلة للتحرير.
+   </p>
+   <div class="actions">
+    <a class="btn primary" href="./ArtboardStudio.rar" download>تحميل الإضافة الآن 📥</a>
+    <a class="btn secondary" href="#features">اكتشف المميزات</a>
+    <a class="btn whatsapp" href="https://wa.me/201127502899?text=مرحبًا،%20أرغب%20في%20الحصول%20على%20إضافة%20Artboard%20Studio%20وطلب%20التفعيل." target="_blank" rel="noopener">◉ اطلب عبر واتساب</a>
+   </div>
   </div>
-</div>
 
-<div id="panel" class="workspace hide">
-  <div class="sidebar">
-    <div class="sb-head">
-      <strong style="color:#a78bfa;font-size:14px">🎨 Artboard Studio Builder</strong>
-      <button type="button" id="out" class="btn btn-sm btn-red">خروج</button>
+  <!-- ======= واجهة Illustrator + الإضافة ======= -->
+  <div class="showcase" id="showcase">
+   <span class="chip a">✂️ قص فعلي خارج الـ Artboard</span>
+   <span class="chip b">🔗 QR متجه قابل للتحرير</span>
+   <span class="chip c">⚡ لوحة واحدة لكل الأدوات</span>
+
+   <div class="ai-window" id="aiWindow">
+    <div class="ai-titlebar">
+     <div class="dots"><i></i><i></i><i></i></div>
+     <div class="ai-logo">Ai</div>
+     <div class="ai-menu"><span>File</span><span>Edit</span><span>Object</span><span>Type</span><span>Select</span><span>Effect</span><span>View</span><span>Window</span></div>
+     <div class="ai-doc">Untitled-1 @ 100%</div>
     </div>
+    <div class="ai-body">
+     <div class="ai-tools"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+     <div class="ai-canvas">
+      <div class="artboard-label">Artboard 1</div>
+      <div class="artboard">
+       <div class="shape s1"></div>
+       <div class="shape s2"></div>
+       <div class="qr"></div>
+       <div class="shape s3"></div>
+       <div class="shape s4"></div>
+      </div>
+      <div class="selection"></div>
 
-    <div class="tabs">
-      <div class="tab active" onclick="swTab('t-text',this)">النصوص</div>
-      <div class="tab" onclick="swTab('t-color',this)">الألوان والتدرج</div>
-      <div class="tab" onclick="swTab('t-anim',this)">الخط والحركة</div>
-      <div class="tab" onclick="swTab('t-layout',this)">الأماكن والإضافة</div>
-      <div class="tab" onclick="swTab('t-media',this)">الصور والملفات</div>
+      <div class="panel" id="panel">
+       <div class="panel-head">Artboard Studio 2024</div>
+       <div class="panel-slides" id="slides">
+        <div class="slide active"><img src="img1.png" alt="Artboard Studio - أدوات الـ Artboard" loading="eager"></div>
+        <div class="slide"><img src="img2.png" alt="Artboard Studio - الماسكات والمستطيل" loading="lazy"></div>
+        <div class="slide"><img src="img3.png" alt="Artboard Studio - مولد QR Code" loading="lazy"></div>
+        <div class="scan"></div>
+        <div class="progress" id="progress"></div>
+       </div>
+      </div>
+     </div>
     </div>
+   </div>
 
-    <div class="sb-body">
-      <div id="t-text" class="tab-pane">
-        <label>أيقونة الشارة العلوية</label>
-        <div class="row">
-          <input type="text" id="tag-ico" value="✨" oninput="liveSync()" style="width:65px;text-align:center;font-size:18px">
-          <input type="text" id="h-tag" oninput="liveSync()" placeholder="نص الشارة العلوية">
-        </div>
-        <div class="ico-grid">
-          <div class="ico-btn" onclick="setIco('tag-ico','✨')">✨</div>
-          <div class="ico-btn" onclick="setIco('tag-ico','🚀')">🚀</div>
-          <div class="ico-btn" onclick="setIco('tag-ico','🎨')">🎨</div>
-          <div class="ico-btn" onclick="setIco('tag-ico','⚡')">⚡</div>
-          <div class="ico-btn" onclick="setIco('tag-ico','🔥')">🔥</div>
-          <div class="ico-btn" onclick="setIco('tag-ico','💎')">💎</div>
-        </div>
+   <div class="showcase-nav" id="showcaseNav">
+    <button class="active" data-i="0">أدوات الـ Artboard</button>
+    <button data-i="1">الماسكات والمستطيل</button>
+    <button data-i="2">مولّد QR Code</button>
+   </div>
+  </div>
+ </div>
+</section>
 
-        <label>العنوان الرئيسي (Hero Title)</label>
-        <input type="text" id="h-title" oninput="liveSync()" value="ARTBOARD STUDIO">
+<section id="features">
+ <div class="container">
+  <div class="section-title">
+   <h2>مميزات الإضافة</h2>
+   <p>أدوات عملية تساعدك على إنجاز مهامك بسهولة داخل Illustrator</p>
+  </div>
+  <div class="features">
+   <article class="feature"><div class="ico">✂️</div><h3>قص العناصر خارج اللوحة</h3><p>قص العناصر التي تتجاوز حدود Artboard باستخدام Pathfinder Crop.</p></article>
+   <article class="feature"><div class="ico">▣</div><h3>أقنعة القص التلقائية</h3><p>إنشاء Clipping Mask للعناصر والطبقات المستهدفة.</p></article>
+   <article class="feature"><div class="ico">🖼️</div><h3>ضبط الصور</h3><p>إنشاء أقنعة للصور المرتبطة والمضمنة داخل حدود لوحة الرسم.</p></article>
+   <article class="feature"><div class="ico">▭</div><h3>مستطيل مطابق للوحة</h3><p>إنشاء مستطيل مطابق لأبعاد Artboard مع تخصيص التعبئة والحدود والألوان والسمك.</p></article>
+   <article class="feature"><div class="ico">☎️</div><h3>رمز QR للهاتف</h3><p>إنشاء رمز قابل للمسح للاتصال بأرقام الهواتف مع دعم مفتاح الدولة.</p></article>
+   <article class="feature"><div class="ico">💬</div><h3>رمز QR لواتساب</h3><p>إنشاء رمز يفتح محادثة WhatsApp مباشرة.</p></article>
+   <article class="feature"><div class="ico">🔗</div><h3>رمز QR للروابط</h3><p>تحويل روابط المواقع إلى رموز QR بسهولة.</p></article>
+   <article class="feature"><div class="ico">✧</div><h3>مسارات متجهية قابلة للتحرير</h3><p>إنشاء رموز QR كأشكال ومسارات متجهية داخل Illustrator.</p></article>
+   <article class="feature"><div class="ico">⚡</div><h3>واجهة أدوات موحدة</h3><p>الوصول إلى مجموعة من الوظائف من خلال لوحة واحدة داخل البرنامج.</p></article>
+  </div>
+ </div>
+</section>
 
-        <label>الوصف التعريفي أسفل العنوان</label>
-        <textarea id="h-desc" rows="3" oninput="liveSync()"></textarea>
+<section id="gallery">
+ <div class="container">
+  <div class="section-title">
+   <h2>معرض صور الإضافة</h2>
+   <p>شاهد واجهة Artboard Studio وأدواتها داخل Illustrator (اضغط على الصورة لتكبيرها)</p>
+  </div>
+  <div class="gallery">
+   <figure class="shot reveal">
+    <div class="frame"><img src="img1.png" alt="أدوات الـ Artboard" loading="lazy"><div class="miss">img1.png</div></div>
+    <figcaption>القص والاحتواء<small>قص فعلي، ماسك للطبقات، ماسك للصور</small></figcaption>
+   </figure>
+   <figure class="shot reveal">
+    <div class="frame"><img src="img2.png" alt="مستطيل بمقاس الـ Artboard" loading="lazy"><div class="miss">img2.png</div></div>
+    <figcaption>مستطيل بمقاس الـ Artboard<small>تحكم كامل في اللون والحد والسمك</small></figcaption>
+   </figure>
+   <figure class="shot reveal">
+    <div class="frame"><img src="img3.png" alt="مولد QR Code" loading="lazy"><div class="miss">img3.png</div></div>
+    <figcaption>مولّد QR Code<small>هاتف · واتساب · رابط URL، توليد محلي بالكامل</small></figcaption>
+   </figure>
+  </div>
+ </div>
+</section>
 
-        <label>أيقونة ونص زر التحميل</label>
-        <div class="row">
-          <input type="text" id="btn-ico" value="⬇️" oninput="liveSync()" style="width:65px;text-align:center;font-size:18px">
-          <input type="text" id="b-txt" oninput="liveSync()" value="تحميل الإضافة الآن">
-        </div>
-        <div class="ico-grid">
-          <div class="ico-btn" onclick="setIco('btn-ico','⬇️')">⬇️</div>
-          <div class="ico-btn" onclick="setIco('btn-ico','📥')">📥</div>
-          <div class="ico-btn" onclick="setIco('btn-ico','⚡')">⚡</div>
-          <div class="ico-btn" onclick="setIco('btn-ico','🎁')">🎁</div>
-          <div class="ico-btn" onclick="setIco('btn-ico','📦')">📦</div>
-          <div class="ico-btn" onclick="setIco('btn-ico','✅')">✅</div>
-        </div>
+<section id="install">
+ <div class="container">
+  <div class="section-title">
+   <h2>طريقة التثبيت</h2>
+   <p>اتبع الخطوات التالية لبدء استخدام الإضافة</p>
+  </div>
+  <div class="steps">
+   <div class="step"><b>01</b><p>حمّل ملف Artboard Studio من رابط التحميل.</p></div>
+   <div class="step"><b>02</b><p>فك ضغط الملف واختر المجلد المناسب لإصدار Illustrator.</p></div>
+   <div class="step"><b>03</b><p>أغلق Illustrator وشغّل ملف التثبيت المرفق.</p></div>
+   <div class="step"><b>04</b><p>افتح Illustrator وانتقل إلى Window ثم Extensions (Legacy) ثم Artboard Studio.</p></div>
+  </div>
+ </div>
+</section>
 
-        <label>رقم الواتساب للتواصل (بدون +)</label>
-        <input type="text" id="wa-num" oninput="liveSync()" value="201127502899">
-      </div>
+<section>
+ <div class="container">
+  <div class="download-box">
+   <h2>احصل على Artboard Studio الآن</h2>
+   <p>ابدأ باستخدام أدوات الإضافة داخل Adobe Illustrator.</p>
+   <a class="btn primary" href="./ArtboardStudio.rar" download>تحميل الإضافة الآن</a>
+  </div>
+ </div>
+</section>
 
-      <div id="t-color" class="tab-pane hide">
-        <div class="sec-box">
-          <strong style="color:#a78bfa;font-size:12px">تدرج الأزرار والعناصر المميزة</strong>
-          <div class="grid-3" style="margin-top:6px">
-            <div><label>لون 1</label><input type="color" id="grad-c1" value="#7954ec" oninput="liveSync()"></div>
-            <div><label>لون 2</label><input type="color" id="grad-c2" value="#a17aff" oninput="liveSync()"></div>
-            <div><label>الزاوية <span id="v-ang" class="val">120°</span></label><input type="range" id="grad-ang" min="0" max="360" value="120" oninput="liveSync()"></div>
-          </div>
-        </div>
+<section class="contact" id="contact">
+ <div class="container">
+  <div class="section-title">
+   <h2>اطلب الإضافة والتفعيل</h2>
+   <p>للاستفسار أو طلب الإضافة والتفعيل، تواصل معنا مباشرة.</p>
+  </div>
+  <a class="btn whatsapp" href="https://wa.me/201127502899?text=مرحبًا،%20أرغب%20في%20الحصول%20على%20إضافة%20Artboard%20Studio%20وطلب%20التفعيل." target="_blank" rel="noopener">
+   ☎ تواصل عبر واتساب
+  </a>
+  <p style="direction:ltr;margin-top:15px">+20 112 750 2899</p>
+  <a class="btn secondary" href="https://www.facebook.com/rafat.hamed1" target="_blank" rel="noopener">صفحة المطور على فيسبوك</a>
+ </div>
+</section>
 
-        <div class="sec-box">
-          <strong style="color:#38bdf8;font-size:12px">خلفية الموقع وتدرج الواجهة</strong>
-          <div class="grid-3" style="margin-top:6px">
-            <div><label>خلفية عامة</label><input type="color" id="bg-col" value="#090b13" oninput="liveSync()"></div>
-            <div><label>توهج يمين</label><input type="color" id="hero-g1" value="#30205a" oninput="liveSync()"></div>
-            <div><label>توهج يسار</label><input type="color" id="hero-g2" value="#102d4b" oninput="liveSync()"></div>
-          </div>
-        </div>
+<section>
+ <div class="container faq">
+  <div class="section-title"><h2>الأسئلة الشائعة</h2></div>
+  <details><summary>ما هي Artboard Studio؟</summary><p>إضافة لبرنامج Adobe Illustrator توفر مجموعة أدوات للتعامل مع لوحات الرسم والعناصر والصور وإنشاء رموز QR.</p></details>
+  <details><summary>كيف أحصل على الإضافة؟</summary><p>يمكنك تحميلها من زر "تحميل الإضافة الآن" الموجود في الموقع.</p></details>
+  <details><summary>كيف أطلب التفعيل؟</summary><p>تواصل معنا مباشرة عبر زر واتساب الموجود في الموقع.</p></details>
+  <details><summary>هل يمكن تعديل رموز QR؟</summary><p>نعم، يتم إنشاؤها كأشكال ومسارات متجهية يمكن فك تجميعها وتحريرها داخل Illustrator.</p></details>
+ </div>
+</section>
+</main>
 
-        <div class="grid-2" style="margin-top:8px">
-          <div><label>لون النصوص الأساسية</label><input type="color" id="txt-col" value="#f5f6ff" oninput="liveSync()"></div>
-          <div><label>لون النص الثانوي</label><input type="color" id="sub-col" value="#b9bdd0" oninput="liveSync()"></div>
-        </div>
-      </div>
+<footer>
+ <div class="container">
+  <div style="font-size:19px;font-weight:900;direction:ltr">ARTBOARD STUDIO</div>
+  <p>تطوير: RAFAT HAMED</p>
+  <p>© 2026 Artboard Studio – Developed by RAFAT HAMED. All Rights Reserved.</p>
+ </div>
+</footer>
 
-      <div id="t-anim" class="tab-pane hide">
-        <label>نوع الخط العربي</label>
-        <select id="f-font" onchange="liveSync()">
-          <option value="'Cairo',sans-serif">Cairo (كايرو - عصري)</option>
-          <option value="'Tajawal',sans-serif">Tajawal (تجوّل - ناعم)</option>
-          <option value="'IBM Plex Sans Arabic',sans-serif">IBM Plex Sans Arabic (تقني)</option>
-          <option value="'Almarai',sans-serif">Almarai (المراعي - واضح)</option>
-          <option value="'Readex Pro',sans-serif">Readex Pro (هندسي)</option>
-        </select>
+<a class="float-wa" href="https://wa.me/201127502899?text=مرحبًا،%20أرغب%20في%20الحصول%20على%20إضافة%20Artboard%20Studio%20وطلب%20التفعيل." target="_blank" rel="noopener" aria-label="تواصل عبر واتساب">◉</a>
 
-        <label>حجم خط الفقرات <span id="v-fsize" class="val">16px</span></label>
-        <input type="range" id="f-size" min="13" max="24" value="16" oninput="liveSync()">
+<div class="lightbox" id="lightbox"><img alt=""></div>
 
-        <label>حجم العنوان الرئيسي <span id="v-hsize" class="val">54px</span></label>
-        <input type="range" id="h-size" min="28" max="82" value="54" oninput="liveSync()">
+<script>
+(function(){
+ /* ---- عرض الشرائح داخل لوحة الإضافة ---- */
+ var slides=[].slice.call(document.querySelectorAll('#slides .slide'));
+ var btns=[].slice.call(document.querySelectorAll('#showcaseNav button'));
+ var bar=document.getElementById('progress');
+ var DUR=4500,cur=0,timer=null,paused=false;
+ bar.style.setProperty('--dur',DUR+'ms');
 
-        <label>استدارة حواف الأزرار <span id="v-rad" class="val">12px</span></label>
-        <input type="range" id="btn-rad" min="0" max="40" value="12" oninput="liveSync()">
+ slides.forEach(function(s){
+  var im=s.querySelector('img');
+  im.addEventListener('error',function(){s.classList.add('missing');s.textContent='ضع الصورة: '+im.getAttribute('src');});
+ });
 
-        <div class="sec-box">
-          <strong style="color:#4ade80;font-size:12px">إعدادات الحركة (Animations)</strong>
-          <label>نوع حركة ظهور المحتوى</label>
-          <select id="anim-type" onchange="liveSync()">
-            <option value="none">بدون حركة إضافية</option>
-            <option value="fadeUp">انزلاق ناعم لأعلى (Fade Up)</option>
-            <option value="zoomIn">تكبير تدريجي (Zoom In)</option>
-            <option value="pulseBtn">نبض مستمر لزر التحميل (Pulse)</option>
-          </select>
+ function runBar(){
+  bar.classList.remove('run');void bar.offsetWidth;bar.classList.add('run');
+ }
+ function show(i){
+  cur=(i+slides.length)%slides.length;
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  btns.forEach(function(b,k){b.classList.toggle('active',k===cur)});
+  runBar();
+ }
+ function loop(){
+  clearTimeout(timer);
+  timer=setTimeout(function(){ if(!paused) show(cur+1); loop(); },DUR);
+ }
+ btns.forEach(function(b){
+  b.addEventListener('click',function(){show(+b.dataset.i);loop();});
+ });
+ show(0);loop();
 
-          <label>سرعة الحركة (بالثواني) <span id="v-aspd" class="val">1.0s</span></label>
+ /* ---- إمالة ثلاثية الأبعاد مع حركة الماوس ---- */
+ var box=document.getElementById('showcase'),win=document.getElementById('aiWindow');
+ var fine=window.matchMedia('(hover:hover)').matches;
+ if(fine){
+  box.addEventListener('mousemove',function(e){
+   var r=box.getBoundingClientRect();
+   var x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+   win.style.transform='rotateY('+(x*10)+'deg) rotateX('+(-y*8)+'deg)';
+   paused=true;
+  });
+  box.addEventListener('mouseleave',function(){
+   win.style.transform='';paused=false;
+  });
+ }
+
+ /* ---- ظهور تدريجي عند التمرير ---- */
+ var rev=document.querySelectorAll('.reveal');
+ if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){
+   es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.15});
+  rev.forEach(function(r){io.observe(r)});
+ }else{rev.forEach(function(r){r.classList.add('in')})}
+
+ /* ---- المعرض: تكبير الصورة + رسالة عند غياب الصورة ---- */
+ var lb=document.getElementById('lightbox'),lbi=lb.querySelector('img');
+ document.querySelectorAll('.shot').forEach(function(f){
+  var im=f.querySelector('img');
+  im.addEventListener('error',function(){f.classList.add('err')});
+  f.addEventListener('click',function(){
+   if(f.classList.contains('err'))return;
+   lbi.src=im.src;lbi.alt=im.alt;lb.classList.add('open');
+  });
+ });
+ lb.addEventListener('click',function(){lb.classList.remove('open')});
+ document.addEventListener('keydown',function(e){if(e.key==='Escape')lb.classList.remove('open')});
+})();
+</script>
+
+<!-- ربط موقع Artboard Studio بلوحة تحكم الأدمن -->
+<script>
+(async function syncAdminData() {
+  function loadJs(u) {
+    return new Promise(function (res, rej) {
+      var s = document.createElement('script');
+      s.src = u; s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+
+  // يقبل روابط https فقط (أو مسارات نسبية) لمنع javascript: وغيرها
+  function safeUrl(u) {
+    if (typeof u !== 'string' || !u.trim()) return null;
+    try {
+      var url = new URL(u, location.href);
+      return (url.protocol === 'https:' || url.origin === location.origin) ? url.href : null;
+    } catch (e) { return null; }
+  }
+
+  try {
+    var FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    await loadJs(FB + 'firebase-app-compat.js');
+    await loadJs(FB + 'firebase-firestore-compat.js');
+
+    var firebaseConfig = {
+      apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zkKCE83xWErxg",
+      authDomain: "artboardstudio-117a6.firebaseapp.com",
+      projectId: "artboardstudio-117a6",
+      storageBucket: "artboardstudio-117a6.firebasestorage.app",
+      messagingSenderId: "26311402131",
+      appId: "1:26311402131:web:7c2950a172814b2ba0e366"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+
+    var snap = await db.collection("site").doc("content").get();
+    if (!snap.exists) return;
+    var d = snap.data();
+
+    // 1. الخطوط والأحجام واللون الرئيسي
+    if (d.siteFont) document.body.style.fontFamily = String(d.siteFont);
+    if (d.baseFontSize) document.body.style.fontSize = (parseInt(d.baseFontSize, 10) || 16) + 'px';
+    if (d.primaryColor && /^#[0-9a-fA-F]{3,8}$/.test(d.primaryColor)) {
+      document.querySelectorAll('.primary').forEach(function (b) { b.style.background = d.primaryColor; });
+      document.querySelectorAll('.logo span, h1 span').forEach(function (sp) { sp.style.color = d.primaryColor; });
+    }
+
+    // 2. العنوان الرئيسي (مع الحفاظ على الكلمة الأخيرة ملوّنة داخل span)
+    var heroTitle = document.querySelector('.hero h1');
+    if (heroTitle && d.heroTitle) {
+      var words = String(d.heroTitle).trim().split(/\s+/);
+      var last = words.pop();
+      heroTitle.textContent = words.length ? words.join(' ') + ' ' : '';
+      var sp = document.createElement('span');
+      sp.textContent = last;
+      if (d.primaryColor && /^#[0-9a-fA-F]{3,8}$/.test(d.primaryColor)) sp.style.color = d.primaryColor;
+      heroTitle.appendChild(sp);
+      if (d.heroTitleSize) heroTitle.style.fontSize = (parseInt(d.heroTitleSize, 10) || 65) + 'px';
+    }
+
+    // 3. وصف العنوان (يُعقَّم بـ DOMPurify قبل الإدراج)
+    var heroDesc = document.querySelector('.hero p');
+    if (heroDesc && d.heroDescHtml && d.heroDescHtml !== '<p><br></p>') {
+      try {
+        await loadJs('https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js');
+        heroDesc.innerHTML = DOMPurify.sanitize(d.heroDescHtml, {
+          ALLOWED_TAGS: ['b', 'strong', 'i', 'em', 'u', 'br', 'span', 'p'],
+          ALLOWED_ATTR: ['style']
+        });
+      } catch (e) {
+        heroDesc.textContent = String(d.heroDescHtml).replace(/<[^>]*>/g, '');
+      }
+    }
+
+    // 4. زر التحميل ورابط الملف
+    var dlBtn = document.querySelector('.hero .btn.primary');
+    if (dlBtn) {
+      if (d.downloadBtnText) dlBtn.textContent = String(d.downloadBtnText);
+      var dl = safeUrl(d.downloadFileUrl);
+      if (dl) {
+        dlBtn.href = dl;
+        document.querySelectorAll('.download-box .btn.primary').forEach(function (b) { b.href = dl; });
+      }
+    }
+
+    // 5. رقم واتساب (أرقام فقط) مع الحفاظ على رسالة الترحيب
+    var num = String(d.whatsappNumber || '').replace(/\D/g, '');
+    if (num) {
+      document.querySelectorAll('a[href*="wa.me"]').forEach(function (wa) {
+        var q = wa.href.indexOf('?');
+        wa.href = 'https://wa.me/' + num + (q > -1 ? wa.href.slice(q) : '');
+      });
+    }
+
+    // 6. صور المعرض الثلاث (الشرائح + المعرض)
+    var gal = [d.galleryImg1, d.galleryImg2, d.galleryImg3];
+    var slideImgs = document.querySelectorAll('.panel-slides .slide img');
+    var shotImgs = document.querySelectorAll('.gallery .shot img');
+    gal.forEach(function (g, i) {
+      var u = safeUrl(g);
+      if (!u) return;
+      if (slideImgs[i]) slideImgs[i].src = u;
+      if (shotImgs[i]) shotImgs[i].src = u;
+    });
+
+  } catch (e) {
+    console.error("Admin sync error:", e);
+  }
+})();
+</script>
+</body>
+</html>
