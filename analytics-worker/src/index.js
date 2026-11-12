@@ -134,6 +134,22 @@ async function trackEvent(request, env) {
   return json({ ok: true }, 202);
 }
 
+
+async function cloudinarySignature(request, env) {
+  if (!validOrigin(request, env)) return json({ ok: false, error: "origin_not_allowed" }, 403);
+  if (!(await authenticateAdmin(request, env))) return json({ ok: false, error: "unauthorized" }, 401);
+  const cloudName = String(env.CLOUDINARY_CLOUD_NAME || "").trim();
+  const apiKey = String(env.CLOUDINARY_API_KEY || "").trim();
+  const apiSecret = String(env.CLOUDINARY_API_SECRET || "");
+  if (!cloudName || !apiKey || !apiSecret) return json({ ok: false, error: "cloudinary_not_configured" }, 503);
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  const folder = "artboard-studio/site-assets";
+  const parameters = "folder=" + folder + "&timestamp=" + timestamp;
+  const digest = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(parameters + apiSecret));
+  const signature = Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  return json({ ok: true, cloudName, apiKey, folder, timestamp, signature }, 200);
+}
+
 async function adminSummary(request, env) {
   if (!validOrigin(request, env)) return json({ ok: false, error: "origin_not_allowed" }, 403);
   if (!(await authenticateAdmin(request, env))) return json({ ok: false, error: "unauthorized" }, 401);
@@ -218,6 +234,13 @@ export default {
     try {
       if (request.method === "POST" && url.pathname === "/track") {
         const response = await trackEvent(request, env);
+        const responseHeaders = new Headers(response.headers);
+        Object.entries(headers).forEach(([k, v]) => responseHeaders.set(k, v));
+        return new Response(response.body, { status: response.status, headers: responseHeaders });
+      }
+
+      if (request.method === "POST" && url.pathname === "/admin/cloudinary-signature") {
+        const response = await cloudinarySignature(request, env);
         const responseHeaders = new Headers(response.headers);
         Object.entries(headers).forEach(([k, v]) => responseHeaders.set(k, v));
         return new Response(response.body, { status: response.status, headers: responseHeaders });
