@@ -603,7 +603,9 @@
       var handle = document.createElement("span"); handle.className = "as-visual-resize"; handle.setAttribute("aria-label", "تغيير حجم العنصر"); node.appendChild(handle);
       node.addEventListener("pointerdown", function (event) {
         if (!visualEditMode || !currentUser) return;
-        event.preventDefault(); event.stopPropagation(); activeVisualItemId = item.id; fillVisualControls(item); renderVisualList();
+        event.preventDefault(); event.stopPropagation(); activeVisualItemId = item.id;
+        document.querySelectorAll(".as-visual-item").forEach(function (entry) { entry.classList.remove("as-v-picked"); });
+        node.classList.add("as-v-picked"); fillVisualControls(item); renderVisualList();
         var startX = event.clientX, startY = event.clientY, originalLeft = Number(item.leftPct) || 0;
         var originalTop = Number(item.topPx) || 0, originalWidth = Number(item.width) || 240;
         var isResize = event.target.classList.contains("as-visual-resize");
@@ -612,7 +614,7 @@
           if (isResize) { item.width = Math.max(60, Math.min(1600, originalWidth + dx)); node.style.width = item.width + "px"; }
           else { item.leftPct = Math.max(0, Math.min(96, originalLeft + (dx / Math.max(1, window.innerWidth)) * 100)); item.topPx = Math.max(0, originalTop + dy); node.style.left = item.leftPct + "%"; node.style.top = item.topPx + "px"; }
         }
-        function stop() { document.removeEventListener("pointermove", move); document.removeEventListener("pointerup", stop); document.removeEventListener("pointercancel", stop); renderVisualList(); }
+        function stop() { document.removeEventListener("pointermove", move); document.removeEventListener("pointerup", stop); document.removeEventListener("pointercancel", stop); fillVisualControls(item); renderVisualList(); }
         document.addEventListener("pointermove", move); document.addEventListener("pointerup", stop); document.addEventListener("pointercancel", stop);
       });
       node.addEventListener("click", function (event) {
@@ -1012,7 +1014,7 @@
       });
       auth.onAuthStateChanged(function (user) {
         if (user && user.email && user.email.toLowerCase() === ADMIN_EMAIL && user.emailVerified) { currentUser = user; showAdmin(); }
-        else { currentUser = null; if (user) auth.signOut(); showLogin("سجّل الدخول باستخدام بريد الإدارة الموثّق.",false); }
+        else { currentUser = null; setVisualEditMode(false); if (user) auth.signOut(); showLogin("سجّل الدخول باستخدام بريد الإدارة الموثّق.",false); }
       });
       loadContent();
     } catch (e) { console.error("Admin initialization failed:",e); showLogin("تعذر تهيئة Firebase. تحقق من اتصال الموقع وإعدادات المشروع.",true); }
