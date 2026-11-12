@@ -2,6 +2,8 @@
 (function () {
   "use strict";
   var ADMIN_EMAIL = "rafathamed9@gmail.com";
+  var ANALYTICS_API_URL = "https://artboard-studio-analytics.rafat-hamed.workers.dev";
+  var analyticsMapInstance = null, analyticsMapLayer = null, analyticsLeafletPromise = null;
   var FIREBASE_CONFIG = {
     apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zkKCE83xWErxg",
     authDomain: "artboardstudio-117a6.firebaseapp.com",
@@ -34,6 +36,7 @@
       ".st-content{flex:1;overflow:auto;padding:14px;font-size:12px}.st-pane{display:none}.st-pane.active{display:block}.st-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.st-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}.st-row{display:flex;gap:7px;align-items:center}.st-row>*{min-width:0}",
       ".st-note{font-size:11px;color:#9ca3b8;line-height:1.7}.st-status{margin:12px 0 0;padding:9px;border-radius:8px;background:#171b2e;color:#cbd5e1;min-height:36px;font-size:11px;line-height:1.6}",
       ".st-card{padding:10px;margin:8px 0;background:#171b2e;border:1px solid #2b3252;border-radius:10px}.st-card strong{color:#c4b5fd}.st-bottom{padding:12px 14px;border-top:1px solid #262a40;background:#111422;display:flex;gap:8px}.st-bottom button{flex:1}.st-hidden{display:none!important}",
+      " .as-analytics-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}.as-analytics-kpi{padding:12px;border-radius:12px;border:1px solid #343954;background:#171b2e;display:flex;flex-direction:column;gap:5px}.as-analytics-kpi span{font-size:11px;color:#b9bdd0}.as-analytics-kpi strong{font-size:23px;color:#c4b5fd;font-variant-numeric:tabular-nums}.as-analytics-legend{display:flex;gap:15px;font-size:11px;margin:8px 0;color:#cbd5e1}.as-analytics-legend span:first-child{color:#c4b5fd}.as-analytics-legend span:last-child{color:#67e8f9}.as-analytics-table-wrap{overflow:auto;margin-top:10px}.as-analytics-table{width:100%;border-collapse:collapse;font-size:11px;min-width:520px}.as-analytics-table th,.as-analytics-table td{padding:9px 8px;border-bottom:1px solid #30364f;text-align:right;vertical-align:top}.as-analytics-table th{color:#c4b5fd;background:#0d0f1a;position:sticky;top:0}.as-analytics-table td{color:#e2e8f0}.as-analytics-countries{display:grid;gap:7px;margin-top:10px}.as-analytics-country{display:flex;justify-content:space-between;gap:10px;padding:7px 9px;background:#0d0f1a;border-radius:8px;font-size:12px}.as-analytics-country strong{color:#c4b5fd}.as-analytics-status-error{color:#fca5a5!important}",
       ".as-dynamic-area{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;padding:14px 0;position:relative}.as-dynamic-area[data-position='floating-left']{position:fixed;left:18px;bottom:155px;z-index:45;flex-direction:column;align-items:flex-start;padding:0}.as-dynamic-area[data-position='floating-right']{position:fixed;right:18px;bottom:90px;z-index:45;flex-direction:column;align-items:flex-end;padding:0}.as-dynamic-area[data-position='header-nav']{padding:0;display:inline-flex}.as-dynamic-area[data-position='hero-actions']{padding:0;display:contents}",
 ".as-custom-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 18px;border-radius:11px;text-decoration:none;font:700 13px Cairo,Tahoma,sans-serif;cursor:pointer;transition:.2s;border:1px solid transparent}.as-custom-button:hover{transform:translateY(-2px);filter:brightness(1.08)}.as-custom-button.secondary{background:#171827;border-color:#55516f;color:#fff}.as-custom-button.outline{background:transparent;border-color:#a78bfa;color:inherit}.as-custom-button.whatsapp{background:#168c58;color:#fff}.as-custom-button.gradient{background:linear-gradient(120deg,#7954ec,#a17aff);color:#fff}",
 ".as-page-overlay{position:fixed;inset:0;z-index:9990;background:#03040bd9;backdrop-filter:blur(7px);display:none;align-items:stretch}.as-page-panel{height:100%;width:min(760px,94vw);overflow:auto;background:#111422;color:#f5f6ff;box-shadow:0 0 60px #000b;padding:0 24px 32px}.as-page-head{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:16px 0;background:inherit;border-bottom:1px solid #ffffff22}.as-page-content{max-width:100%;margin:auto;padding:24px 0}.as-page-content h2{font-size:clamp(24px,4vw,38px);margin-bottom:8px}.as-page-content p{white-space:pre-wrap;line-height:1.9}.as-element{padding:20px;border-radius:15px;margin:16px auto;max-width:100%;overflow:hidden}.as-element img{display:block;width:100%;height:auto;max-height:680px;object-fit:contain;border-radius:10px}.as-element-button{display:inline-flex;padding:11px 18px;border-radius:10px;background:linear-gradient(120deg,#7954ec,#a17aff);color:#fff;text-decoration:none;font-weight:800}.as-draft-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.as-draft-actions button{font-size:11px}.as-form-hint{font-size:11px;color:#9ca3b8;line-height:1.6;margin-top:5px}",
@@ -62,7 +65,7 @@
       "<button type='button' id='st-go' class='st-btn st-primary' style='width:100%;margin-top:14px;padding:11px'>دخول للوحة التحكم</button>",
       "<p class='st-note' style='margin-top:12px'>الدخول عبر Firebase Authentication. لا يتم حفظ كلمة المرور داخل الموقع.</p><div id='st-login-msg' class='st-status' role='status'>أدخل بيانات حساب الإدارة للمتابعة.</div></div>",
       "<div id='st-body' class='st-hidden' style='flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden'>",
-      "<div class='st-tabs'><button type='button' class='st-tab active' data-t='p-txt'>النصوص</button><button type='button' class='st-tab' data-t='p-col'>الألوان</button><button type='button' class='st-tab' data-t='p-anm'>الخط</button><button type='button' class='st-tab' data-t='p-buttons'>الأزرار</button><button type='button' class='st-tab' data-t='p-pages'>الصفحات</button><button type='button' class='st-tab' data-t='p-elements'>العناصر</button><button type='button' class='st-tab' data-t='p-add'>البطاقات</button></div>",
+      "<div class='st-tabs'><button type='button' class='st-tab active' data-t='p-txt'>النصوص</button><button type='button' class='st-tab' data-t='p-col'>الألوان</button><button type='button' class='st-tab' data-t='p-anm'>الخط</button><button type='button' class='st-tab' data-t='p-buttons'>الأزرار</button><button type='button' class='st-tab' data-t='p-pages'>الصفحات</button><button type='button' class='st-tab' data-t='p-elements'>العناصر</button><button type='button' class='st-tab' data-t='p-add'>البطاقات</button><button type='button' class='st-tab' data-t='p-analytics'>الإحصائيات</button></div>",
       "<div class='st-content'>",
       "<section id='p-txt' class='st-pane active'><label>أيقونة ونص الشارة العلوية</label><div class='st-row'><input id='f-tico' value='✨' style='width:58px;text-align:center'><input id='f-tag' value='إضافة احترافية للمصممين'></div>",
       "<label>العنوان الرئيسي</label><input id='f-title' value='ARTBOARD STUDIO'><label>الوصف التعريفي أسفل العنوان</label><textarea id='f-desc' rows='4'></textarea>",
@@ -80,16 +83,19 @@
       "<button type='button' id='nb-add' class='st-btn st-primary' style='width:100%;margin-top:10px'>➕ إضافة البطاقة للقائمة</button></div><div id='nb-list'></div><p class='st-note'>تُحفظ البطاقات ضمن إعدادات الموقع، ويمكن حذفها قبل حفظ التعديلات.</p></section>",
       "\n<section id=\"p-buttons\" class=\"st-pane\">\n  <div class=\"st-card\"><strong>➕ إنشاء زر جديد</strong>\n    <label>اسم الزر</label><input id=\"bt-label\" placeholder=\"مثال: اشترِ الآن\">\n    <label>أيقونة الزر</label><input id=\"bt-icon\" value=\"🔗\" maxlength=\"12\">\n    <label>رابط الزر (اختياري عند فتح صفحة جانبية)</label><input id=\"bt-url\" placeholder=\"https://... أو مسار داخلي\">\n    <label>فتح صفحة جانبية</label><select id=\"bt-page\"><option value=\"\">لا يوجد – استخدم الرابط</option></select>\n    <label>مكان الزر</label><select id=\"bt-position\">\n      <option value=\"header-nav\">شريط القائمة العلوي</option><option value=\"hero-actions\">بجوار زر التحميل الرئيسي</option>\n      <option value=\"before-hero\">قبل الواجهة الرئيسية</option><option value=\"after-hero\">بعد الواجهة الرئيسية</option>\n      <option value=\"before-features\">قبل قسم المميزات</option><option value=\"after-features\">بعد قسم المميزات</option>\n      <option value=\"before-gallery\">قبل معرض الصور</option><option value=\"after-gallery\">بعد معرض الصور</option>\n      <option value=\"before-install\">قبل طريقة التثبيت</option><option value=\"after-install\">بعد طريقة التثبيت</option>\n      <option value=\"before-download\">قبل صندوق التحميل</option><option value=\"after-download\">بعد صندوق التحميل</option>\n      <option value=\"before-contact\">قبل التواصل</option><option value=\"after-contact\">بعد التواصل</option>\n      <option value=\"before-faq\">قبل الأسئلة الشائعة</option><option value=\"after-faq\">بعد الأسئلة الشائعة</option>\n      <option value=\"before-footer\">قبل نهاية الموقع</option>\n      <option value=\"floating-left\">زر عائم يسار الشاشة</option><option value=\"floating-right\">زر عائم يمين الشاشة</option>\n    </select>\n    <label>شكل الزر</label><select id=\"bt-style\"><option value=\"gradient\">متدرج بنفسجي</option><option value=\"secondary\">داكن</option><option value=\"outline\">إطار شفاف</option><option value=\"whatsapp\">أخضر</option></select>\n    <input type=\"hidden\" id=\"bt-edit-id\"><button type=\"button\" id=\"bt-add\" class=\"st-btn st-primary\" style=\"width:100%;margin-top:10px\">➕ إضافة الزر</button>\n    <p class=\"as-form-hint\">يمكن تعديل الزر أو حذفه من القائمة، ثم اضغط حفظ التعديلات لنشره.</p>\n  </div><div id=\"bt-list\"></div>\n</section>\n<section id=\"p-pages\" class=\"st-pane\">\n  <div class=\"st-card\"><strong>📄 إنشاء صفحة جانبية مستقلة</strong>\n    <label>عنوان الصفحة</label><input id=\"pg-title\" placeholder=\"مثال: من نحن\">\n    <label>عنوان فرعي</label><input id=\"pg-subtitle\" placeholder=\"نبذة قصيرة\">\n    <label>محتوى الصفحة</label><textarea id=\"pg-body\" rows=\"5\" placeholder=\"اكتب محتوى الصفحة هنا...\"></textarea>\n    <div class=\"st-grid2\">\n      <div><label>لون الخلفية</label><input type=\"color\" id=\"pg-bg\" value=\"#111422\"></div>\n      <div><label>لون النص</label><input type=\"color\" id=\"pg-color\" value=\"#f5f6ff\"></div>\n      <div><label>لون العنوان</label><input type=\"color\" id=\"pg-accent\" value=\"#a78bfa\"></div>\n      <div><label>عرض الصفحة</label><select id=\"pg-width\"><option value=\"760px\">واسعة</option><option value=\"620px\">متوسطة</option><option value=\"480px\">ضيقة</option></select></div>\n    </div>\n    <label>مكان فتح الصفحة</label><select id=\"pg-side\"><option value=\"right\">من اليمين</option><option value=\"left\">من اليسار</option></select>\n    <input type=\"hidden\" id=\"pg-edit-id\"><button type=\"button\" id=\"pg-add\" class=\"st-btn st-primary\" style=\"width:100%;margin-top:10px\">➕ إنشاء الصفحة</button>\n    <p class=\"as-form-hint\">كل صفحة تنشأ تحصل على رابط تلقائي في قائمة الموقع، ويمكن ربطها بأي زر أيضًا.</p>\n  </div><div id=\"pg-list\"></div>\n</section>\n<section id=\"p-elements\" class=\"st-pane\">\n  <div class=\"st-card\"><strong>🧩 إضافة أي عنصر إلى الموقع</strong>\n    <label>نوع العنصر</label><select id=\"el-type\"><option value=\"text\">عنوان ونص</option><option value=\"image\">صورة</option><option value=\"button\">زر ورابط</option><option value=\"banner\">شريط / إعلان</option><option value=\"divider\">فاصل</option></select>\n    <label>العنوان</label><input id=\"el-title\" placeholder=\"عنوان العنصر\">\n    <label>النص أو الوصف</label><textarea id=\"el-text\" rows=\"3\" placeholder=\"المحتوى...\"></textarea>\n    <label>رابط صورة HTTPS (للصور)</label><input id=\"el-image\" placeholder=\"https://...\">\n    <label>نص الزر (لنوع زر)</label><input id=\"el-label\" placeholder=\"اضغط هنا\">\n    <label>رابط الزر</label><input id=\"el-url\" placeholder=\"https://... أو مسار داخلي\">\n    <label>مكان العنصر</label><select id=\"el-position\">\n      <option value=\"top\">بداية الصفحة بعد القائمة</option><option value=\"before-hero\">قبل الواجهة الرئيسية</option><option value=\"after-hero\">بعد الواجهة الرئيسية</option>\n      <option value=\"before-features\">قبل قسم المميزات</option><option value=\"after-features\">بعد قسم المميزات</option>\n      <option value=\"before-gallery\">قبل معرض الصور</option><option value=\"after-gallery\">بعد معرض الصور</option>\n      <option value=\"before-install\">قبل طريقة التثبيت</option><option value=\"after-install\">بعد طريقة التثبيت</option>\n      <option value=\"before-download\">قبل صندوق التحميل</option><option value=\"after-download\">بعد صندوق التحميل</option>\n      <option value=\"before-contact\">قبل التواصل</option><option value=\"after-contact\">بعد التواصل</option>\n      <option value=\"before-faq\">قبل الأسئلة الشائعة</option><option value=\"after-faq\">بعد الأسئلة الشائعة</option>\n      <option value=\"before-footer\">قبل التذييل</option><option value=\"side-page\">داخل صفحة جانبية</option>\n    </select>\n    <label>الصفحة الجانبية المستهدفة (عند اختيار داخل صفحة جانبية)</label><select id=\"el-page\"><option value=\"\">اختر صفحة</option></select>\n    <div class=\"st-grid2\">\n      <div><label>محاذاة العنصر</label><select id=\"el-align\"><option value=\"center\">وسط</option><option value=\"right\">يمين</option><option value=\"left\">يسار</option></select></div>\n      <div><label>عرض العنصر</label><select id=\"el-width\"><option value=\"100%\">كامل</option><option value=\"85%\">85%</option><option value=\"65%\">65%</option><option value=\"50%\">50%</option></select></div>\n      <div><label>خلفية العنصر</label><input type=\"color\" id=\"el-bg\" value=\"#171827\"></div>\n      <div><label>لون النص</label><input type=\"color\" id=\"el-color\" value=\"#f5f6ff\"></div>\n    </div>\n    <input type=\"hidden\" id=\"el-edit-id\"><button type=\"button\" id=\"el-add\" class=\"st-btn st-primary\" style=\"width:100%;margin-top:10px\">➕ إضافة العنصر</button>\n    <p class=\"as-form-hint\">يمكنك وضع العنوان أو النص أو الصورة أو الزر أو الإعلان في أي منطقة متاحة أو داخل صفحة جانبية.</p>\n  </div><div id=\"el-list\"></div>\n</section>",
       ,
+      "\n<section id=\"p-analytics\" class=\"st-pane\">\n  <div class=\"st-card\">\n    <strong>📊 إحصائيات زوار الموقع</strong>\n    <p class=\"st-note\">آخر 30 يومًا افتراضيًا. عنوان IP والموقع التقريبي متاحان لحساب الإدارة فقط.</p>\n    <div class=\"st-grid2\">\n      <div><label>الفترة الزمنية</label><select id=\"as-analytics-days\"><option value=\"7\">آخر 7 أيام</option><option value=\"30\" selected>آخر 30 يومًا</option></select></div>\n      <div style=\"display:flex;align-items:end\"><button type=\"button\" id=\"as-analytics-refresh\" class=\"st-btn st-primary\" style=\"width:100%\">↻ تحديث الإحصائيات</button></div>\n    </div>\n    <p id=\"as-analytics-status\" class=\"st-status\" role=\"status\">اضغط تحديث الإحصائيات لجلب البيانات.</p>\n  </div>\n  <div class=\"as-analytics-kpis\">\n    <div class=\"as-analytics-kpi\"><span>إجمالي الزيارات</span><strong id=\"as-kpi-visits\">—</strong></div>\n    <div class=\"as-analytics-kpi\"><span>الزوار الفريدون</span><strong id=\"as-kpi-unique\">—</strong></div>\n    <div class=\"as-analytics-kpi\"><span>نقرات التحميل</span><strong id=\"as-kpi-downloads\">—</strong></div>\n    <div class=\"as-analytics-kpi\"><span>الدول</span><strong id=\"as-kpi-countries\">—</strong></div>\n  </div>\n  <div class=\"st-card\"><strong>📈 الزيارات والتنزيلات حسب اليوم</strong>\n    <div class=\"as-analytics-legend\"><span>■ الزيارات</span><span>■ نقرات التحميل</span></div>\n    <canvas id=\"as-analytics-chart\" height=\"210\" aria-label=\"رسم الزيارات والتنزيلات اليومية\"></canvas>\n  </div>\n  <div class=\"st-card\"><strong>🌍 خريطة مواقع الزوار</strong>\n    <p class=\"st-note\">المواقع تقريبية على مستوى المدينة أو منطقة مزود الإنترنت، وليست عنوانًا منزليًا دقيقًا.</p>\n    <div id=\"as-analytics-map\" style=\"height:320px;border-radius:12px;overflow:hidden;background:#0b0d17;margin-top:10px\"></div>\n  </div>\n  <div class=\"st-card\"><strong>🏳️ الزيارات حسب الدولة</strong>\n    <div id=\"as-analytics-countries\" class=\"as-analytics-countries\"><p class=\"st-note\">لا توجد بيانات بعد.</p></div>\n  </div>\n  <div class=\"st-card\"><strong>🧭 أحدث الزيارات وعناوين IP</strong>\n    <p class=\"st-note\">يتم الاحتفاظ بسجلات الزيارات لمدة 30 يومًا ثم حذفها تلقائيًا عند وصول طلبات تتبع جديدة.</p>\n    <div class=\"as-analytics-table-wrap\"><table class=\"as-analytics-table\">\n      <thead><tr><th>التاريخ</th><th>IP</th><th>الموقع</th><th>الصفحة</th></tr></thead>\n      <tbody id=\"as-analytics-recent\"><tr><td colspan=\"4\">لا توجد بيانات بعد.</td></tr></tbody>\n    </table></div>\n  </div>\n</section>",
       "</div><div class='st-bottom'><button type='button' id='st-save' class='st-btn st-primary'>💾 حفظ التعديلات</button><button type='button' id='st-refresh' class='st-btn'>إعادة تحميل</button></div><div id='st-msg' class='st-status' role='status' style='margin:0 14px 12px'></div></div>"
     ].join("");
     document.body.appendChild(overlay);
 
     fab.addEventListener("click", function () { overlay.style.display = "flex"; });
+    document.getElementById("as-analytics-refresh").addEventListener("click", refreshAnalytics);
     document.getElementById("st-close").addEventListener("click", function () { overlay.style.display = "none"; });
     document.querySelectorAll("#studio-overlay .st-tab").forEach(function (tab) {
       tab.addEventListener("click", function () {
         document.querySelectorAll("#studio-overlay .st-tab").forEach(function (t) { t.classList.toggle("active", t === tab); });
         document.querySelectorAll("#studio-overlay .st-pane").forEach(function (p) { p.classList.toggle("active", p.id === tab.getAttribute("data-t")); });
+        if (tab.getAttribute("data-t") === "p-analytics") refreshAnalytics();
       });
     });
     document.getElementById("st-go").addEventListener("click", login);
@@ -584,7 +590,238 @@
     } finally { button.disabled = false; button.textContent = "دخول للوحة التحكم"; }
   }
 
+
+  function analyticsStatus(message, isError) {
+    var el = document.getElementById("as-analytics-status");
+    if (!el) return;
+    el.textContent = message;
+    el.classList.toggle("as-analytics-status-error", !!isError);
+  }
+  function visitorBrowserId() {
+    var key = "artboard_analytics_visitor_id";
+    try {
+      var value = localStorage.getItem(key);
+      if (value && /^[a-zA-Z0-9_-]{16,100}$/.test(value)) return value;
+      value = (window.crypto && crypto.randomUUID) ? crypto.randomUUID().replace(/-/g, "") :
+        ("v" + Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2));
+      localStorage.setItem(key, value);
+      return value;
+    } catch (e) {
+      if (!window.__asVisitorId) window.__asVisitorId = "v" + Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+      return window.__asVisitorId;
+    }
+  }
+  function trackAnalyticsEvent(type) {
+    if (!ANALYTICS_API_URL || ANALYTICS_API_URL.indexOf("REPLACE_") >= 0) return;
+    var payload = {
+      type: type,
+      visitorId: visitorBrowserId(),
+      path: location.pathname,
+      referrer: (function () { try { var ref = new URL(document.referrer); return ref.origin + ref.pathname; } catch (e) { return ""; } })()
+    };
+    fetch(ANALYTICS_API_URL.replace(/\/$/, "") + "/track", {
+      method: "POST",
+      mode: "cors",
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).catch(function () {});
+  }
+  function initVisitorTracking() {
+    if (window.__artboardAnalyticsTrackingStarted) return;
+    window.__artboardAnalyticsTrackingStarted = true;
+    trackAnalyticsEvent("visit");
+    document.addEventListener("click", function (event) {
+      var anchor = event.target && event.target.closest ? event.target.closest("a") : null;
+      if (!anchor) return;
+      var href = anchor.href || "";
+      var fileDownload = anchor.hasAttribute("download") ||
+        /\.(?:rar|zip|7z|exe|msi|dmg)(?:[?#]|$)/i.test(href) ||
+        anchor.hasAttribute("data-analytics-download");
+      if (fileDownload) trackAnalyticsEvent("download");
+    }, true);
+  }
+  function loadLeaflet() {
+    if (window.L) return Promise.resolve(window.L);
+    if (analyticsLeafletPromise) return analyticsLeafletPromise;
+    analyticsLeafletPromise = new Promise(function (resolve, reject) {
+      if (!document.getElementById("as-leaflet-css")) {
+        var css = document.createElement("link");
+        css.id = "as-leaflet-css"; css.rel = "stylesheet";
+        css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        document.head.appendChild(css);
+      }
+      var script = document.createElement("script");
+      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      script.onload = function () { resolve(window.L); };
+      script.onerror = function () { analyticsLeafletPromise = null; reject(new Error("تعذر تحميل مكتبة الخريطة.")); };
+      document.head.appendChild(script);
+    });
+    return analyticsLeafletPromise;
+  }
+  function drawAnalyticsChart(rows) {
+    var canvas = document.getElementById("as-analytics-chart");
+    if (!canvas) return;
+    var rect = canvas.getBoundingClientRect(), width = Math.max(320, rect.width || 600), height = 210;
+    var ratio = window.devicePixelRatio || 1;
+    canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
+    canvas.style.width = "100%"; canvas.style.height = height + "px";
+    var ctx = canvas.getContext("2d"); ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    var left = 34, right = 10, top = 12, bottom = 32;
+    var chartW = width - left - right, chartH = height - top - bottom;
+    var max = 1;
+    rows.forEach(function (r) { max = Math.max(max, Number(r.visits) || 0, Number(r.downloads) || 0); });
+    ctx.font = "10px Cairo,Tahoma,sans-serif";
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (var g = 0; g <= 4; g++) {
+      var y = top + chartH - (chartH * g / 4);
+      ctx.strokeStyle = "rgba(148,163,184,.18)"; ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(width - right, y); ctx.stroke();
+      ctx.fillStyle = "#9ca3b8"; ctx.fillText(String(Math.round(max * g / 4)), left - 6, y);
+    }
+    var slot = chartW / Math.max(rows.length, 1), bw = Math.max(2, Math.min(12, slot * .28));
+    rows.forEach(function (r, i) {
+      var x = left + slot * i + slot / 2;
+      var visits = Number(r.visits) || 0, downloads = Number(r.downloads) || 0;
+      var vh = visits / max * chartH, dh = downloads / max * chartH;
+      ctx.fillStyle = "#a78bfa"; ctx.fillRect(x - bw - 1, top + chartH - vh, bw, vh);
+      ctx.fillStyle = "#67e8f9"; ctx.fillRect(x + 1, top + chartH - dh, bw, dh);
+      if (rows.length <= 15 || i % Math.ceil(rows.length / 10) === 0 || i === rows.length - 1) {
+        ctx.fillStyle = "#aeb6cc"; ctx.textAlign = "center"; ctx.textBaseline = "top";
+        ctx.fillText(String(r.day || "").slice(5), x, top + chartH + 8);
+      }
+    });
+  }
+  function completeDailySeries(rows, dayCount) {
+    var lookup = {};
+    (rows || []).forEach(function (row) { lookup[row.day] = row; });
+    var output = [], today = new Date();
+    today.setUTCHours(0,0,0,0);
+    for (var offset = dayCount - 1; offset >= 0; offset--) {
+      var date = new Date(today.getTime() - offset * 86400000);
+      var key = date.toISOString().slice(0,10);
+      var existing = lookup[key] || {};
+      output.push({day:key,visits:Number(existing.visits || 0),downloads:Number(existing.downloads || 0)});
+    }
+    return output;
+  }
+  function analyticsCountryName(code) {
+    if (!code) return "غير معروف";
+    try {
+      if (typeof Intl !== "undefined" && Intl.DisplayNames) {
+        return new Intl.DisplayNames(["ar"], { type: "region" }).of(code) || code;
+      }
+    } catch (e) {}
+    return code;
+  }
+  function renderAnalyticsCountries(rows) {
+    var target = document.getElementById("as-analytics-countries");
+    if (!target) return; target.textContent = "";
+    if (!rows || !rows.length) { target.textContent = "لا توجد بيانات حسب الدولة حتى الآن."; return; }
+    rows.forEach(function (row) {
+      var line = document.createElement("div"); line.className = "as-analytics-country";
+      var country = document.createElement("span"); country.textContent = analyticsCountryName(row.country);
+      var count = document.createElement("strong"); count.textContent = Number(row.visitors || 0).toLocaleString("ar-EG") + " زائر";
+      line.appendChild(country); line.appendChild(count); target.appendChild(line);
+    });
+  }
+  function renderAnalyticsRecent(rows) {
+    var body = document.getElementById("as-analytics-recent");
+    if (!body) return; body.textContent = "";
+    if (!rows || !rows.length) {
+      var empty = document.createElement("tr"), cell = document.createElement("td");
+      cell.colSpan = 4; cell.textContent = "لا توجد زيارات مسجلة في الفترة المحددة.";
+      empty.appendChild(cell); body.appendChild(empty); return;
+    }
+    rows.forEach(function (row) {
+      var tr = document.createElement("tr");
+      var date = document.createElement("td");
+      var parsed = new Date(row.created_at);
+      date.textContent = isNaN(parsed.getTime()) ? String(row.created_at || "") : parsed.toLocaleString("ar-EG");
+      var ip = document.createElement("td"); ip.textContent = row.ip_address || "غير متاح";
+      ip.style.direction = "ltr"; ip.style.whiteSpace = "nowrap";
+      var locationCell = document.createElement("td");
+      locationCell.textContent = [row.city,row.region,analyticsCountryName(row.country)].filter(Boolean).join("، ") || "غير معروف";
+      var path = document.createElement("td"); path.textContent = row.page_path || "/";
+      path.style.direction = "ltr"; path.style.maxWidth = "130px"; path.style.overflowWrap = "anywhere";
+      tr.appendChild(date); tr.appendChild(ip); tr.appendChild(locationCell); tr.appendChild(path); body.appendChild(tr);
+    });
+  }
+  async function renderAnalyticsMap(points) {
+    var container = document.getElementById("as-analytics-map");
+    if (!container) return;
+    try {
+      await loadLeaflet();
+      if (!analyticsMapInstance) {
+        analyticsMapInstance = L.map(container, { scrollWheelZoom: false }).setView([25, 20], 2);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 18,
+          attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(analyticsMapInstance);
+        analyticsMapLayer = L.layerGroup().addTo(analyticsMapInstance);
+      }
+      analyticsMapLayer.clearLayers();
+      var bounds = [];
+      (points || []).forEach(function (point) {
+        var lat = Number(point.latitude), lon = Number(point.longitude);
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+        var circle = L.circleMarker([lat, lon], {
+          radius: Math.min(15, 6 + Number(point.visitors || 0)),
+          color: "#c4b5fd", weight: 1, fillColor: "#7954ec", fillOpacity: 0.72
+        });
+        var popup = document.createElement("div");
+        var strong = document.createElement("strong");
+        strong.textContent = [point.city,point.region,analyticsCountryName(point.country)].filter(Boolean).join("، ") || "موقع غير معروف";
+        var count = document.createElement("div");
+        count.textContent = Number(point.visitors || 0).toLocaleString("ar-EG") + " زائر فريد";
+        popup.appendChild(strong); popup.appendChild(count);
+        circle.bindPopup(popup).addTo(analyticsMapLayer); bounds.push([lat,lon]);
+      });
+      if (bounds.length === 1) analyticsMapInstance.setView(bounds[0], 5);
+      else if (bounds.length > 1) analyticsMapInstance.fitBounds(bounds, { padding: [24,24], maxZoom: 5 });
+      setTimeout(function () { if (analyticsMapInstance) analyticsMapInstance.invalidateSize(); }, 120);
+    } catch (error) {
+      container.textContent = error.message || "تعذر عرض الخريطة.";
+    }
+  }
+  async function refreshAnalytics() {
+    if (!currentUser) { analyticsStatus("سجّل الدخول بحساب الإدارة أولًا.", true); return; }
+    var button = document.getElementById("as-analytics-refresh");
+    var days = document.getElementById("as-analytics-days");
+    var range = days ? days.value : "30";
+    if (button) { button.disabled = true; button.textContent = "جارٍ التحميل..."; }
+    analyticsStatus("جارٍ جلب بيانات الزوار والتنزيلات...");
+    try {
+      var token = await currentUser.getIdToken(true);
+      var response = await fetch(ANALYTICS_API_URL.replace(/\/$/, "") + "/admin/summary?days=" + encodeURIComponent(range), {
+        method: "GET", mode: "cors", cache: "no-store",
+        headers: { "Authorization": "Bearer " + token }
+      });
+      var data = await response.json();
+      if (!response.ok || !data.ok) {
+        if (response.status === 401) throw new Error("رفض الخادم التحقق من حساب الإدارة. تأكد من صحة Firebase API Key وأن البريد موثّق.");
+        if (response.status === 404) throw new Error("خدمة التحليلات غير منشورة بعد على Cloudflare Worker.");
+        throw new Error(data.error || "تعذر تحميل الإحصائيات.");
+      }
+      var summary = data.summary || {};
+      [["as-kpi-visits",summary.visits],["as-kpi-unique",summary.unique_visitors],["as-kpi-downloads",summary.downloads],["as-kpi-countries",summary.countries]].forEach(function (pair) {
+        var el = document.getElementById(pair[0]); if (el) el.textContent = Number(pair[1] || 0).toLocaleString("ar-EG");
+      });
+      renderAnalyticsCountries(data.countries || []);
+      renderAnalyticsRecent(data.recent || []);
+      drawAnalyticsChart(completeDailySeries(data.daily || [], Number(range) || 30));
+      await renderAnalyticsMap(data.mapPoints || []);
+      analyticsStatus("تم تحديث البيانات. النطاق: آخر " + range + " يومًا. الاحتفاظ بالسجلات: 30 يومًا.", false);
+    } catch (error) {
+      analyticsStatus(error.message || "تعذر الاتصال بخدمة التحليلات. تأكد من نشر Cloudflare Worker.", true);
+      console.error("Analytics dashboard error:", error);
+    } finally {
+      if (button) { button.disabled = false; button.textContent = "↻ تحديث الإحصائيات"; }
+    }
+  }
+
   function start() {
+    initVisitorTracking();
     addStyles(); buildPanel();
     try {
       if (!window.firebase) throw new Error("Firebase SDK غير متاح.");
