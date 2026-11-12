@@ -12,7 +12,7 @@
     messagingSenderId: "26311402131",
     appId: "1:26311402131:web:7c2950a172814b2ba0e366"
   };
-  var db, auth, currentUser = null, draftCards = [], draftButtons = [], draftPages = [], draftElements = [], publishedPages = [];
+  var db, auth, storage, currentUser = null, draftCards = [], draftButtons = [], draftPages = [], draftElements = [], draftVisualItems = [], activeVisualItemId = null, visualEditMode = false, publishedPages = [];
   var defaults = {
     tagIcon:"✨", tagText:"إضافة احترافية للمصممين", heroTitle:"ARTBOARD STUDIO",
     heroDesc:"ارتقِ بتجربتك داخل Adobe Illustrator مع مجموعة من الأدوات العملية المصممة لتسهيل التعامل مع لوحات الرسم والصور والعناصر، وتعديل الصور وتحويلها مباشرة على لوحة العمل، وإنشاء رموز QR متجهية قابلة للتحرير.",
@@ -20,7 +20,7 @@
     whatsappNumber:"201127502899", buttonColor1:"#7954ec", buttonColor2:"#a17aff", buttonAngle:120,
     pageBg:"#090b13", glow1:"#30205a", glow2:"#102d4b", textColor:"#f5f6ff",
     secondaryTextColor:"#b9bdd0", siteFont:"'Cairo',sans-serif", baseFontSize:16,
-    heroTitleSize:54, animation:"none", heroOrder:"normal", customCards:[], customButtons:[], sidePages:[], customElements:[]
+    heroTitleSize:54, animation:"none", heroOrder:"normal", customCards:[], customButtons:[], sidePages:[], customElements:[], customCanvasItems:[]
   };
 
   function addStyles() {
@@ -46,7 +46,7 @@
     ].join("\n");
     var style = document.createElement("style");
     style.id = "as-admin-styles";
-    style.textContent = css;
+    style.textContent = css + "\n#as-free-canvas{position:absolute;top:0;left:0;width:100%;height:1px;z-index:85;pointer-events:none;overflow:visible}.as-visual-item{position:absolute;box-sizing:border-box;max-width:95vw;pointer-events:auto;touch-action:pan-y;transition:box-shadow .16s ease,border-radius .16s ease}.as-visual-item img{display:block;width:100%;height:auto;max-width:95vw}.as-visual-item.as-v-picked{outline:2px dashed #c4b5fd;outline-offset:3px;z-index:999!important}.as-visual-resize{display:none;position:absolute;right:-8px;bottom:-8px;width:18px;height:18px;border:2px solid #fff;border-radius:50%;background:#7954ec;cursor:nwse-resize;z-index:3}.as-v-editing .as-visual-resize{display:block}.as-v-editing .as-visual-item{cursor:move}.as-v-icon-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-top:8px}.as-v-icon-grid button{font-size:22px;padding:7px 2px;border:1px solid #343954;border-radius:8px;background:#0b0d17;color:#fff;cursor:pointer}.as-v-icon-grid button:hover{border-color:#a78bfa;background:#24203a}.as-v-property-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.as-v-property-grid>div{min-width:0}.as-v-list-row{display:flex;align-items:center;gap:7px;padding:8px;background:#0b0d17;border:1px solid #333954;border-radius:8px;margin:6px 0}.as-v-list-row .st-btn{white-space:nowrap}.as-v-list-row span{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.as-v-help{padding:8px;border-radius:8px;background:#231d3c;color:#d8ccff;font-size:11px;line-height:1.7;margin:8px 0}.as-v-gradient-check{display:flex;align-items:center;gap:8px}.as-v-gradient-check input{width:auto!important}@media(max-width:520px){.as-v-icon-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}";
     document.head.appendChild(style);
   }
 
@@ -65,7 +65,7 @@
       "<button type='button' id='st-go' class='st-btn st-primary' style='width:100%;margin-top:14px;padding:11px'>دخول للوحة التحكم</button>",
       "<p class='st-note' style='margin-top:12px'>الدخول عبر Firebase Authentication. لا يتم حفظ كلمة المرور داخل الموقع.</p><div id='st-login-msg' class='st-status' role='status'>أدخل بيانات حساب الإدارة للمتابعة.</div></div>",
       "<div id='st-body' class='st-hidden' style='flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden'>",
-      "<div class='st-tabs'><button type='button' class='st-tab active' data-t='p-txt'>النصوص</button><button type='button' class='st-tab' data-t='p-col'>الألوان</button><button type='button' class='st-tab' data-t='p-anm'>الخط</button><button type='button' class='st-tab' data-t='p-buttons'>الأزرار</button><button type='button' class='st-tab' data-t='p-pages'>الصفحات</button><button type='button' class='st-tab' data-t='p-elements'>العناصر</button><button type='button' class='st-tab' data-t='p-add'>البطاقات</button><button type='button' class='st-tab' data-t='p-analytics'>الإحصائيات</button></div>",
+      "<div class='st-tabs'><button type='button' class='st-tab active' data-t='p-txt'>النصوص</button><button type='button' class='st-tab' data-t='p-col'>الألوان</button><button type='button' class='st-tab' data-t='p-anm'>الخط</button><button type='button' class='st-tab' data-t='p-buttons'>الأزرار</button><button type='button' class='st-tab' data-t='p-pages'>الصفحات</button><button type='button' class='st-tab' data-t='p-elements'>العناصر</button><button type='button' class='st-tab' data-t='p-visual'>المحرر المرئي</button><button type='button' class='st-tab' data-t='p-add'>البطاقات</button><button type='button' class='st-tab' data-t='p-analytics'>الإحصائيات</button></div>",
       "<div class='st-content'>",
       "<section id='p-txt' class='st-pane active'><label>أيقونة ونص الشارة العلوية</label><div class='st-row'><input id='f-tico' value='✨' style='width:58px;text-align:center'><input id='f-tag' value='إضافة احترافية للمصممين'></div>",
       "<label>العنوان الرئيسي</label><input id='f-title' value='ARTBOARD STUDIO'><label>الوصف التعريفي أسفل العنوان</label><textarea id='f-desc' rows='4'></textarea>",
@@ -83,6 +83,7 @@
       "<button type='button' id='nb-add' class='st-btn st-primary' style='width:100%;margin-top:10px'>➕ إضافة البطاقة للقائمة</button></div><div id='nb-list'></div><p class='st-note'>تُحفظ البطاقات ضمن إعدادات الموقع، ويمكن حذفها قبل حفظ التعديلات.</p></section>",
       "\n<section id=\"p-buttons\" class=\"st-pane\">\n  <div class=\"st-card\"><strong>➕ إنشاء زر جديد</strong>\n    <label>اسم الزر</label><input id=\"bt-label\" placeholder=\"مثال: اشترِ الآن\">\n    <label>أيقونة الزر</label><input id=\"bt-icon\" value=\"🔗\" maxlength=\"12\">\n    <label>رابط الزر (اختياري عند فتح صفحة جانبية)</label><input id=\"bt-url\" placeholder=\"https://... أو مسار داخلي\">\n    <label>فتح صفحة جانبية</label><select id=\"bt-page\"><option value=\"\">لا يوجد – استخدم الرابط</option></select>\n    <label>مكان الزر</label><select id=\"bt-position\">\n      <option value=\"header-nav\">شريط القائمة العلوي</option><option value=\"hero-actions\">بجوار زر التحميل الرئيسي</option>\n      <option value=\"before-hero\">قبل الواجهة الرئيسية</option><option value=\"after-hero\">بعد الواجهة الرئيسية</option>\n      <option value=\"before-features\">قبل قسم المميزات</option><option value=\"after-features\">بعد قسم المميزات</option>\n      <option value=\"before-gallery\">قبل معرض الصور</option><option value=\"after-gallery\">بعد معرض الصور</option>\n      <option value=\"before-install\">قبل طريقة التثبيت</option><option value=\"after-install\">بعد طريقة التثبيت</option>\n      <option value=\"before-download\">قبل صندوق التحميل</option><option value=\"after-download\">بعد صندوق التحميل</option>\n      <option value=\"before-contact\">قبل التواصل</option><option value=\"after-contact\">بعد التواصل</option>\n      <option value=\"before-faq\">قبل الأسئلة الشائعة</option><option value=\"after-faq\">بعد الأسئلة الشائعة</option>\n      <option value=\"before-footer\">قبل نهاية الموقع</option>\n      <option value=\"floating-left\">زر عائم يسار الشاشة</option><option value=\"floating-right\">زر عائم يمين الشاشة</option>\n    </select>\n    <label>شكل الزر</label><select id=\"bt-style\"><option value=\"gradient\">متدرج بنفسجي</option><option value=\"secondary\">داكن</option><option value=\"outline\">إطار شفاف</option><option value=\"whatsapp\">أخضر</option></select>\n    <input type=\"hidden\" id=\"bt-edit-id\"><button type=\"button\" id=\"bt-add\" class=\"st-btn st-primary\" style=\"width:100%;margin-top:10px\">➕ إضافة الزر</button>\n    <p class=\"as-form-hint\">يمكن تعديل الزر أو حذفه من القائمة، ثم اضغط حفظ التعديلات لنشره.</p>\n  </div><div id=\"bt-list\"></div>\n</section>\n<section id=\"p-pages\" class=\"st-pane\">\n  <div class=\"st-card\"><strong>📄 إنشاء صفحة جانبية مستقلة</strong>\n    <label>عنوان الصفحة</label><input id=\"pg-title\" placeholder=\"مثال: من نحن\">\n    <label>عنوان فرعي</label><input id=\"pg-subtitle\" placeholder=\"نبذة قصيرة\">\n    <label>محتوى الصفحة</label><textarea id=\"pg-body\" rows=\"5\" placeholder=\"اكتب محتوى الصفحة هنا...\"></textarea>\n    <div class=\"st-grid2\">\n      <div><label>لون الخلفية</label><input type=\"color\" id=\"pg-bg\" value=\"#111422\"></div>\n      <div><label>لون النص</label><input type=\"color\" id=\"pg-color\" value=\"#f5f6ff\"></div>\n      <div><label>لون العنوان</label><input type=\"color\" id=\"pg-accent\" value=\"#a78bfa\"></div>\n      <div><label>عرض الصفحة</label><select id=\"pg-width\"><option value=\"760px\">واسعة</option><option value=\"620px\">متوسطة</option><option value=\"480px\">ضيقة</option></select></div>\n    </div>\n    <label>مكان فتح الصفحة</label><select id=\"pg-side\"><option value=\"right\">من اليمين</option><option value=\"left\">من اليسار</option></select>\n    <input type=\"hidden\" id=\"pg-edit-id\"><button type=\"button\" id=\"pg-add\" class=\"st-btn st-primary\" style=\"width:100%;margin-top:10px\">➕ إنشاء الصفحة</button>\n    <p class=\"as-form-hint\">كل صفحة تنشأ تحصل على رابط تلقائي في قائمة الموقع، ويمكن ربطها بأي زر أيضًا.</p>\n  </div><div id=\"pg-list\"></div>\n</section>\n<section id=\"p-elements\" class=\"st-pane\">\n  <div class=\"st-card\"><strong>🧩 إضافة أي عنصر إلى الموقع</strong>\n    <label>نوع العنصر</label><select id=\"el-type\"><option value=\"text\">عنوان ونص</option><option value=\"image\">صورة</option><option value=\"button\">زر ورابط</option><option value=\"banner\">شريط / إعلان</option><option value=\"divider\">فاصل</option></select>\n    <label>العنوان</label><input id=\"el-title\" placeholder=\"عنوان العنصر\">\n    <label>النص أو الوصف</label><textarea id=\"el-text\" rows=\"3\" placeholder=\"المحتوى...\"></textarea>\n    <label>رابط صورة HTTPS (للصور)</label><input id=\"el-image\" placeholder=\"https://...\">\n    <label>نص الزر (لنوع زر)</label><input id=\"el-label\" placeholder=\"اضغط هنا\">\n    <label>رابط الزر</label><input id=\"el-url\" placeholder=\"https://... أو مسار داخلي\">\n    <label>مكان العنصر</label><select id=\"el-position\">\n      <option value=\"top\">بداية الصفحة بعد القائمة</option><option value=\"before-hero\">قبل الواجهة الرئيسية</option><option value=\"after-hero\">بعد الواجهة الرئيسية</option>\n      <option value=\"before-features\">قبل قسم المميزات</option><option value=\"after-features\">بعد قسم المميزات</option>\n      <option value=\"before-gallery\">قبل معرض الصور</option><option value=\"after-gallery\">بعد معرض الصور</option>\n      <option value=\"before-install\">قبل طريقة التثبيت</option><option value=\"after-install\">بعد طريقة التثبيت</option>\n      <option value=\"before-download\">قبل صندوق التحميل</option><option value=\"after-download\">بعد صندوق التحميل</option>\n      <option value=\"before-contact\">قبل التواصل</option><option value=\"after-contact\">بعد التواصل</option>\n      <option value=\"before-faq\">قبل الأسئلة الشائعة</option><option value=\"after-faq\">بعد الأسئلة الشائعة</option>\n      <option value=\"before-footer\">قبل التذييل</option><option value=\"side-page\">داخل صفحة جانبية</option>\n    </select>\n    <label>الصفحة الجانبية المستهدفة (عند اختيار داخل صفحة جانبية)</label><select id=\"el-page\"><option value=\"\">اختر صفحة</option></select>\n    <div class=\"st-grid2\">\n      <div><label>محاذاة العنصر</label><select id=\"el-align\"><option value=\"center\">وسط</option><option value=\"right\">يمين</option><option value=\"left\">يسار</option></select></div>\n      <div><label>عرض العنصر</label><select id=\"el-width\"><option value=\"100%\">كامل</option><option value=\"85%\">85%</option><option value=\"65%\">65%</option><option value=\"50%\">50%</option></select></div>\n      <div><label>خلفية العنصر</label><input type=\"color\" id=\"el-bg\" value=\"#171827\"></div>\n      <div><label>لون النص</label><input type=\"color\" id=\"el-color\" value=\"#f5f6ff\"></div>\n    </div>\n    <input type=\"hidden\" id=\"el-edit-id\"><button type=\"button\" id=\"el-add\" class=\"st-btn st-primary\" style=\"width:100%;margin-top:10px\">➕ إضافة العنصر</button>\n    <p class=\"as-form-hint\">يمكنك وضع العنوان أو النص أو الصورة أو الزر أو الإعلان في أي منطقة متاحة أو داخل صفحة جانبية.</p>\n  </div><div id=\"el-list\"></div>\n</section>",
       ,
+      "      \n<section id=\"p-visual\" class=\"st-pane\">\n  <div class=\"st-card\">\n    <strong>🖼️ محرر الموقع بالسحب والإفلات</strong>\n    <p class=\"as-v-help\">أضف صورة أو نصًا أو أيقونة أو زرًا. سيظهر العنصر فوق الموقع، ويمكنك سحبه إلى أي مكان وتغيير حجمه. اضغط «تفعيل السحب» لتحريك العناصر، ثم احفظ التعديلات.</p>\n    <div class=\"st-grid2\">\n      <button type=\"button\" id=\"as-v-add-text\" class=\"st-btn st-primary\">＋ إضافة نص</button>\n      <button type=\"button\" id=\"as-v-add-button\" class=\"st-btn\">＋ إضافة زر</button>\n      <button type=\"button\" id=\"as-v-upload\" class=\"st-btn\">⬆ رفع صورة من الجهاز</button>\n      <button type=\"button\" id=\"as-v-toggle\" class=\"st-btn\">✥ تفعيل السحب</button>\n    </div>\n    <input type=\"file\" id=\"as-v-file\" accept=\"image/png,image/jpeg,image/webp,image/gif\" class=\"st-hidden\">\n    <label>الأيقونات الجاهزة — اضغط لإضافتها للموقع</label>\n    <div class=\"as-v-icon-grid\" id=\"as-v-icons\">\n      <button type=\"button\" data-v-icon=\"⭐\">⭐</button><button type=\"button\" data-v-icon=\"✨\">✨</button><button type=\"button\" data-v-icon=\"❤️\">❤️</button><button type=\"button\" data-v-icon=\"🔥\">🔥</button><button type=\"button\" data-v-icon=\"🚀\">🚀</button><button type=\"button\" data-v-icon=\"💎\">💎</button>\n      <button type=\"button\" data-v-icon=\"📥\">📥</button><button type=\"button\" data-v-icon=\"📦\">📦</button><button type=\"button\" data-v-icon=\"🛒\">🛒</button><button type=\"button\" data-v-icon=\"🔔\">🔔</button><button type=\"button\" data-v-icon=\"💬\">💬</button><button type=\"button\" data-v-icon=\"☎️\">☎️</button>\n      <button type=\"button\" data-v-icon=\"✓\">✓</button><button type=\"button\" data-v-icon=\"＋\">＋</button><button type=\"button\" data-v-icon=\"→\">→</button><button type=\"button\" data-v-icon=\"◆\">◆</button><button type=\"button\" data-v-icon=\"●\">●</button><button type=\"button\" data-v-icon=\"✦\">✦</button>\n    </div>\n    <p id=\"as-v-upload-status\" class=\"st-note\">الصور تُرفع إلى Firebase Storage وتظل محفوظة كرابط داخل الموقع.</p>\n  </div>\n  <div class=\"st-card\">\n    <strong>🎨 تنسيق العنصر المحدد</strong>\n    <p id=\"as-v-selected-name\" class=\"st-note\">اختر عنصرًا من القائمة أو اضغط عليه بعد تفعيل السحب.</p>\n    <label>النص أو محتوى الزر / الأيقونة</label><input id=\"as-v-content\" placeholder=\"اكتب النص هنا\">\n    <label>رابط الزر (اختياري)</label><input id=\"as-v-link\" placeholder=\"https://... أو مسار داخل الموقع\">\n    <div class=\"as-v-property-grid\">\n      <div><label>حجم الخط / الأيقونة</label><input type=\"number\" id=\"as-v-font-size\" min=\"10\" max=\"140\" value=\"24\"></div>\n      <div><label>العرض بالبكسل</label><input type=\"number\" id=\"as-v-width\" min=\"40\" max=\"1600\" value=\"280\"></div>\n      <div><label>لون النص</label><input type=\"color\" id=\"as-v-color\" value=\"#ffffff\"></div>\n      <div><label>لون الخلفية</label><input type=\"color\" id=\"as-v-fill1\" value=\"#7954ec\"></div>\n      <div><label>لون التدرج الثاني</label><input type=\"color\" id=\"as-v-fill2\" value=\"#a17aff\"></div>\n      <div><label>لون الحدود</label><input type=\"color\" id=\"as-v-border-color\" value=\"#a78bfa\"></div>\n      <div><label>سمك الحدود</label><input type=\"number\" id=\"as-v-border-width\" min=\"0\" max=\"20\" value=\"0\"></div>\n      <div><label>استدارة الزوايا</label><input type=\"number\" id=\"as-v-radius\" min=\"0\" max=\"120\" value=\"14\"></div>\n    </div>\n    <label class=\"as-v-gradient-check\"><input type=\"checkbox\" id=\"as-v-gradient\"> تفعيل التدرج اللوني</label>\n    <label>الظل</label><select id=\"as-v-shadow\"><option value=\"none\">بدون ظل</option><option value=\"soft\">ظل ناعم</option><option value=\"strong\">ظل قوي</option></select>\n    <div class=\"st-grid2\">\n      <button type=\"button\" id=\"as-v-apply\" class=\"st-btn st-primary\">تطبيق التنسيق</button>\n      <button type=\"button\" id=\"as-v-delete\" class=\"st-btn st-danger\">حذف العنصر المحدد</button>\n    </div>\n  </div>\n  <div class=\"st-card\"><strong>📋 عناصر التصميم الحر</strong><div id=\"as-v-list\"><p class=\"st-note\">لم تتم إضافة عناصر بعد.</p></div></div>\n</section>\n" +
       "\n<section id=\"p-analytics\" class=\"st-pane\">\n  <div class=\"st-card\">\n    <strong>📊 إحصائيات زوار الموقع</strong>\n    <p class=\"st-note\">آخر 30 يومًا افتراضيًا. عنوان IP والموقع التقريبي متاحان لحساب الإدارة فقط.</p>\n    <div class=\"st-grid2\">\n      <div><label>الفترة الزمنية</label><select id=\"as-analytics-days\"><option value=\"7\">آخر 7 أيام</option><option value=\"30\" selected>آخر 30 يومًا</option></select></div>\n      <div style=\"display:flex;align-items:end\"><button type=\"button\" id=\"as-analytics-refresh\" class=\"st-btn st-primary\" style=\"width:100%\">↻ تحديث الإحصائيات</button></div>\n    </div>\n    <p id=\"as-analytics-status\" class=\"st-status\" role=\"status\">اضغط تحديث الإحصائيات لجلب البيانات.</p>\n  </div>\n  <div class=\"as-analytics-kpis\">\n    <div class=\"as-analytics-kpi\"><span>إجمالي الزيارات</span><strong id=\"as-kpi-visits\">—</strong></div>\n    <div class=\"as-analytics-kpi\"><span>الزوار الفريدون</span><strong id=\"as-kpi-unique\">—</strong></div>\n    <div class=\"as-analytics-kpi\"><span>نقرات التحميل</span><strong id=\"as-kpi-downloads\">—</strong></div>\n    <div class=\"as-analytics-kpi\"><span>الدول</span><strong id=\"as-kpi-countries\">—</strong></div>\n  </div>\n  <div class=\"st-card\"><strong>📈 الزيارات والتنزيلات حسب اليوم</strong>\n    <div class=\"as-analytics-legend\"><span>■ الزيارات</span><span>■ نقرات التحميل</span></div>\n    <canvas id=\"as-analytics-chart\" height=\"210\" aria-label=\"رسم الزيارات والتنزيلات اليومية\"></canvas>\n  </div>\n  <div class=\"st-card\"><strong>🌍 خريطة مواقع الزوار</strong>\n    <p class=\"st-note\">المواقع تقريبية على مستوى المدينة أو منطقة مزود الإنترنت، وليست عنوانًا منزليًا دقيقًا.</p>\n    <div id=\"as-analytics-map\" style=\"height:320px;border-radius:12px;overflow:hidden;background:#0b0d17;margin-top:10px\"></div>\n  </div>\n  <div class=\"st-card\"><strong>🏳️ الزيارات حسب الدولة</strong>\n    <div id=\"as-analytics-countries\" class=\"as-analytics-countries\"><p class=\"st-note\">لا توجد بيانات بعد.</p></div>\n  </div>\n  <div class=\"st-card\"><strong>🧭 أحدث الزيارات وعناوين IP</strong>\n    <p class=\"st-note\">يتم الاحتفاظ بسجلات الزيارات لمدة 30 يومًا ثم حذفها تلقائيًا عند وصول طلبات تتبع جديدة.</p>\n    <div class=\"as-analytics-table-wrap\"><table class=\"as-analytics-table\">\n      <thead><tr><th>التاريخ</th><th>IP</th><th>الموقع</th><th>الصفحة</th></tr></thead>\n      <tbody id=\"as-analytics-recent\"><tr><td colspan=\"4\">لا توجد بيانات بعد.</td></tr></tbody>\n    </table></div>\n  </div>\n</section>",
       "</div><div class='st-bottom'><button type='button' id='st-save' class='st-btn st-primary'>💾 حفظ التعديلات</button><button type='button' id='st-refresh' class='st-btn'>إعادة تحميل</button></div><div id='st-msg' class='st-status' role='status' style='margin:0 14px 12px'></div></div>"
     ].join("");
@@ -107,6 +108,23 @@
     document.getElementById("bt-add").addEventListener("click", addButton);
     document.getElementById("pg-add").addEventListener("click", addPage);
     document.getElementById("el-add").addEventListener("click", addElement);
+    document.getElementById("as-v-add-text").addEventListener("click", function () { addVisualItem("text"); });
+    document.getElementById("as-v-add-button").addEventListener("click", function () { addVisualItem("button"); });
+    document.getElementById("as-v-upload").addEventListener("click", function () { document.getElementById("as-v-file").click(); });
+    document.getElementById("as-v-file").addEventListener("change", uploadVisualImage);
+    document.getElementById("as-v-toggle").addEventListener("click", function () { setVisualEditMode(!visualEditMode); });
+    document.getElementById("as-v-icons").addEventListener("click", function (event) {
+      var iconButton = event.target.closest("[data-v-icon]");
+      if (iconButton) addVisualItem("icon", { text: iconButton.getAttribute("data-v-icon") });
+    });
+    document.getElementById("as-v-apply").addEventListener("click", applyVisualControls);
+    document.getElementById("as-v-delete").addEventListener("click", deleteActiveVisualItem);
+    document.getElementById("p-visual").addEventListener("input", function (event) {
+      if (event.target && event.target.id !== "as-v-file") applyVisualControls(false);
+    });
+    document.getElementById("p-visual").addEventListener("change", function (event) {
+      if (event.target && event.target.id === "as-v-gradient") applyVisualControls(false);
+    });
   }
 
   function status(id, message, type) {
@@ -174,6 +192,7 @@
     renderCustomButtons(Array.isArray(d.customButtons) ? d.customButtons : []);
     renderSidePages(Array.isArray(d.sidePages) ? d.sidePages : []);
     renderElements(Array.isArray(d.customElements) ? d.customElements : [], Array.isArray(d.sidePages) ? d.sidePages : []);
+    renderVisualItems(Array.isArray(d.customCanvasItems) ? d.customCanvasItems : []);
   }
 
   function applyMotion(mode) {
@@ -501,7 +520,9 @@
     draftButtons = Array.isArray(d.customButtons) ? d.customButtons.slice(0, 100) : [];
     draftPages = Array.isArray(d.sidePages) ? d.sidePages.slice(0, 50) : [];
     draftElements = Array.isArray(d.customElements) ? d.customElements.slice(0, 150) : [];
-    renderDraftButtons(); renderDraftPages(); renderDraftElements();
+    draftVisualItems = Array.isArray(d.customCanvasItems) ? d.customCanvasItems.slice(0, 100) : [];
+    activeVisualItemId = draftVisualItems.length ? draftVisualItems[0].id : null;
+    renderDraftButtons(); renderDraftPages(); renderDraftElements(); renderVisualItems(draftVisualItems); renderVisualList(); fillVisualControls();
   }
   function renderDraftCards() {
     var list = document.getElementById("nb-list"); if (!list) return; list.textContent = "";
@@ -525,6 +546,150 @@
     renderDraftCards(); status("st-msg", "أُضيفت البطاقة إلى المسودة. اضغط حفظ التعديلات لنشرها.", "success");
   }
 
+
+  function visualShadow(value) {
+    if (value === "strong") return "0 18px 42px rgba(0,0,0,.42)";
+    if (value === "soft") return "0 8px 24px rgba(0,0,0,.28)";
+    return "none";
+  }
+  function addVisualItem(type, extra) {
+    var item = Object.assign({
+      id: makeId("visual"), type: type, text: type === "text" ? "اكتب النص هنا" : type === "button" ? "زر جديد" : "",
+      imageUrl: "", href: type === "button" ? "#features" : "", leftPct: 35,
+      topPx: Math.max(30, (window.scrollY || 0) + Math.round(window.innerHeight * 0.34)),
+      width: type === "icon" ? 76 : type === "button" ? 210 : 280,
+      fontSize: type === "icon" ? 42 : 24, color: "#ffffff", fill1: "#7954ec", fill2: "#a17aff",
+      gradient: type === "button", borderColor: "#a78bfa", borderWidth: 0, radius: 14, shadow: "soft"
+    }, extra || {});
+    draftVisualItems.push(item); activeVisualItemId = item.id;
+    renderVisualItems(draftVisualItems); renderVisualList(); fillVisualControls(item); setVisualEditMode(true);
+    status("st-msg", "تمت إضافة العنصر إلى المعاينة. اسحبه إلى المكان المطلوب ثم احفظ التعديلات.", "success");
+  }
+  function visualNodeStyle(node, item) {
+    node.style.position = "absolute"; node.style.left = Math.max(0, Math.min(100, Number(item.leftPct) || 0)) + "%";
+    node.style.top = Math.max(0, Number(item.topPx) || 0) + "px";
+    node.style.width = Math.max(40, Math.min(1600, Number(item.width) || 240)) + "px"; node.style.maxWidth = "95vw";
+    node.style.color = color(item.color, "#ffffff"); node.style.fontSize = Math.max(10, Math.min(140, Number(item.fontSize) || 24)) + "px";
+    node.style.border = Math.max(0, Math.min(20, Number(item.borderWidth) || 0)) + "px solid " + color(item.borderColor, "#a78bfa");
+    node.style.borderRadius = Math.max(0, Math.min(120, Number(item.radius) || 0)) + "px"; node.style.boxShadow = visualShadow(item.shadow);
+    node.style.background = item.gradient ? "linear-gradient(120deg," + color(item.fill1, "#7954ec") + "," + color(item.fill2, "#a17aff") + ")" : (item.type === "image" || item.type === "icon" ? "transparent" : color(item.fill1, "#7954ec"));
+    node.style.padding = item.type === "image" || item.type === "icon" ? "0" : "10px 14px";
+    node.style.textAlign = "center"; node.style.lineHeight = "1.45"; node.style.zIndex = item.type === "button" ? "90" : "85";
+  }
+  function renderVisualItems(items) {
+    var old = document.getElementById("as-free-canvas"); if (old) old.remove();
+    var canvas = document.createElement("div"); canvas.id = "as-free-canvas";
+    (items || []).forEach(function (item) {
+      if (!item || !item.id) return;
+      var node;
+      if (item.type === "image") {
+        node = document.createElement("div"); var image = document.createElement("img");
+        image.src = url(item.imageUrl, false) || ""; image.alt = String(item.text || "صورة مضافة"); image.loading = "lazy";
+        image.style.width = "100%"; image.style.height = "auto";
+        image.style.borderRadius = Math.max(0, Math.min(120, Number(item.radius) || 0)) + "px";
+        image.style.boxShadow = visualShadow(item.shadow);
+        image.style.border = Math.max(0, Math.min(20, Number(item.borderWidth) || 0)) + "px solid " + color(item.borderColor, "#a78bfa");
+        node.appendChild(image);
+      } else if (item.type === "button") {
+        node = document.createElement("a"); node.href = url(item.href, true) || "#"; node.textContent = String(item.text || "زر");
+        node.style.display = "inline-flex"; node.style.alignItems = "center"; node.style.justifyContent = "center";
+        node.style.textDecoration = "none"; node.style.fontWeight = "800";
+      } else {
+        node = document.createElement("div"); node.textContent = String(item.text || (item.type === "icon" ? "✨" : ""));
+        if (item.type === "icon") node.style.fontWeight = "900"; else node.style.whiteSpace = "pre-wrap";
+      }
+      node.className = "as-visual-item" + (visualEditMode && item.id === activeVisualItemId ? " as-v-picked" : "");
+      node.setAttribute("data-as-visual-id", item.id); visualNodeStyle(node, item);
+      var handle = document.createElement("span"); handle.className = "as-visual-resize"; handle.setAttribute("aria-label", "تغيير حجم العنصر"); node.appendChild(handle);
+      node.addEventListener("pointerdown", function (event) {
+        if (!visualEditMode || !currentUser) return;
+        event.preventDefault(); event.stopPropagation(); activeVisualItemId = item.id; fillVisualControls(item); renderVisualList();
+        var startX = event.clientX, startY = event.clientY, originalLeft = Number(item.leftPct) || 0;
+        var originalTop = Number(item.topPx) || 0, originalWidth = Number(item.width) || 240;
+        var isResize = event.target.classList.contains("as-visual-resize");
+        function move(moveEvent) {
+          var dx = moveEvent.clientX - startX, dy = moveEvent.clientY - startY;
+          if (isResize) { item.width = Math.max(60, Math.min(1600, originalWidth + dx)); node.style.width = item.width + "px"; }
+          else { item.leftPct = Math.max(0, Math.min(96, originalLeft + (dx / Math.max(1, window.innerWidth)) * 100)); item.topPx = Math.max(0, originalTop + dy); node.style.left = item.leftPct + "%"; node.style.top = item.topPx + "px"; }
+        }
+        function stop() { document.removeEventListener("pointermove", move); document.removeEventListener("pointerup", stop); document.removeEventListener("pointercancel", stop); renderVisualList(); }
+        document.addEventListener("pointermove", move); document.addEventListener("pointerup", stop); document.addEventListener("pointercancel", stop);
+      });
+      node.addEventListener("click", function (event) {
+        if (!visualEditMode) return;
+        event.preventDefault(); event.stopPropagation(); activeVisualItemId = item.id; fillVisualControls(item);
+        renderVisualItems(draftVisualItems); renderVisualList();
+      });
+      canvas.appendChild(node);
+    });
+    document.body.appendChild(canvas); document.documentElement.classList.toggle("as-v-editing", !!visualEditMode);
+  }
+  function renderVisualList() {
+    var list = document.getElementById("as-v-list"); if (!list) return; list.textContent = "";
+    if (!draftVisualItems.length) { var empty = document.createElement("p"); empty.className = "st-note"; empty.textContent = "لم تتم إضافة عناصر بعد."; list.appendChild(empty); return; }
+    draftVisualItems.forEach(function (item) {
+      var row = document.createElement("div"); row.className = "as-v-list-row"; var label = document.createElement("span");
+      label.textContent = (item.type === "image" ? "🖼️ صورة" : item.type === "icon" ? "✦ أيقونة" : item.type === "button" ? "▣ زر" : "T نص") + " — " + String(item.text || item.id).slice(0,36);
+      var select = document.createElement("button"); select.type = "button"; select.className = "st-btn"; select.textContent = "تحديد";
+      select.addEventListener("click", function () { activeVisualItemId = item.id; fillVisualControls(item); renderVisualItems(draftVisualItems); renderVisualList(); });
+      row.appendChild(label); row.appendChild(select); list.appendChild(row);
+    });
+  }
+  function fillVisualControls(item) {
+    item = item || draftVisualItems.find(function (entry) { return entry.id === activeVisualItemId; });
+    var label = document.getElementById("as-v-selected-name");
+    if (!item) { if (label) label.textContent = "اختر عنصرًا من القائمة."; return; }
+    if (label) label.textContent = "العنصر المحدد: " + item.type + " · اسحب العنصر على الصفحة لتغيير مكانه.";
+    var values = {"as-v-content":item.text || "","as-v-link":item.href || "","as-v-font-size":item.fontSize || 24,"as-v-width":item.width || 240,"as-v-color":color(item.color,"#ffffff"),"as-v-fill1":color(item.fill1,"#7954ec"),"as-v-fill2":color(item.fill2,"#a17aff"),"as-v-border-color":color(item.borderColor,"#a78bfa"),"as-v-border-width":item.borderWidth || 0,"as-v-radius":item.radius || 0,"as-v-gradient":!!item.gradient,"as-v-shadow":item.shadow || "none"};
+    Object.keys(values).forEach(function (id) { var el = document.getElementById(id); if (el) { if (el.type === "checkbox") el.checked = !!values[id]; else el.value = values[id]; } });
+  }
+  function applyVisualControls(showMessage) {
+    var item = draftVisualItems.find(function (entry) { return entry.id === activeVisualItemId; }); if (!item) return;
+    item.text = document.getElementById("as-v-content").value.slice(0,500);
+    var href = document.getElementById("as-v-link").value.trim(); if (href) item.href = url(href, true) || item.href || "#";
+    item.fontSize = Math.max(10, Math.min(140, Number(document.getElementById("as-v-font-size").value) || 24));
+    item.width = Math.max(40, Math.min(1600, Number(document.getElementById("as-v-width").value) || 240));
+    item.color = color(document.getElementById("as-v-color").value, "#ffffff"); item.fill1 = color(document.getElementById("as-v-fill1").value, "#7954ec");
+    item.fill2 = color(document.getElementById("as-v-fill2").value, "#a17aff"); item.borderColor = color(document.getElementById("as-v-border-color").value, "#a78bfa");
+    item.borderWidth = Math.max(0, Math.min(20, Number(document.getElementById("as-v-border-width").value) || 0));
+    item.radius = Math.max(0, Math.min(120, Number(document.getElementById("as-v-radius").value) || 0));
+    item.gradient = document.getElementById("as-v-gradient").checked; item.shadow = document.getElementById("as-v-shadow").value;
+    renderVisualItems(draftVisualItems);
+    if (showMessage !== false) status("st-msg", "تم تحديث تنسيق العنصر في المعاينة. اضغط حفظ التعديلات للنشر.", "success");
+  }
+  function setVisualEditMode(enabled) {
+    visualEditMode = !!enabled && !!currentUser; var button = document.getElementById("as-v-toggle");
+    if (button) button.textContent = visualEditMode ? "✓ إيقاف السحب" : "✥ تفعيل السحب";
+    renderVisualItems(draftVisualItems);
+  }
+  async function uploadVisualImage() {
+    var input = document.getElementById("as-v-file"), file = input && input.files && input.files[0]; if (!file) return;
+    var hint = document.getElementById("as-v-upload-status");
+    try {
+      if (!currentUser || !storage) throw new Error("سجّل الدخول وتأكد من تحميل Firebase Storage أولًا.");
+      if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) throw new Error("الصيغ المدعومة: PNG وJPG وWEBP وGIF.");
+      if (file.size > 5 * 1024 * 1024) throw new Error("حجم الصورة يجب ألا يتجاوز 5 ميجابايت.");
+      if (hint) hint.textContent = "جارٍ رفع الصورة إلى التخزين السحابي...";
+      var safeName = file.name.replace(/[^\w.-]+/g, "-").slice(-80) || "image";
+      var ref = storage.ref().child("site-assets/" + currentUser.uid + "/" + Date.now() + "-" + safeName);
+      var task = await ref.put(file, { contentType: file.type, cacheControl: "public,max-age=31536000" });
+      var imageUrl = await task.ref.getDownloadURL();
+      addVisualItem("image", { imageUrl: imageUrl, text: file.name, width: 300 });
+      if (hint) hint.textContent = "تم رفع الصورة بنجاح. يمكنك سحبها وتغيير حجمها.";
+      input.value = "";
+    } catch (error) {
+      if (hint) hint.textContent = error.message || "تعذر رفع الصورة.";
+      status("st-msg", error.message || "تعذر رفع الصورة. راجع قواعد Firebase Storage.", "error");
+    }
+  }
+  function deleteActiveVisualItem() {
+    if (!activeVisualItemId) return;
+    draftVisualItems = draftVisualItems.filter(function (item) { return item.id !== activeVisualItemId; });
+    activeVisualItemId = draftVisualItems.length ? draftVisualItems[draftVisualItems.length - 1].id : null;
+    renderVisualItems(draftVisualItems); renderVisualList(); fillVisualControls();
+    status("st-msg", "تم حذف العنصر من المسودة. احفظ التعديلات لتأكيد الحذف.", "success");
+  }
+
   function collect() {
     var download = url(document.getElementById("f-download").value, true);
     if (!download) throw new Error("رابط التحميل غير صالح. استخدم رابط HTTPS أو مسارًا داخل الموقع.");
@@ -541,7 +706,7 @@
       siteFont:document.getElementById("f-font").value,baseFontSize:Math.max(12,Math.min(30,parseInt(document.getElementById("f-fs").value,10)||16)),
       heroTitleSize:Math.max(28,Math.min(90,parseInt(document.getElementById("f-hs").value,10)||54)),
       animation:document.getElementById("f-anm").value,heroOrder:document.getElementById("f-ord").value,
-      customCards:draftCards.slice(0,60),customButtons:draftButtons.slice(0,100),sidePages:draftPages.slice(0,50),customElements:draftElements.slice(0,150),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:currentUser.email
+      customCards:draftCards.slice(0,60),customButtons:draftButtons.slice(0,100),sidePages:draftPages.slice(0,50),customElements:draftElements.slice(0,150),customCanvasItems:draftVisualItems.slice(0,100),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:currentUser.email
     };
   }
 
@@ -559,9 +724,9 @@
   }
   async function loadContent() {
     try {
-      var snap = await db.collection("site").doc("content").get(), data = snap.exists ? snap.data() : defaults;
-      fill(data); apply(data); status("st-msg","تم تحميل إعدادات الموقع من Firebase.","success");
-    } catch (e) { console.error("Admin content read failed:",e); status("st-msg","تعذر قراءة إعدادات الموقع من Firebase.","error"); }
+      var snap = await db.collection("site").doc("content").get({ source: "server" }), data = snap.exists ? snap.data() : defaults;
+      fill(data); apply(data); revealPublishedSite(); status("st-msg","تم تحميل إعدادات الموقع من Firebase.","success");
+    } catch (e) { console.error("Admin content read failed:",e); revealPublishedSite(); status("st-msg","تعذر قراءة إعدادات الموقع من Firebase.","error"); }
   }
   function showAdmin() {
     document.getElementById("st-login").classList.add("st-hidden");
@@ -820,21 +985,30 @@
     }
   }
 
+  function revealPublishedSite() {
+    if (window.__asSiteReady) return;
+    window.__asSiteReady = true;
+    document.documentElement.classList.remove("as-content-loading");
+  }
+
   function start() {
     initVisitorTracking();
     addStyles(); buildPanel();
     try {
       if (!window.firebase) throw new Error("Firebase SDK غير متاح.");
       if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-      db = firebase.firestore(); auth = firebase.auth();
+      db = firebase.firestore(); auth = firebase.auth(); storage = firebase.storage();
       // Keep every open visitor tab synchronized with published site content.
       db.collection("site").doc("content").onSnapshot(function (snap) {
-        if (!snap.exists) return;
+        if (snap.metadata && snap.metadata.fromCache) return;
+        if (!snap.exists) { revealPublishedSite(); return; }
         var published = snap.data();
         apply(published);
         if (currentUser) fill(published);
+        revealPublishedSite();
       }, function (error) {
         console.error("Artboard Studio live content listener failed:", error);
+        revealPublishedSite();
       });
       auth.onAuthStateChanged(function (user) {
         if (user && user.email && user.email.toLowerCase() === ADMIN_EMAIL && user.emailVerified) { currentUser = user; showAdmin(); }
