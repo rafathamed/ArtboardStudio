@@ -617,7 +617,7 @@
       type: type,
       visitorId: visitorBrowserId(),
       path: location.pathname,
-      referrer: document.referrer || ""
+      referrer: (function () { try { var ref = new URL(document.referrer); return ref.origin + ref.pathname; } catch (e) { return ""; } })()
     };
     fetch(ANALYTICS_API_URL.replace(/\/$/, "") + "/track", {
       method: "POST",
@@ -705,13 +705,22 @@
     }
     return output;
   }
+  function analyticsCountryName(code) {
+    if (!code) return "غير معروف";
+    try {
+      if (typeof Intl !== "undefined" && Intl.DisplayNames) {
+        return new Intl.DisplayNames(["ar"], { type: "region" }).of(code) || code;
+      }
+    } catch (e) {}
+    return code;
+  }
   function renderAnalyticsCountries(rows) {
     var target = document.getElementById("as-analytics-countries");
     if (!target) return; target.textContent = "";
     if (!rows || !rows.length) { target.textContent = "لا توجد بيانات حسب الدولة حتى الآن."; return; }
     rows.forEach(function (row) {
       var line = document.createElement("div"); line.className = "as-analytics-country";
-      var country = document.createElement("span"); country.textContent = row.country || "غير معروف";
+      var country = document.createElement("span"); country.textContent = analyticsCountryName(row.country);
       var count = document.createElement("strong"); count.textContent = Number(row.visitors || 0).toLocaleString("ar-EG") + " زائر";
       line.appendChild(country); line.appendChild(count); target.appendChild(line);
     });
@@ -732,7 +741,7 @@
       var ip = document.createElement("td"); ip.textContent = row.ip_address || "غير متاح";
       ip.style.direction = "ltr"; ip.style.whiteSpace = "nowrap";
       var locationCell = document.createElement("td");
-      locationCell.textContent = [row.city,row.region,row.country].filter(Boolean).join("، ") || "غير معروف";
+      locationCell.textContent = [row.city,row.region,analyticsCountryName(row.country)].filter(Boolean).join("، ") || "غير معروف";
       var path = document.createElement("td"); path.textContent = row.page_path || "/";
       path.style.direction = "ltr"; path.style.maxWidth = "130px"; path.style.overflowWrap = "anywhere";
       tr.appendChild(date); tr.appendChild(ip); tr.appendChild(locationCell); tr.appendChild(path); body.appendChild(tr);
@@ -762,7 +771,7 @@
         });
         var popup = document.createElement("div");
         var strong = document.createElement("strong");
-        strong.textContent = [point.city,point.region,point.country].filter(Boolean).join("، ") || "موقع غير معروف";
+        strong.textContent = [point.city,point.region,analyticsCountryName(point.country)].filter(Boolean).join("، ") || "موقع غير معروف";
         var count = document.createElement("div");
         count.textContent = Number(point.visitors || 0).toLocaleString("ar-EG") + " زائر فريد";
         popup.appendChild(strong); popup.appendChild(count);
