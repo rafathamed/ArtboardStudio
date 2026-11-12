@@ -87,15 +87,30 @@ match /site/content {
 
 أُضيف تبويب **المحرر المرئي** إلى لوحة الإدارة. يمكنك إضافة نص أو زر أو أيقونة جاهزة أو صورة، ثم سحب العنصر مباشرة فوق صفحة الموقع إلى الموضع المطلوب، وتغيير حجمه بسحب مقبض الزاوية. تتضمن خصائص التنسيق حجم النص والعرض والألوان والتدرج والظل والحدود واستدارة الزوايا. اضغط **حفظ التعديلات** لنشر العناصر.
 
-### تفعيل Firebase Storage للصور
+### إعداد Cloudinary بدون تفعيل فوترة Firebase Storage
 
-رفع الصور يحتاج تفعيل Firebase Storage في مشروع `artboardstudio-117a6` مرة واحدة:
+رفع الصور أصبح يستخدم Cloudinary بدل Firebase Storage؛ لا يلزم تفعيل خطة فوترة Firebase Storage.
 
-1. افتح Firebase Console ثم Storage، وأنشئ/فعّل مساحة التخزين للمشروع.
-2. افتح تبويب Rules، وانشر القواعد الموجودة في الملف `firebase-storage.rules` بهذا المستودع.
-3. سجّل الدخول بحساب الإدارة، ثم استخدم زر **رفع صورة من الجهاز**. الصيغ المدعومة PNG وJPG وWEBP وGIF، وبحد أقصى 5 ميجابايت للصورة.
+1. افتح Cloudinary Console ثم Settings → API Keys.
+2. لأن API Secret السابق تمت مشاركته في محادثة، أنشئ زوج API Key وAPI Secret جديدًا من **Generate New API Key**. لا ترسل الـ API Secret الجديد إلى المحادثة، ولا تضعه في ملفات الموقع أو GitHub.
+3. من داخل مجلد `analytics-worker` نفّذ الأوامر التالية، واكتب القيمة المناسبة عند ظهور مطالبة Wrangler:
 
-القراءة العامة للصور المرفوعة مطلوبة لكي تظهر للزوار، بينما الكتابة مقصورة على حساب الإدارة الموثّق. تُحفظ ملفات الصور في `site-assets/{uid}/` ولا تُخزن بيانات الصورة الثنائية داخل Firestore.
+   ```powershell
+   npx.cmd wrangler secret put CLOUDINARY_CLOUD_NAME
+   npx.cmd wrangler secret put CLOUDINARY_API_KEY
+   npx.cmd wrangler secret put CLOUDINARY_API_SECRET
+   ```
+
+   استخدم Cloud Name الخاص ببيئة Cloudinary، ومفتاح API الجديد، والـ API Secret الجديد. تُحفظ هذه القيم في Cloudflare Worker ولا تُضاف إلى مستودع GitHub.
+4. انشر نسخة Worker المحدّثة:
+
+   ```powershell
+   npx.cmd wrangler deploy
+   ```
+
+5. بعد التأكد من نجاح رفع صورة تجريبية، ارجع إلى Cloudinary Settings → API Keys وعطّل زوج المفاتيح القديم الذي تم كشف سره.
+
+يطلب محرر الموقع تصريح رفع موقّعًا من Worker بعد التحقق من جلسة Firebase للإدارة، ثم يرفع الصورة مباشرة إلى Cloudinary. لا يغادر API Secret الخادم مطلقًا. الصيغ المدعومة PNG وJPG وWEBP وGIF، وبحد أقصى 5 ميجابايت للصورة.
 
 ### منع ظهور التصميم القديم قبل التحديث
 
