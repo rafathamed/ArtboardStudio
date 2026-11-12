@@ -195,6 +195,265 @@
     });
   }
 
+
+  function makeId(prefix) {
+    return prefix + "-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,7);
+  }
+  function field(id) { var el = document.getElementById(id); return el ? el.value : ""; }
+  function refreshPageSelects() {
+    ["bt-page","el-page"].forEach(function (id) {
+      var select = document.getElementById(id); if (!select) return;
+      var old = select.value, first = id === "bt-page" ? "لا يوجد – استخدم الرابط" : "اختر صفحة";
+      select.textContent = "";
+      var empty = document.createElement("option"); empty.value = ""; empty.textContent = first; select.appendChild(empty);
+      draftPages.forEach(function (page) {
+        var option = document.createElement("option"); option.value = page.id; option.textContent = page.title; select.appendChild(option);
+      });
+      if (draftPages.some(function (page) { return page.id === old; })) select.value = old;
+    });
+  }
+  function makeDraftRow(listId, titleText, detailsText, onEdit, onDelete) {
+    var list = document.getElementById(listId); if (!list) return;
+    var row = document.createElement("div"); row.className = "st-card";
+    var title = document.createElement("strong"); title.textContent = titleText;
+    var details = document.createElement("p"); details.className = "st-note"; details.textContent = detailsText || "";
+    var actions = document.createElement("div"); actions.className = "as-draft-actions";
+    var edit = document.createElement("button"); edit.type = "button"; edit.className = "st-btn"; edit.textContent = "تعديل"; edit.addEventListener("click", onEdit);
+    var del = document.createElement("button"); del.type = "button"; del.className = "st-btn st-danger"; del.textContent = "حذف"; del.addEventListener("click", onDelete);
+    actions.appendChild(edit); actions.appendChild(del); row.appendChild(title); row.appendChild(details); row.appendChild(actions); list.appendChild(row);
+  }
+  function renderDraftButtons() {
+    var list = document.getElementById("bt-list"); if (!list) return; list.textContent = "";
+    if (!draftButtons.length) { var empty = document.createElement("p"); empty.className = "st-note"; empty.textContent = "لم تتم إضافة أزرار بعد."; list.appendChild(empty); }
+    draftButtons.forEach(function (item) {
+      var page = draftPages.find(function (p) { return p.id === item.pageId; });
+      makeDraftRow("bt-list", (item.icon || "") + " " + item.label, "المكان: " + item.position + (page ? " · يفتح صفحة: " + page.title : " · الرابط: " + (item.url || "")), function () {
+        document.getElementById("bt-edit-id").value = item.id;
+        document.getElementById("bt-label").value = item.label || "";
+        document.getElementById("bt-icon").value = item.icon || "";
+        document.getElementById("bt-url").value = item.url || "";
+        document.getElementById("bt-page").value = item.pageId || "";
+        document.getElementById("bt-position").value = item.position || "header-nav";
+        document.getElementById("bt-style").value = item.style || "gradient";
+        document.getElementById("bt-add").textContent = "حفظ تعديل الزر";
+      }, function () {
+        draftButtons = draftButtons.filter(function (b) { return b.id !== item.id; });
+        renderDraftButtons();
+      });
+    });
+    refreshPageSelects();
+  }
+  function addButton() {
+    var label = field("bt-label").trim(), pageId = field("bt-page"), rawUrl = field("bt-url").trim();
+    var link = pageId ? "" : url(rawUrl, true);
+    if (!label) { status("st-msg", "اكتب اسم الزر أولًا.", "error"); return; }
+    if (pageId && !draftPages.some(function (p) { return p.id === pageId; })) { status("st-msg", "الصفحة المستهدفة غير موجودة.", "error"); return; }
+    if (!pageId && !link) { status("st-msg", "أدخل رابطًا صالحًا أو اختر صفحة جانبية.", "error"); return; }
+    var id = field("bt-edit-id");
+    var item = {id:id || makeId("button"),label:label.slice(0,90),icon:field("bt-icon").trim().slice(0,12),url:link,pageId:pageId,position:field("bt-position"),style:field("bt-style")};
+    var index = draftButtons.findIndex(function (b) { return b.id === id; });
+    if (index >= 0) draftButtons[index] = item; else draftButtons.push(item);
+    document.getElementById("bt-edit-id").value = "";
+    document.getElementById("bt-label").value = ""; document.getElementById("bt-url").value = "";
+    document.getElementById("bt-add").textContent = "➕ إضافة الزر";
+    renderDraftButtons(); status("st-msg", "تم تحديث قائمة الأزرار. اضغط حفظ التعديلات لنشرها.", "success");
+  }
+  function renderDraftPages() {
+    var list = document.getElementById("pg-list"); if (!list) return; list.textContent = "";
+    if (!draftPages.length) { var empty = document.createElement("p"); empty.className = "st-note"; empty.textContent = "لا توجد صفحات جانبية بعد."; list.appendChild(empty); }
+    draftPages.forEach(function (page) {
+      makeDraftRow("pg-list", "📄 " + page.title, (page.subtitle || "بدون وصف") + " · تفتح من " + (page.side === "left" ? "اليسار" : "اليمين"), function () {
+        document.getElementById("pg-edit-id").value = page.id;
+        document.getElementById("pg-title").value = page.title || "";
+        document.getElementById("pg-subtitle").value = page.subtitle || "";
+        document.getElementById("pg-body").value = page.body || "";
+        document.getElementById("pg-bg").value = color(page.background, "#111422");
+        document.getElementById("pg-color").value = color(page.textColor, "#f5f6ff");
+        document.getElementById("pg-accent").value = color(page.accent, "#a78bfa");
+        document.getElementById("pg-width").value = page.width || "760px";
+        document.getElementById("pg-side").value = page.side || "right";
+        document.getElementById("pg-add").textContent = "حفظ تعديل الصفحة";
+      }, function () {
+        draftPages = draftPages.filter(function (p) { return p.id !== page.id; });
+        draftButtons = draftButtons.map(function (b) { if (b.pageId === page.id) { b.pageId = ""; b.url = "#"; } return b; }).filter(function (b) { return b.url !== "#"; });
+        draftElements = draftElements.filter(function (el) { return el.pageId !== page.id; });
+        renderDraftPages(); renderDraftButtons(); renderDraftElements();
+      });
+    });
+    refreshPageSelects();
+  }
+  function addPage() {
+    var title = field("pg-title").trim();
+    if (!title) { status("st-msg", "اكتب عنوان الصفحة أولًا.", "error"); return; }
+    var id = field("pg-edit-id");
+    var item = {id:id || makeId("page"),title:title.slice(0,100),subtitle:field("pg-subtitle").trim().slice(0,180),body:field("pg-body").slice(0,8000),background:color(field("pg-bg"),"#111422"),textColor:color(field("pg-color"),"#f5f6ff"),accent:color(field("pg-accent"),"#a78bfa"),width:field("pg-width"),side:field("pg-side")};
+    var index = draftPages.findIndex(function (p) { return p.id === id; });
+    if (index >= 0) draftPages[index] = item; else draftPages.push(item);
+    ["pg-edit-id","pg-title","pg-subtitle","pg-body"].forEach(function (key) { document.getElementById(key).value = ""; });
+    document.getElementById("pg-add").textContent = "➕ إنشاء الصفحة";
+    renderDraftPages(); renderDraftButtons(); renderDraftElements();
+    status("st-msg", "تم تجهيز الصفحة الجانبية. احفظ التعديلات لنشرها.", "success");
+  }
+  function renderDraftElements() {
+    var list = document.getElementById("el-list"); if (!list) return; list.textContent = "";
+    if (!draftElements.length) { var empty = document.createElement("p"); empty.className = "st-note"; empty.textContent = "لم تتم إضافة عناصر مخصصة بعد."; list.appendChild(empty); }
+    draftElements.forEach(function (item) {
+      var page = draftPages.find(function (p) { return p.id === item.pageId; });
+      makeDraftRow("el-list", (item.type || "text") + " · " + (item.title || item.text || item.label || "عنصر"), "المكان: " + item.position + (page ? " · " + page.title : ""), function () {
+        document.getElementById("el-edit-id").value = item.id;
+        document.getElementById("el-type").value = item.type || "text";
+        document.getElementById("el-title").value = item.title || "";
+        document.getElementById("el-text").value = item.text || "";
+        document.getElementById("el-image").value = item.imageUrl || "";
+        document.getElementById("el-label").value = item.label || "";
+        document.getElementById("el-url").value = item.url || "";
+        document.getElementById("el-position").value = item.position || "after-hero";
+        document.getElementById("el-page").value = item.pageId || "";
+        document.getElementById("el-align").value = item.align || "center";
+        document.getElementById("el-width").value = item.width || "100%";
+        document.getElementById("el-bg").value = color(item.background, "#171827");
+        document.getElementById("el-color").value = color(item.textColor, "#f5f6ff");
+        document.getElementById("el-add").textContent = "حفظ تعديل العنصر";
+      }, function () {
+        draftElements = draftElements.filter(function (el) { return el.id !== item.id; });
+        renderDraftElements();
+      });
+    });
+    refreshPageSelects();
+  }
+  function addElement() {
+    var type = field("el-type"), title = field("el-title").trim(), textValue = field("el-text").trim();
+    var imageRaw = field("el-image").trim(), imageUrl = imageRaw ? url(imageRaw, false) : "";
+    var buttonUrl = field("el-url").trim(), pageId = field("el-page"), position = field("el-position");
+    if (type === "image" && !imageUrl) { status("st-msg", "أدخل رابط صورة صحيحًا يبدأ بـ HTTPS.", "error"); return; }
+    if (type === "button" && !pageId && !url(buttonUrl, true)) { status("st-msg", "أدخل رابطًا صالحًا للزر أو اختر رابط صفحة جانبية.", "error"); return; }
+    if (position === "side-page" && (!pageId || !draftPages.some(function (p) { return p.id === pageId; }))) { status("st-msg", "اختر الصفحة الجانبية التي سيظهر العنصر داخلها.", "error"); return; }
+    if (type !== "divider" && !title && !textValue && !imageUrl && !field("el-label").trim()) { status("st-msg", "أضف محتوى للعنصر قبل الحفظ.", "error"); return; }
+    var id = field("el-edit-id");
+    var item = {id:id || makeId("element"),type:type,title:title.slice(0,120),text:textValue.slice(0,4000),imageUrl:imageUrl,label:field("el-label").trim().slice(0,100),url:pageId && type === "button" ? "" : (url(buttonUrl,true) || ""),pageId:pageId,position:position,align:field("el-align"),width:field("el-width"),background:color(field("el-bg"),"#171827"),textColor:color(field("el-color"),"#f5f6ff")};
+    var index = draftElements.findIndex(function (el) { return el.id === id; });
+    if (index >= 0) draftElements[index] = item; else draftElements.push(item);
+    document.getElementById("el-edit-id").value = "";
+    ["el-title","el-text","el-image","el-label","el-url"].forEach(function (key) { document.getElementById(key).value = ""; });
+    document.getElementById("el-add").textContent = "➕ إضافة العنصر";
+    renderDraftElements(); status("st-msg", "تمت إضافة العنصر إلى المسودة. اضغط حفظ التعديلات لنشره.", "success");
+  }
+
+  function createPositionArea(position, kind, areas) {
+    if (areas[position]) return areas[position];
+    var area = document.createElement("div");
+    area.className = "as-dynamic-area";
+    area.dataset.position = position;
+    area.dataset.renderKind = kind;
+    var parent = null, before = null;
+    if (position === "after-hero") { var hero = document.querySelector(".hero"); parent = hero && hero.parentNode; before = hero && hero.nextSibling; }
+    else if (position === "after-features") { var features = document.querySelector("#features"); parent = features && features.parentNode; before = features && features.nextSibling; }
+    else if (position === "after-gallery") { var gallery = document.querySelector("#gallery"); parent = gallery && gallery.parentNode; before = gallery && gallery.nextSibling; }
+    else if (position === "before-footer") { var footer = document.querySelector("footer"); parent = footer && footer.parentNode; before = footer; }
+    else if (position === "top") { var header = document.querySelector("header"); parent = header && header.parentNode; before = header && header.nextSibling; }
+    else if (position === "floating-left" || position === "floating-right") { parent = document.body; }
+    if (parent) { parent.insertBefore(area, before || null); areas[position] = area; }
+    return area;
+  }
+  function createPageLayer() {
+    if (document.getElementById("as-page-overlay")) return;
+    var overlay = document.createElement("div");
+    overlay.id = "as-page-overlay"; overlay.className = "as-page-overlay";
+    var panel = document.createElement("div"); panel.className = "as-page-panel"; panel.id = "as-page-panel";
+    panel.innerHTML = "<div class='as-page-head'><strong id='as-page-heading'>صفحة</strong><button type='button' class='as-page-close' id='as-page-close'>✕ إغلاق</button></div><div class='as-page-content' id='as-page-content'></div>";
+    overlay.appendChild(panel); document.body.appendChild(overlay);
+    document.getElementById("as-page-close").addEventListener("click", closeSidePage);
+    overlay.addEventListener("click", function (event) { if (event.target === overlay) closeSidePage(); });
+    document.addEventListener("keydown", function (event) { if (event.key === "Escape") closeSidePage(); });
+    document.addEventListener("click", function (event) {
+      var trigger = event.target.closest ? event.target.closest("[data-as-page]") : null;
+      if (!trigger) return;
+      event.preventDefault(); openSidePage(trigger.getAttribute("data-as-page"));
+    });
+  }
+  function closeSidePage() { var overlay = document.getElementById("as-page-overlay"); if (overlay) overlay.style.display = "none"; }
+  function renderPageElement(item, parent) {
+    var node = buildElementNode(item);
+    if (node) parent.appendChild(node);
+  }
+  function openSidePage(id) {
+    createPageLayer();
+    var page = publishedPages.find(function (p) { return p.id === id; });
+    if (!page) return;
+    var overlay = document.getElementById("as-page-overlay"), panel = document.getElementById("as-page-panel");
+    panel.style.background = color(page.background, "#111422");
+    panel.style.color = color(page.textColor, "#f5f6ff");
+    panel.style.width = "min(" + (page.width || "760px") + ",94vw)";
+    panel.style.marginLeft = page.side === "left" ? "0" : "auto";
+    panel.style.marginRight = page.side === "left" ? "auto" : "0";
+    document.getElementById("as-page-heading").textContent = page.title;
+    var content = document.getElementById("as-page-content"); content.textContent = "";
+    var heading = document.createElement("h2"); heading.textContent = page.title; heading.style.color = color(page.accent, "#a78bfa");
+    content.appendChild(heading);
+    if (page.subtitle) { var sub = document.createElement("p"); sub.className = "as-page-subtitle"; sub.textContent = page.subtitle; content.appendChild(sub); }
+    if (page.body) { var body = document.createElement("div"); body.className = "as-page-body"; body.textContent = page.body; content.appendChild(body); }
+    draftSafePageElements(id, content);
+    overlay.style.display = "flex";
+    panel.scrollTop = 0;
+  }
+  function draftSafePageElements(pageId, content) {
+    var items = window.__asPublishedElements || [];
+    items.filter(function (item) { return item.position === "side-page" && item.pageId === pageId; }).forEach(function (item) { renderPageElement(item, content); });
+  }
+  function buildElementNode(item) {
+    var wrapper = document.createElement("div"); wrapper.className = "as-element";
+    wrapper.style.width = item.width || "100%";
+    wrapper.style.marginLeft = item.align === "right" ? "0" : item.align === "left" ? "auto" : "auto";
+    wrapper.style.marginRight = item.align === "left" ? "0" : item.align === "right" ? "auto" : "auto";
+    wrapper.style.textAlign = item.align || "center";
+    wrapper.style.background = item.type === "divider" ? "transparent" : color(item.background, "#171827");
+    wrapper.style.color = color(item.textColor, "#f5f6ff");
+    if (item.type === "divider") { var hr = document.createElement("hr"); hr.style.border = "0"; hr.style.borderTop = "1px solid " + color(item.textColor, "#8b8b9d"); wrapper.style.padding = "0"; wrapper.appendChild(hr); return wrapper; }
+    if (item.type === "image") { var img = document.createElement("img"); img.src = url(item.imageUrl,false) || ""; img.alt = item.title || "صورة مضافة"; img.loading = "lazy"; wrapper.appendChild(img); }
+    if (item.type === "text" || item.type === "banner") {
+      if (item.title) { var heading = document.createElement("h3"); heading.textContent = item.title; wrapper.appendChild(heading); }
+      if (item.text) { var paragraph = document.createElement("p"); paragraph.textContent = item.text; wrapper.appendChild(paragraph); }
+    }
+    if (item.type === "button") {
+      var anchor = document.createElement("a"); anchor.className = "as-element-button"; anchor.textContent = item.label || item.title || "فتح";
+      if (item.pageId) { anchor.href = "#"; anchor.setAttribute("data-as-page", item.pageId); }
+      else { var target = url(item.url,true); if (!target) return wrapper; anchor.href = target; if (/^https:\/\//i.test(target) && new URL(target).origin !== location.origin) { anchor.target = "_blank"; anchor.rel = "noopener"; } }
+      wrapper.appendChild(anchor);
+    }
+    return wrapper;
+  }
+  function renderCustomButtons(buttons) {
+    document.querySelectorAll("[data-as-generated-button='1'],.as-dynamic-area[data-render-kind='buttons']").forEach(function (el) { el.remove(); });
+    var areas = {}, nav = document.querySelector("header nav"), actions = document.querySelector(".hero .actions");
+    (buttons || []).forEach(function (item) {
+      var a = document.createElement("a"); a.className = "as-custom-button " + (item.style || "gradient"); a.setAttribute("data-as-generated-button","1");
+      a.textContent = (item.icon ? item.icon + " " : "") + item.label;
+      if (item.pageId) { a.href = "#"; a.setAttribute("data-as-page", item.pageId); }
+      else { var target = url(item.url,true); if (!target) return; a.href = target; if (/^https:\/\//i.test(target) && new URL(target).origin !== location.origin) { a.target = "_blank"; a.rel = "noopener"; } }
+      if (item.position === "header-nav" && nav) { a.style.padding = "5px 10px"; a.style.fontSize = "12px"; nav.appendChild(a); }
+      else if (item.position === "hero-actions" && actions) actions.appendChild(a);
+      else { var area = createPositionArea(item.position,"buttons",areas); if (area) area.appendChild(a); }
+    });
+  }
+  function renderElements(elements, pages) {
+    document.querySelectorAll(".as-dynamic-area[data-render-kind='elements']").forEach(function (el) { el.remove(); });
+    window.__asPublishedElements = Array.isArray(elements) ? elements : [];
+    var areas = {};
+    (elements || []).filter(function (item) { return item.position !== "side-page"; }).forEach(function (item) {
+      var node = buildElementNode(item), area = createPositionArea(item.position,"elements",areas);
+      if (node && area) area.appendChild(node);
+    });
+  }
+  function renderSidePages(pages) {
+    publishedPages = Array.isArray(pages) ? pages : [];
+    createPageLayer();
+    document.querySelectorAll("[data-as-page-nav='1']").forEach(function (el) { el.remove(); });
+    var nav = document.querySelector("header nav");
+    if (nav) publishedPages.forEach(function (page) {
+      var link = document.createElement("a"); link.href = "#"; link.textContent = page.title; link.setAttribute("data-as-page",page.id); link.setAttribute("data-as-page-nav","1"); nav.appendChild(link);
+    });
+  }
+
   function fill(data) {
     data = data || {};
     var d = Object.assign({}, defaults, data);
