@@ -72,9 +72,8 @@
     </div>
 
     <div class="sb-body">
-      <!-- 1. النصوص والأيقونات -->
       <div id="t-text" class="tab-pane">
-        <label>أيقونة الشارة العلوية (اختر أو اكتب)</label>
+        <label>أيقونة الشارة العلوية</label>
         <div class="row">
           <input type="text" id="tag-ico" value="✨" oninput="liveSync()" style="width:65px;text-align:center;font-size:18px">
           <input type="text" id="h-tag" oninput="liveSync()" placeholder="نص الشارة العلوية">
@@ -112,7 +111,6 @@
         <input type="text" id="wa-num" oninput="liveSync()" value="201127502899">
       </div>
 
-      <!-- 2. الألوان والتدرجات -->
       <div id="t-color" class="tab-pane hide">
         <div class="sec-box">
           <strong style="color:#a78bfa;font-size:12px">تدرج الأزرار والعناصر المميزة</strong>
@@ -138,7 +136,6 @@
         </div>
       </div>
 
-      <!-- 3. الخطوط والأنميشن -->
       <div id="t-anim" class="tab-pane hide">
         <label>نوع الخط العربي</label>
         <select id="f-font" onchange="liveSync()">
@@ -165,3 +162,7 @@
             <option value="none">بدون حركة إضافية</option>
             <option value="fadeUp">انزلاق ناعم لأعلى (Fade Up)</option>
             <option value="zoomIn">تكبير تدريجي (Zoom In)</option>
+            <option value="pulseBtn">نبض مستمر لزر التحميل (Pulse)</option>
+          </select>
+
+          <label>سرعة الحركة (بالثواني) <span id="v-aspd" class="val">1.0s</span></label>
