@@ -89,11 +89,13 @@
     document.body.appendChild(overlay);
 
     fab.addEventListener("click", function () { overlay.style.display = "flex"; });
+    document.getElementById("as-analytics-refresh").addEventListener("click", refreshAnalytics);
     document.getElementById("st-close").addEventListener("click", function () { overlay.style.display = "none"; });
     document.querySelectorAll("#studio-overlay .st-tab").forEach(function (tab) {
       tab.addEventListener("click", function () {
         document.querySelectorAll("#studio-overlay .st-tab").forEach(function (t) { t.classList.toggle("active", t === tab); });
         document.querySelectorAll("#studio-overlay .st-pane").forEach(function (p) { p.classList.toggle("active", p.id === tab.getAttribute("data-t")); });
+        if (tab.getAttribute("data-t") === "p-analytics") refreshAnalytics();
       });
     });
     document.getElementById("st-go").addEventListener("click", login);
@@ -588,7 +590,216 @@
     } finally { button.disabled = false; button.textContent = "دخول للوحة التحكم"; }
   }
 
+
+  function analyticsStatus(message, isError) {
+    var el = document.getElementById("as-analytics-status");
+    if (!el) return;
+    el.textContent = message;
+    el.classList.toggle("as-analytics-status-error", !!isError);
+  }
+  function visitorBrowserId() {
+    var key = "artboard_analytics_visitor_id";
+    try {
+      var value = localStorage.getItem(key);
+      if (value && /^[a-zA-Z0-9_-]{16,100}$/.test(value)) return value;
+      value = (window.crypto && crypto.randomUUID) ? crypto.randomUUID().replace(/-/g, "") :
+        ("v" + Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2));
+      localStorage.setItem(key, value);
+      return value;
+    } catch (e) {
+      if (!window.__asVisitorId) window.__asVisitorId = "v" + Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+      return window.__asVisitorId;
+    }
+  }
+  function trackAnalyticsEvent(type) {
+    if (!ANALYTICS_API_URL || ANALYTICS_API_URL.indexOf("REPLACE_") >= 0) return;
+    var payload = {
+      type: type,
+      visitorId: visitorBrowserId(),
+      path: location.pathname,
+      referrer: document.referrer || ""
+    };
+    fetch(ANALYTICS_API_URL.replace(/\/$/, "") + "/track", {
+      method: "POST",
+      mode: "cors",
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).catch(function () {});
+  }
+  function initVisitorTracking() {
+    if (window.__artboardAnalyticsTrackingStarted) return;
+    window.__artboardAnalyticsTrackingStarted = true;
+    trackAnalyticsEvent("visit");
+    document.addEventListener("click", function (event) {
+      var anchor = event.target && event.target.closest ? event.target.closest("a") : null;
+      if (!anchor) return;
+      var href = anchor.href || "";
+      var fileDownload = anchor.hasAttribute("download") ||
+        /\.(?:rar|zip|7z|exe|msi|dmg)(?:[?#]|$)/i.test(href) ||
+        anchor.hasAttribute("data-analytics-download");
+      if (fileDownload) trackAnalyticsEvent("download");
+    }, true);
+  }
+  function loadLeaflet() {
+    if (window.L) return Promise.resolve(window.L);
+    if (analyticsLeafletPromise) return analyticsLeafletPromise;
+    analyticsLeafletPromise = new Promise(function (resolve, reject) {
+      if (!document.getElementById("as-leaflet-css")) {
+        var css = document.createElement("link");
+        css.id = "as-leaflet-css"; css.rel = "stylesheet";
+        css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        document.head.appendChild(css);
+      }
+      var script = document.createElement("script");
+      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      script.onload = function () { resolve(window.L); };
+      script.onerror = function () { analyticsLeafletPromise = null; reject(new Error("تعذر تحميل مكتبة الخريطة.")); };
+      document.head.appendChild(script);
+    });
+    return analyticsLeafletPromise;
+  }
+  function drawAnalyticsChart(rows) {
+    var canvas = document.getElementById("as-analytics-chart");
+    if (!canvas) return;
+    var rect = canvas.getBoundingClientRect(), width = Math.max(320, rect.width || 600), height = 210;
+    var ratio = window.devicePixelRatio || 1;
+    canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
+    canvas.style.width = "100%"; canvas.style.height = height + "px";
+    var ctx = canvas.getContext("2d"); ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    var left = 34, right = 10, top = 12, bottom = 32;
+    var chartW = width - left - right, chartH = height - top - bottom;
+    var max = 1;
+    rows.forEach(function (r) { max = Math.max(max, Number(r.visits) || 0, Number(r.downloads) || 0); });
+    ctx.font = "10px Cairo,Tahoma,sans-serif";
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (var g = 0; g <= 4; g++) {
+      var y = top + chartH - (chartH * g / 4);
+      ctx.strokeStyle = "rgba(148,163,184,.18)"; ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(width - right, y); ctx.stroke();
+      ctx.fillStyle = "#9ca3b8"; ctx.fillText(String(Math.round(max * g / 4)), left - 6, y);
+    }
+    var slot = chartW / Math.max(rows.length, 1), bw = Math.max(2, Math.min(12, slot * .28));
+    rows.forEach(function (r, i) {
+      var x = left + slot * i + slot / 2;
+      var visits = Number(r.visits) || 0, downloads = Number(r.downloads) || 0;
+      var vh = visits / max * chartH, dh = downloads / max * chartH;
+      ctx.fillStyle = "#a78bfa"; ctx.fillRect(x - bw - 1, top + chartH - vh, bw, vh);
+      ctx.fillStyle = "#67e8f9"; ctx.fillRect(x + 1, top + chartH - dh, bw, dh);
+      if (rows.length <= 15 || i % Math.ceil(rows.length / 10) === 0 || i === rows.length - 1) {
+        ctx.fillStyle = "#aeb6cc"; ctx.textAlign = "center"; ctx.textBaseline = "top";
+        ctx.fillText(String(r.day || "").slice(5), x, top + chartH + 8);
+      }
+    });
+  }
+  function renderAnalyticsCountries(rows) {
+    var target = document.getElementById("as-analytics-countries");
+    if (!target) return; target.textContent = "";
+    if (!rows || !rows.length) { target.textContent = "لا توجد بيانات حسب الدولة حتى الآن."; return; }
+    rows.forEach(function (row) {
+      var line = document.createElement("div"); line.className = "as-analytics-country";
+      var country = document.createElement("span"); country.textContent = row.country || "غير معروف";
+      var count = document.createElement("strong"); count.textContent = Number(row.visitors || 0).toLocaleString("ar-EG") + " زائر";
+      line.appendChild(country); line.appendChild(count); target.appendChild(line);
+    });
+  }
+  function renderAnalyticsRecent(rows) {
+    var body = document.getElementById("as-analytics-recent");
+    if (!body) return; body.textContent = "";
+    if (!rows || !rows.length) {
+      var empty = document.createElement("tr"), cell = document.createElement("td");
+      cell.colSpan = 4; cell.textContent = "لا توجد زيارات مسجلة في الفترة المحددة.";
+      empty.appendChild(cell); body.appendChild(empty); return;
+    }
+    rows.forEach(function (row) {
+      var tr = document.createElement("tr");
+      var date = document.createElement("td");
+      var parsed = new Date(row.created_at);
+      date.textContent = isNaN(parsed.getTime()) ? String(row.created_at || "") : parsed.toLocaleString("ar-EG");
+      var ip = document.createElement("td"); ip.textContent = row.ip_address || "غير متاح";
+      ip.style.direction = "ltr"; ip.style.whiteSpace = "nowrap";
+      var locationCell = document.createElement("td");
+      locationCell.textContent = [row.city,row.region,row.country].filter(Boolean).join("، ") || "غير معروف";
+      var path = document.createElement("td"); path.textContent = row.page_path || "/";
+      path.style.direction = "ltr"; path.style.maxWidth = "130px"; path.style.overflowWrap = "anywhere";
+      tr.appendChild(date); tr.appendChild(ip); tr.appendChild(locationCell); tr.appendChild(path); body.appendChild(tr);
+    });
+  }
+  async function renderAnalyticsMap(points) {
+    var container = document.getElementById("as-analytics-map");
+    if (!container) return;
+    try {
+      await loadLeaflet();
+      if (!analyticsMapInstance) {
+        analyticsMapInstance = L.map(container, { scrollWheelZoom: false }).setView([25, 20], 2);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 18,
+          attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(analyticsMapInstance);
+        analyticsMapLayer = L.layerGroup().addTo(analyticsMapInstance);
+      }
+      analyticsMapLayer.clearLayers();
+      var bounds = [];
+      (points || []).forEach(function (point) {
+        var lat = Number(point.latitude), lon = Number(point.longitude);
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+        var circle = L.circleMarker([lat, lon], {
+          radius: Math.min(15, 6 + Number(point.visitors || 0)),
+          color: "#c4b5fd", weight: 1, fillColor: "#7954ec", fillOpacity: 0.72
+        });
+        var popup = document.createElement("div");
+        var strong = document.createElement("strong");
+        strong.textContent = [point.city,point.region,point.country].filter(Boolean).join("، ") || "موقع غير معروف";
+        var count = document.createElement("div");
+        count.textContent = Number(point.visitors || 0).toLocaleString("ar-EG") + " زائر فريد";
+        popup.appendChild(strong); popup.appendChild(count);
+        circle.bindPopup(popup).addTo(analyticsMapLayer); bounds.push([lat,lon]);
+      });
+      if (bounds.length === 1) analyticsMapInstance.setView(bounds[0], 5);
+      else if (bounds.length > 1) analyticsMapInstance.fitBounds(bounds, { padding: [24,24], maxZoom: 5 });
+      setTimeout(function () { if (analyticsMapInstance) analyticsMapInstance.invalidateSize(); }, 120);
+    } catch (error) {
+      container.textContent = error.message || "تعذر عرض الخريطة.";
+    }
+  }
+  async function refreshAnalytics() {
+    if (!currentUser) { analyticsStatus("سجّل الدخول بحساب الإدارة أولًا.", true); return; }
+    var button = document.getElementById("as-analytics-refresh");
+    var days = document.getElementById("as-analytics-days");
+    var range = days ? days.value : "30";
+    if (button) { button.disabled = true; button.textContent = "جارٍ التحميل..."; }
+    analyticsStatus("جارٍ جلب بيانات الزوار والتنزيلات...");
+    try {
+      var token = await currentUser.getIdToken(true);
+      var response = await fetch(ANALYTICS_API_URL.replace(/\/$/, "") + "/admin/summary?days=" + encodeURIComponent(range), {
+        method: "GET", mode: "cors", cache: "no-store",
+        headers: { "Authorization": "Bearer " + token }
+      });
+      var data = await response.json();
+      if (!response.ok || !data.ok) {
+        if (response.status === 401) throw new Error("رفض الخادم التحقق من حساب الإدارة. تأكد من صحة Firebase API Key وأن البريد موثّق.");
+        if (response.status === 404) throw new Error("خدمة التحليلات غير منشورة بعد على Cloudflare Worker.");
+        throw new Error(data.error || "تعذر تحميل الإحصائيات.");
+      }
+      var summary = data.summary || {};
+      [["as-kpi-visits",summary.visits],["as-kpi-unique",summary.unique_visitors],["as-kpi-downloads",summary.downloads],["as-kpi-countries",summary.countries]].forEach(function (pair) {
+        var el = document.getElementById(pair[0]); if (el) el.textContent = Number(pair[1] || 0).toLocaleString("ar-EG");
+      });
+      renderAnalyticsCountries(data.countries || []);
+      renderAnalyticsRecent(data.recent || []);
+      drawAnalyticsChart(data.daily || []);
+      await renderAnalyticsMap(data.mapPoints || []);
+      analyticsStatus("تم تحديث البيانات. النطاق: آخر " + range + " يومًا. الاحتفاظ بالسجلات: 30 يومًا.", false);
+    } catch (error) {
+      analyticsStatus(error.message || "تعذر الاتصال بخدمة التحليلات. تأكد من نشر Cloudflare Worker.", true);
+      console.error("Analytics dashboard error:", error);
+    } finally {
+      if (button) { button.disabled = false; button.textContent = "↻ تحديث الإحصائيات"; }
+    }
+  }
+
   function start() {
+    initVisitorTracking();
     addStyles(); buildPanel();
     try {
       if (!window.firebase) throw new Error("Firebase SDK غير متاح.");
