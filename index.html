@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>document.documentElement.classList.add("as-content-loading");window.setTimeout(function(){document.documentElement.classList.remove("as-content-loading");},10000);</script>
+<style>html.as-content-loading body{visibility:hidden}html.as-content-loading::before{content:"جارٍ تحميل أحدث نسخة من الموقع…";position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#090b13;color:#c4b5fd;font:700 16px Cairo,Tahoma,sans-serif}</style>
 <meta name="description" content="Artboard Studio - إضافة احترافية لأدوات Adobe Illustrator">
 <title>Artboard Studio | أدوات احترافية لإليستريتور</title>
 <style>
@@ -588,6 +590,7 @@ footer{
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="./admin-panel.js?v=4"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="./admin-panel.js?v=5"></script>
 </body>
 </html>
