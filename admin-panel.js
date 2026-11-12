@@ -1001,7 +1001,7 @@
       if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
       db = firebase.firestore(); auth = firebase.auth(); storage = firebase.storage();
       // Keep every open visitor tab synchronized with published site content.
-      db.collection("site").doc("content").onSnapshot(function (snap) {
+      db.collection("site").doc("content").onSnapshot({ includeMetadataChanges: true }, function (snap) {
         if (snap.metadata && snap.metadata.fromCache) return;
         if (!snap.exists) { revealPublishedSite(); return; }
         var published = snap.data();
