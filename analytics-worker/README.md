@@ -82,7 +82,7 @@ If Cloudflare prints a different URL, update `ANALYTICS_API_URL` near the top of
 ## Dashboard endpoints
 
 - `POST /track` — public, accepts only `visit` and `download` events from the configured site origin.
-- `GET /admin/summary?days=7|30|90` — Firebase-admin authenticated summary, daily counts, countries, map points and recent visit/IP records.
+- `GET /admin/summary?days=7|30` — Firebase-admin authenticated summary, daily counts, countries, map points and recent visit/IP records.
 
 ## Privacy and operational notes
 
