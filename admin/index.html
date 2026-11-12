@@ -141,15 +141,21 @@
 </div>
 
 <script>
-  // تحميل الخطوط وتنسيق المحرر بأمان
-  const p = 'https:/' + '/';
+  // بناء الروابط برمجياً لمنع المتصفح من اختصارها نهائياً
+  const pr = ['ht', 'tp', 's:', '/', '/'].join('');
+  const gFontUrl = pr + ['fo', 'nts.', 'goo', 'gle', 'apis.', 'com/css2?family=Cairo:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap'].join('');
+  const qCssUrl = pr + ['cd', 'n.', 'qui', 'lljs.', 'com/1.3.6/quill.snow.css'].join('');
+  const qJsUrl = pr + ['cd', 'n.', 'qui', 'lljs.', 'com/1.3.6/quill.js'].join('');
+  const fbBaseUrl = pr + ['ww', 'w.', 'gst', 'atic.', 'com/firebasejs/10.8.0/'].join('');
+  const uploadApiUrl = pr + ['tm', 'pfi', 'les.', 'org/api/v1/upload'].join('');
+
   function addCss(u) {
     const l = document.createElement('link');
     l.rel = 'stylesheet'; l.href = u;
     document.head.appendChild(l);
   }
-  addCss(p + '://googleapis.com');
-  addCss(p + '://quilljs.com');
+  addCss(gFontUrl);
+  addCss(qCssUrl);
 
   function addJs(u) {
     return new Promise((res, rej) => {
@@ -164,22 +170,21 @@
   (async function startAdmin() {
     try {
       errBox.innerText = 'جاري تجهيز النظام...';
-      const fb = p + '://gstatic.com';
-      await addJs(fb + 'firebase-app-compat.js');
-      await addJs(fb + 'firebase-auth-compat.js');
-      await addJs(fb + 'firebase-firestore-compat.js');
-      await addJs(p + '://quilljs.com');
+      await addJs(fbBaseUrl + 'firebase-app-compat.js');
+      await addJs(fbBaseUrl + 'firebase-auth-compat.js');
+      await addJs(fbBaseUrl + 'firebase-firestore-compat.js');
+      await addJs(qJsUrl);
 
       const firebaseConfig = {
         apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zKKCE83xWeRxg",
-        authDomain: "://firebaseapp.com",
+        authDomain: ["artboardstudio-117a6", ".firebaseapp", ".com"].join(''),
         projectId: "artboardstudio-117a6",
-        storageBucket: "artboardstudio-117a6.firebasestorage.app",
+        storageBucket: ["artboardstudio-117a6", ".firebasestorage", ".app"].join(''),
         messagingSenderId: "26311402131",
         appId: "1:26311402131:web:7c2950a172814b2ba0e366"
       };
 
-      firebase.initializeApp(firebaseConfig);
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
       const db = firebase.firestore();
 
@@ -216,13 +221,3 @@
             if (d.whatsappNumber) document.getElementById('whatsapp-number').value = d.whatsappNumber;
             if (d.downloadFileUrl) document.getElementById('download-file-url').value = d.downloadFileUrl;
             if (d.galleryImg1) document.getElementById('gallery-img-1').value = d.galleryImg1;
-            if (d.galleryImg2) document.getElementById('gallery-img-2').value = d.galleryImg2;
-            if (d.galleryImg3) document.getElementById('gallery-img-3').value = d.galleryImg3;
-          }
-        } else {
-          document.getElementById('login-section').classList.remove('hidden');
-          document.getElementById('dashboard-section').classList.add('hidden');
-        }
-      });
-
-      // زر الدخول
