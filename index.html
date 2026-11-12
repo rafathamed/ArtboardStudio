@@ -7,7 +7,7 @@
 <title>Artboard Studio | أدوات احترافية لإليستريتور</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
-
+@import url('https://googleapis.com');
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
@@ -569,4 +569,74 @@ footer{
 })();
 </script>
 </body>
+ <!-- ربط موقع Artboard Studio بلوحة تحكم الأدمن -->
+<script type="module">
+  import { initializeApp } from "https://gstatic.com";
+  import { getFirestore, doc, getDoc } from "https://gstatic.com";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBYZy3hL5Nolj7KyFd3g8zKKCE83xWeRxg",
+    authDomain: "://firebaseapp.com",
+    projectId: "artboardstudio-117a6",
+    storageBucket: "artboardstudio-117a6.firebasestorage.app",
+    messagingSenderId: "26311402131",
+    appId: "1:26311402131:web:7c2950a172814b2ba0e366",
+    measurementId: "G-E2Z3V238QJ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function applyAdminSettings() {
+    try {
+      const snap = await getDoc(doc(db, "site", "content"));
+      if (!snap.exists()) return;
+      const d = snap.data();
+
+      // 1. التحكم في الخطوط والأحجام واللون الرئيسي
+      if (d.siteFont) document.body.style.fontFamily = d.siteFont;
+      if (d.baseFontSize) document.body.style.fontSize = d.baseFontSize + 'px';
+      if (d.primaryColor) {
+        document.querySelectorAll('.primary').forEach(btn => btn.style.background = d.primaryColor);
+        document.querySelectorAll('.logo span, h1 span').forEach(sp => sp.style.color = d.primaryColor);
+      }
+
+      // 2. تحديث العنوان الرئيسي والوصف
+      const heroTitle = document.querySelector('.hero h1');
+      if (heroTitle && d.heroTitle) {
+        heroTitle.innerText = d.heroTitle;
+        if (d.heroTitleSize) heroTitle.style.fontSize = d.heroTitleSize + 'px';
+      }
+
+      const heroDesc = document.querySelector('.hero p');
+      if (heroDesc && d.heroDescHtml && d.heroDescHtml !== '<p><br></p>') {
+        heroDesc.innerHTML = d.heroDescHtml;
+      }
+
+      // 3. تحديث زر التحميل ورابط الملف
+      const dlBtn = document.querySelector('.hero .btn.primary');
+      if (dlBtn) {
+        if (d.downloadBtnText) dlBtn.innerText = d.downloadBtnText;
+        if (d.downloadFileUrl) dlBtn.href = d.downloadFileUrl;
+      }
+
+      // 4. تحديث رقم الواتساب في جميع أزرار الواتساب
+      if (d.whatsappNumber) {
+        document.querySelectorAll('a[href*="wa.me"]').forEach(wa => {
+          wa.href = `https://wa.me{d.whatsappNumber}`;
+        });
+      }
+
+      // 5. تحديث صور المعرض الثلاث تلقائياً
+      const slides = document.querySelectorAll('.panel-slides .slide img');
+      if (slides[0] && d.galleryImg1) slides[0].src = d.galleryImg1;
+      if (slides[1] && d.galleryImg2) slides[1].src = d.galleryImg2;
+      if (slides[2] && d.galleryImg3) slides[2].src = d.galleryImg3;
+
+    } catch (e) {
+      console.error("Admin sync error:", e);
+    }
+  }
+  applyAdminSettings();
+</script>
 </html>
