@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة تحكم الأدمن | Artboard Studio</title>
-  <link href="https://googleapis.com" rel="stylesheet">
-  <link href="https://quilljs.com" rel="stylesheet">
+  <link id="g-fonts" rel="stylesheet">
+  <link id="q-css" rel="stylesheet">
   <style>
     * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
     body { background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
@@ -13,7 +13,7 @@
     .card { background: #1e293b; padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #334155; }
     h1, h2, h3 { margin-top: 0; color: #38bdf8; }
     label { display: block; margin: 12px 0 6px; font-weight: 600; color: #cbd5e1; }
-    input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="number"], select {
+    input, select {
       width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #475569;
       background: #0f172a; color: #fff; font-size: 15px;
     }
@@ -33,6 +33,10 @@
     .upload-btn { background: #475569; padding: 10px 15px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
     @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
   </style>
+  <script>
+    document.getElementById('g-fonts').href = 'https://googleapis.com';
+    document.getElementById('q-css').href = 'https://quilljs.com';
+  </script>
 </head>
 <body>
 
@@ -80,7 +84,7 @@
         </div>
         <div>
           <label>اللون الرئيسي للموقع (Accent Color)</label>
-          <input type="color" id="primary-color" value="#9877ff" style="height: 42px; width: 100%; cursor: pointer;">
+          <input type="color" id="primary-color" value="#9877ff" style="height: 42px; cursor: pointer;">
         </div>
       </div>
     </div>
