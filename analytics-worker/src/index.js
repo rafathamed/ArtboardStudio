@@ -77,13 +77,28 @@ async function authenticateAdmin(request, env) {
     return { ok: false, reason: "firebase_lookup_network_error" };
   }
 
-  if (!response.ok) return { ok: false, reason: "firebase_lookup_http_" + response.status };
-
   let data;
   try {
     data = await response.json();
   } catch {
     return { ok: false, reason: "firebase_lookup_invalid_response" };
+  }
+
+  if (!response.ok) {
+    const firebaseCode = String(data && data.error && data.error.message || "").split(":")[0].toUpperCase();
+    const safeCodes = new Set([
+      "API_KEY_INVALID",
+      "INVALID_ID_TOKEN",
+      "USER_DISABLED",
+      "USER_NOT_FOUND",
+      "PROJECT_NOT_FOUND",
+      "INVALID_LOGIN_CREDENTIALS",
+      "TOKEN_EXPIRED",
+      "INVALID_ARGUMENT",
+      "OPERATION_NOT_ALLOWED"
+    ]);
+    const diagnostic = safeCodes.has(firebaseCode) ? "firebase_" + firebaseCode.toLowerCase() : "firebase_lookup_http_" + response.status;
+    return { ok: false, reason: diagnostic };
   }
 
   const user = data && data.users && data.users[0];
