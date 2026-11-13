@@ -58,27 +58,44 @@ async function visitorHash(visitorId, secret) {
 
 async function authenticateAdmin(request, env) {
   const authorization = request.headers.get("Authorization") || "";
-  const match = authorization.match(/^Bearer\s+(.+)$/i);
-  if (!match || !env.FIREBASE_API_KEY) return false;
+  const match = authorization.match(/^Bearer\\s+(.+)$/i);
+  if (!match) return { ok: false, reason: "missing_bearer_token" };
+  if (!env.FIREBASE_API_KEY) return { ok: false, reason: "firebase_api_key_not_configured" };
 
   // Identity Toolkit validates the Firebase ID token signature, issuer, expiry and audience.
-  const response = await fetch(
-    "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + encodeURIComponent(env.FIREBASE_API_KEY),
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken: match[1] })
-    }
-  );
-  if (!response.ok) return false;
-  const data = await response.json();
+  let response;
+  try {
+    response = await fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + encodeURIComponent(env.FIREBASE_API_KEY),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken: match[1] })
+      }
+    );
+  } catch {
+    return { ok: false, reason: "firebase_lookup_network_error" };
+  }
+
+  if (!response.ok) return { ok: false, reason: "firebase_lookup_http_" + response.status };
+
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    return { ok: false, reason: "firebase_lookup_invalid_response" };
+  }
+
   const user = data && data.users && data.users[0];
-  const allowedAdmin = String(env.ADMIN_EMAIL || ADMIN_EMAIL).toLowerCase();
-  return !!(
-    user &&
-    String(user.email || "").toLowerCase() === allowedAdmin &&
-    user.emailVerified === true
-  );
+  if (!user) return { ok: false, reason: "firebase_user_missing" };
+
+  const allowedAdmin = String(env.ADMIN_EMAIL || ADMIN_EMAIL).trim().toLowerCase();
+  if (String(user.email || "").trim().toLowerCase() !== allowedAdmin) {
+    return { ok: false, reason: "admin_email_mismatch" };
+  }
+  if (user.emailVerified !== true) return { ok: false, reason: "email_not_verified" };
+
+  return { ok: true, reason: "authorized" };
 }
 
 async function trackEvent(request, env) {
@@ -137,7 +154,8 @@ async function trackEvent(request, env) {
 
 async function cloudinarySignature(request, env) {
   if (!validOrigin(request, env)) return json({ ok: false, error: "origin_not_allowed" }, 403);
-  if (!(await authenticateAdmin(request, env))) return json({ ok: false, error: "unauthorized" }, 401);
+  const auth = await authenticateAdmin(request, env);
+  if (!auth.ok) return json({ ok: false, error: "unauthorized", diagnostic: auth.reason }, 401);
   const cloudName = String(env.CLOUDINARY_CLOUD_NAME || "").trim();
   const apiKey = String(env.CLOUDINARY_API_KEY || "").trim();
   const apiSecret = String(env.CLOUDINARY_API_SECRET || "");
@@ -152,7 +170,8 @@ async function cloudinarySignature(request, env) {
 
 async function adminSummary(request, env) {
   if (!validOrigin(request, env)) return json({ ok: false, error: "origin_not_allowed" }, 403);
-  if (!(await authenticateAdmin(request, env))) return json({ ok: false, error: "unauthorized" }, 401);
+  const auth = await authenticateAdmin(request, env);
+  if (!auth.ok) return json({ ok: false, error: "unauthorized", diagnostic: auth.reason }, 401);
 
   // Enforce the 30-day retention window whenever the dashboard is opened.
   await env.DB.prepare("DELETE FROM analytics_events WHERE datetime(created_at) < datetime('now', '-30 days')").run();
