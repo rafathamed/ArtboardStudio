@@ -45,8 +45,8 @@
     el.style.setProperty("--as-dom-translate",(Number(item.x)||0)+"px "+(Number(item.y)||0)+"px");
     el.style.setProperty("--as-dom-scale",String(Math.max(.25,Math.min(3,Number(item.scale)||1))));
     el.classList.toggle("as-dom-deleted",!!item.deleted);
-    if(item.width!==undefined&&item.width!==null)el.style.setProperty("width",Number(item.width)<=0?"auto":Math.max(1,Math.min(10000,Number(item.width)))+"px","important");else el.style.removeProperty("width");
-    if(item.height!==undefined&&item.height!==null)el.style.setProperty("height",Number(item.height)<=0?"auto":Math.max(1,Math.min(10000,Number(item.height)))+"px","important");else el.style.removeProperty("height");
+    if(item.width!==undefined&&item.width!==null)el.style.setProperty("width",Number(item.width)<=0?"auto":Math.max(1,Math.min(10000,Number(item.width)))+"px","important");
+    if(item.height!==undefined&&item.height!==null)el.style.setProperty("height",Number(item.height)<=0?"auto":Math.max(1,Math.min(10000,Number(item.height)))+"px","important");
     if(Number(item.z)>0){el.classList.add("as-dom-layer");el.style.setProperty("--as-dom-z",String(Math.max(1,Math.min(9999,Number(item.z)||1))));}
     else{el.classList.remove("as-dom-layer");el.style.removeProperty("--as-dom-z");}
   }
