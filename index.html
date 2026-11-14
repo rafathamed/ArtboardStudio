@@ -24,7 +24,7 @@ html[dir="ltr"] .contact{text-align:center}
 <meta name="description" content="Artboard Studio - إضافة احترافية لأدوات Adobe Illustrator">
 <title>Artboard Studio | أدوات احترافية لإليستريتور</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Readex+Pro:wght@400;600;700&family=Tajawal:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;800&family=Noto+Sans+Devanagari:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;700;800&family=Noto+Sans+JP:wght@400;500;700;800&family=Almarai:wght@400;700;800&family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Readex+Pro:wght@400;600;700&family=Tajawal:wght@400;500;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
@@ -776,13 +776,15 @@ footer{
   footerDev:"開発者：RAFAT HAMED",privacy:"サイト改善のため、訪問数、ダウンロードクリック、IPアドレス、おおよそのネットワーク位置、ユニーク訪問者数を数えるランダムなブラウザー識別子を記録する場合があります。分析ログは最大30日間保存されます。"
  }
  };
- const langs={ar:{dir:"rtl",font:"'Cairo',sans-serif"},en:{dir:"ltr",font:"Arial,sans-serif"},ru:{dir:"ltr",font:"Arial,sans-serif"},hi:{dir:"ltr",font:"Arial,sans-serif"},zh:{dir:"ltr",font:"Arial,sans-serif"},ja:{dir:"ltr",font:"Arial,sans-serif"}};
+ const langs={ar:{dir:"rtl",font:"'Cairo',sans-serif"},en:{dir:"ltr",font:"'Noto Sans',Arial,sans-serif"},ru:{dir:"ltr",font:"'Noto Sans',Arial,sans-serif"},hi:{dir:"ltr",font:"'Noto Sans Devanagari','Noto Sans',sans-serif"},zh:{dir:"ltr",font:"'Noto Sans SC','Noto Sans',sans-serif"},ja:{dir:"ltr",font:"'Noto Sans JP','Noto Sans',sans-serif"}};
  const $=s=>document.querySelector(s);
  function setText(sel,val){const el=$(sel);if(el&&val!==undefined)el.textContent=val;}
  function apply(lang){
   const t=translations[lang]||translations.en;const meta=langs[lang]||langs.en;
   document.documentElement.lang=lang;document.documentElement.dir=meta.dir;
   document.body.style.fontFamily=meta.font;
+  const pageTitles={ar:"Artboard Studio | أدوات احترافية لإليستريتور",en:"Artboard Studio | Professional Illustrator Tools",ru:"Artboard Studio | Профессиональные инструменты для Illustrator",hi:"Artboard Studio | Illustrator के लिए पेशेवर टूल",zh:"Artboard Studio | Illustrator 专业工具",ja:"Artboard Studio | Illustrator向けプロツール"};
+  document.title=pageTitles[lang]||pageTitles.en;
   document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;if(t[k])el.textContent=t[k];});
   setText(".tag",t.tag);setText(".hero-grid > div:first-child > p",t.hero);
   setText(".hero .btn.whatsapp",t.whatsapp);setText('.hero .btn.secondary',t.discover);
