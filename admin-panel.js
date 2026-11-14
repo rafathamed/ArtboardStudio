@@ -27,10 +27,10 @@
     if (document.getElementById("as-admin-styles")) return;
     var css = [
       "#open-admin-fab{position:fixed;bottom:90px;left:18px;z-index:9998;background:#171827ee;color:#a78bfa;border:1px solid #5a4c93;padding:10px 15px;border-radius:30px;cursor:pointer;font:700 12px Cairo,Tahoma,sans-serif;backdrop-filter:blur(8px);box-shadow:0 8px 25px #0008}",
-      "#studio-overlay{display:none;position:fixed;top:0;right:0;width:410px;max-width:96vw;height:100vh;height:100dvh;z-index:9999;flex-direction:column;background:#111422;color:#f8fafc;border-left:1px solid #2e3452;box-shadow:-15px 0 50px #000c;font-family:Cairo,Tahoma,sans-serif;text-align:right}",
+      "#studio-overlay{display:none;position:fixed;top:8vh;right:8vw;width:480px;height:84vh;min-width:320px;min-height:360px;max-width:94vw;max-height:92vh;z-index:9999;flex-direction:column;resize:both;overflow:hidden;background:#111422;color:#f8fafc;border:1px solid #3b4260;border-radius:14px;box-shadow:0 18px 60px #000c;font-family:Cairo,Tahoma,sans-serif;text-align:right}",
       "#studio-overlay *{box-sizing:border-box}#studio-overlay input,#studio-overlay textarea,#studio-overlay select{width:100%;min-width:0;padding:9px 10px;border-radius:8px;border:1px solid #333954;background:#0b0d17;color:#fff;font:12px Cairo,Tahoma,sans-serif}",
       "#studio-overlay input[type=color]{height:38px;padding:3px;background:#0b0d17}#studio-overlay label{display:block;margin:10px 0 5px;font-size:12px;color:#d8def0}",
-      "#studio-overlay button{font-family:inherit}.st-head{padding:14px 16px;background:#171b2e;border-bottom:1px solid #262a40;display:flex;justify-content:space-between;align-items:center;gap:10px}.st-head strong{color:#a78bfa;font-size:14px}",
+      "#studio-overlay button{font-family:inherit}.st-head{padding:14px 16px;background:#171b2e;border-bottom:1px solid #262a40;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:move;touch-action:none;user-select:none}.st-head strong{color:#a78bfa;font-size:14px}.st-panel-size{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 12px;background:#101321;border-bottom:1px solid #262a40}.st-panel-size label{display:flex;align-items:center;gap:6px;margin:0;color:#aeb6cc;font-size:10px}.st-panel-size input{width:78px!important;padding:5px!important;text-align:center}",
       ".st-btn{border:0;border-radius:8px;padding:8px 12px;color:#fff;background:#343954;cursor:pointer;font-size:12px}.st-primary{background:linear-gradient(120deg,#7954ec,#a17aff);font-weight:800}.st-danger{background:#b91c1c}",
       ".st-tabs{display:flex;flex-wrap:wrap;overflow:visible;background:#0d0f1a;border-bottom:1px solid #262a40;scrollbar-width:thin}.st-tab{flex:1 1 18%;min-width:72px;border:0;background:transparent;color:#94a3b8;padding:11px 4px;font-size:10px;white-space:nowrap;cursor:pointer;border-bottom:2px solid transparent}.st-tab.active{color:#c4b5fd;border-color:#8b5cf6}",
       ".st-content{flex:1;overflow:auto;padding:14px;font-size:12px}.st-pane{display:none}.st-pane.active{display:block}.st-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.st-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}.st-row{display:flex;gap:7px;align-items:center}.st-row>*{min-width:0}",
@@ -58,7 +58,8 @@
     var overlay = document.createElement("aside");
     overlay.id = "studio-overlay"; overlay.setAttribute("dir", "rtl");
     overlay.innerHTML = [
-      "<div class='st-head'><strong>🎨 استوديو التحكم المباشر</strong><div class='st-row'><button type='button' class='st-btn st-danger st-hidden' id='st-logout'>خروج</button><button type='button' class='st-btn' id='st-close'>✕ إغلاق</button></div></div>",
+      "<div class='st-head'><strong>🎨 استوديو التحكم المباشر — اسحب الشريط لتحريك اللوحة</strong><div class='st-row'><button type='button' class='st-btn st-danger st-hidden' id='st-logout'>خروج</button><button type='button' class='st-btn' id='st-close'>✕ إغلاق</button></div></div>",
+      "<div class='st-panel-size'><label>العرض px <input type='number' id='st-panel-width' min='320' max='1800' value='480'></label><label>الارتفاع px <input type='number' id='st-panel-height' min='360' max='1400' value='760'></label></div>",
       "<div id='st-login' class='st-content'><h3 style='color:#38bdf8;font-size:16px;margin:0 0 12px'>تسجيل دخول الأدمن</h3>",
       "<label for='st-em'>البريد الإلكتروني</label><input type='email' id='st-em' value='rafathamed9@gmail.com' autocomplete='username'>",
       "<label for='st-pw'>كلمة المرور</label><input type='password' id='st-pw' placeholder='••••••••' autocomplete='current-password'>",
@@ -89,6 +90,28 @@
     ].join("");
     document.body.appendChild(overlay);
 
+    function setPanelSize(){
+      var w=Math.max(320,Math.min(1800,Number(document.getElementById("st-panel-width").value)||480));
+      var h=Math.max(360,Math.min(1400,Number(document.getElementById("st-panel-height").value)||760));
+      overlay.style.width=w+"px";overlay.style.height=h+"px";
+      document.getElementById("st-panel-width").value=w;document.getElementById("st-panel-height").value=h;
+    }
+    document.getElementById("st-panel-width").addEventListener("change",setPanelSize);
+    document.getElementById("st-panel-height").addEventListener("change",setPanelSize);
+    var panelDrag=null,head=overlay.querySelector(".st-head");
+    head.addEventListener("pointerdown",function(event){
+      if(event.button!==0||event.target.closest("button,input,select"))return;
+      var rect=overlay.getBoundingClientRect();panelDrag={x:event.clientX,y:event.clientY,left:rect.left,top:rect.top};
+      head.setPointerCapture(event.pointerId);event.preventDefault();
+    });
+    head.addEventListener("pointermove",function(event){
+      if(!panelDrag)return;
+      var left=panelDrag.left+event.clientX-panelDrag.x,top=panelDrag.top+event.clientY-panelDrag.y;
+      left=Math.max(0,Math.min(window.innerWidth-overlay.offsetWidth,left));top=Math.max(0,Math.min(window.innerHeight-overlay.offsetHeight,top));
+      overlay.style.left=left+"px";overlay.style.top=top+"px";overlay.style.right="auto";
+    });
+    function endPanelDrag(){panelDrag=null;}
+    head.addEventListener("pointerup",endPanelDrag);head.addEventListener("pointercancel",endPanelDrag);
     fab.addEventListener("click", function () { overlay.style.display = "flex"; });
     document.getElementById("as-analytics-refresh").addEventListener("click", refreshAnalytics);
     document.getElementById("st-close").addEventListener("click", function () { overlay.style.display = "none"; });
