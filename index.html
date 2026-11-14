@@ -60,6 +60,24 @@ h1 span{color:#a78bfa}
 .whatsapp{background:#168c58;color:white}
 .macos{background:linear-gradient(120deg,#7954ec,#a17aff);color:#fff}
 
+/* Platform icons above the download labels */
+.hero .btn.primary,.download-box .btn.primary,
+.hero .btn.macos,.download-box .btn.macos{
+ flex-direction:column;gap:3px;min-width:190px;min-height:82px;
+}
+.hero .btn.primary::before,.download-box .btn.primary::before{
+ content:"";display:block;width:25px;height:25px;
+ background:
+  linear-gradient(#fff 0 0) left top/11px 11px no-repeat,
+  linear-gradient(#fff 0 0) right top/11px 11px no-repeat,
+  linear-gradient(#fff 0 0) left bottom/11px 11px no-repeat,
+  linear-gradient(#fff 0 0) right bottom/11px 11px no-repeat;
+}
+.hero .btn.macos::before,.download-box .btn.macos::before{
+ content:"";display:block;font-family:Arial,sans-serif;
+ font-size:29px;line-height:27px;font-weight:400;
+}
+
 /* ============ Illustrator showcase ============ */
 .showcase{
  position:relative;perspective:1400px;
