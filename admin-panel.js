@@ -52,9 +52,6 @@
 
   function buildPanel() {
     if (document.getElementById("studio-overlay")) return;
-    var fab = document.createElement("button");
-    fab.id = "open-admin-fab"; fab.type = "button"; fab.title = "لوحة التحكم"; fab.textContent = "⚙️ الإدارة";
-    document.body.appendChild(fab);
     var overlay = document.createElement("aside");
     overlay.id = "studio-overlay"; overlay.setAttribute("dir", "rtl");
     overlay.innerHTML = [
@@ -112,7 +109,13 @@
     });
     function endPanelDrag(){panelDrag=null;}
     head.addEventListener("pointerup",endPanelDrag);head.addEventListener("pointercancel",endPanelDrag);
-    fab.addEventListener("click", function () { overlay.style.display = "flex"; });
+    // Hidden admin entry: Ctrl + Shift + Alt + A
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.shiftKey && event.altKey && event.key.toLowerCase() === "a") {
+        event.preventDefault();
+        overlay.style.display = "flex";
+      }
+    });
     document.getElementById("as-analytics-refresh").addEventListener("click", refreshAnalytics);
     document.getElementById("st-close").addEventListener("click", function () { overlay.style.display = "none"; });
     document.querySelectorAll("#studio-overlay .st-tab").forEach(function (tab) {
