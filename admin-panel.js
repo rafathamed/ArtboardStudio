@@ -61,7 +61,7 @@
       "<div class='st-head'><strong>🎨 استوديو التحكم المباشر — اسحب الشريط لتحريك اللوحة</strong><div class='st-row'><button type='button' class='st-btn st-danger st-hidden' id='st-logout'>خروج</button><button type='button' class='st-btn' id='st-close'>✕ إغلاق</button></div></div>",
       "<div class='st-panel-size'><label>العرض px <input type='number' id='st-panel-width' min='320' max='1800' value='480'></label><label>الارتفاع px <input type='number' id='st-panel-height' min='360' max='1400' value='760'></label></div>",
       "<div id='st-login' class='st-content'><h3 style='color:#38bdf8;font-size:16px;margin:0 0 12px'>تسجيل دخول الأدمن</h3>",
-      "<label for='st-em'>البريد الإلكتروني</label><input type='email' id='st-em' value='rafathamed9@gmail.com' autocomplete='username'>",
+      "<label for='st-em'>البريد الإلكتروني</label><input type='email' id='st-em' placeholder='أدخل البريد الإلكتروني' autocomplete='username'>",
       "<label for='st-pw'>كلمة المرور</label><input type='password' id='st-pw' placeholder='••••••••' autocomplete='current-password'>",
       "<button type='button' id='st-go' class='st-btn st-primary' style='width:100%;margin-top:14px;padding:11px'>دخول للوحة التحكم</button>",
       "<p class='st-note' style='margin-top:12px'>الدخول عبر Firebase Authentication. لا يتم حفظ كلمة المرور داخل الموقع.</p><div id='st-login-msg' class='st-status' role='status'>أدخل بيانات حساب الإدارة للمتابعة.</div></div>",
@@ -112,11 +112,7 @@
     });
     function endPanelDrag(){panelDrag=null;}
     head.addEventListener("pointerup",endPanelDrag);head.addEventListener("pointercancel",endPanelDrag);
-    fab.addEventListener("click", function () {
-      var emailField = document.getElementById("st-em");
-      if (emailField && !emailField.value.trim()) emailField.value = ADMIN_EMAIL;
-      overlay.style.display = "flex";
-    });
+    fab.addEventListener("click", function () { overlay.style.display = "flex"; });
     document.getElementById("as-analytics-refresh").addEventListener("click", refreshAnalytics);
     document.getElementById("st-close").addEventListener("click", function () { overlay.style.display = "none"; });
     document.querySelectorAll("#studio-overlay .st-tab").forEach(function (tab) {
