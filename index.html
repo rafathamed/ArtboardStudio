@@ -80,6 +80,20 @@ h1 span{color:#a78bfa}
 }
 .hero .btn.macos::after,.download-box .btn.macos::after{content:none;}
 
+/* Consistent wider download and action buttons */
+.hero .actions .btn,.download-box .btn{
+ width:240px;min-width:240px;min-height:88px;
+}
+.hero .actions{gap:12px}
+.download-box .btn{margin:5px}
+@media(max-width:520px){
+ .hero .actions .btn,.download-box .btn{
+  width:min(100%,320px);min-width:0;
+ }
+ .hero .actions{justify-content:center}
+}
+
+
 /* ============ Illustrator showcase ============ */
 .showcase{
  position:relative;perspective:1400px;
