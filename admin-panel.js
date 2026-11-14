@@ -16,7 +16,7 @@
   var defaults = {
     tagIcon:"✨", tagText:"إضافة احترافية للمصممين", heroTitle:"ARTBOARD STUDIO",
     heroDesc:"ارتقِ بتجربتك داخل Adobe Illustrator مع مجموعة من الأدوات العملية المصممة لتسهيل التعامل مع لوحات الرسم والصور والعناصر، وتعديل الصور وتحويلها مباشرة على لوحة العمل، وإنشاء رموز QR متجهية قابلة للتحرير.",
-    downloadIcon:"📥", downloadBtnText:"تحميل الإضافة الآن", downloadFileUrl:"./Artboard_Studio_1.12.0_Setup.exe",
+    downloadIcon:"📥", downloadBtnText:"Download for Windows", downloadFileUrl:"./Artboard_Studio_1.12.0_Setup.exe",
     whatsappNumber:"201127502899", buttonColor1:"#7954ec", buttonColor2:"#a17aff", buttonAngle:120,
     pageBg:"#090b13", glow1:"#30205a", glow2:"#102d4b", textColor:"#f5f6ff",
     secondaryTextColor:"#b9bdd0", siteFont:"'Cairo',sans-serif", baseFontSize:16,
@@ -67,7 +67,7 @@
       "<div class='st-content'>",
       "<section id='p-txt' class='st-pane active'><label>أيقونة ونص الشارة العلوية</label><div class='st-row'><input id='f-tico' value='✨' style='width:58px;text-align:center'><input id='f-tag' value='إضافة احترافية للمصممين'></div>",
       "<label>العنوان الرئيسي</label><input id='f-title' value='ARTBOARD STUDIO'><label>الوصف التعريفي أسفل العنوان</label><textarea id='f-desc' rows='4'></textarea>",
-      "<label>أيقونة ونص زر التحميل</label><div class='st-row'><input id='f-bico' value='📥' style='width:58px;text-align:center'><input id='f-btxt' value='تحميل الإضافة الآن'></div>",
+      "<label>أيقونة ونص زر التحميل</label><div class='st-row'><input id='f-bico' value='📥' style='width:58px;text-align:center'><input id='f-btxt' value='Download for Windows'></div>",
       "<label>رابط ملف التحميل</label><input id='f-download' value='./Artboard_Studio_1.12.0_Setup.exe' placeholder='https://... أو مسار نسبي'><label>رقم الواتساب (بدون +)</label><input id='f-wa' value='201127502899' inputmode='numeric'></section>",
       "<section id='p-col' class='st-pane'><label>تدرج الأزرار (لون 1 / لون 2 / الزاوية)</label><div class='st-grid3'><input type='color' id='f-c1' value='#7954ec'><input type='color' id='f-c2' value='#a17aff'><input type='number' id='f-ang' value='120' min='0' max='360'></div>",
       "<label>خلفية الموقع وتوهج الواجهة</label><div class='st-grid3'><input type='color' id='f-bg' value='#090b13'><input type='color' id='f-g1' value='#30205a'><input type='color' id='f-g2' value='#102d4b'></div>",
@@ -177,6 +177,7 @@
   function apply(data) {
     data = data || {};
     var d = Object.assign({}, defaults, data);
+    if (d.downloadBtnText === "تحميل الإضافة الآن" || d.downloadBtnText === "تحميل الاضافة الان") d.downloadBtnText = "Download for Windows";
     // Compatibility with the older Firebase fields already used by this website.
     if (data.primaryColor && !data.buttonColor1 && !data.buttonColor2) {
       d.buttonColor1 = data.primaryColor;
