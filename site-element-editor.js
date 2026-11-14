@@ -45,6 +45,8 @@
     el.style.setProperty("--as-dom-translate",(Number(item.x)||0)+"px "+(Number(item.y)||0)+"px");
     el.style.setProperty("--as-dom-scale",String(Math.max(.25,Math.min(3,Number(item.scale)||1))));
     el.classList.toggle("as-dom-deleted",!!item.deleted);
+    if(item.width!==undefined&&item.width!==null)el.style.setProperty("width",Number(item.width)<=0?"auto":Math.max(1,Math.min(10000,Number(item.width)))+"px","important");else el.style.removeProperty("width");
+    if(item.height!==undefined&&item.height!==null)el.style.setProperty("height",Number(item.height)<=0?"auto":Math.max(1,Math.min(10000,Number(item.height)))+"px","important");else el.style.removeProperty("height");
     if(Number(item.z)>0){el.classList.add("as-dom-layer");el.style.setProperty("--as-dom-z",String(Math.max(1,Math.min(9999,Number(item.z)||1))));}
     else{el.classList.remove("as-dom-layer");el.style.removeProperty("--as-dom-z");}
   }
@@ -56,7 +58,7 @@
   }
   function findEdit(el){
     var key=keyFor(el),item=edits.find(function(x){return x.key===key;});
-    if(!item){item={key:key,x:0,y:0,scale:1,z:0,deleted:false};edits.push(item);}return item;
+    if(!item){item={key:key,x:0,y:0,scale:1,width:null,height:null,z:0,deleted:false};edits.push(item);}return item;
   }
   function status(msg,error){var box=document.getElementById("as-dom-status");if(box){box.textContent=msg;box.style.color=error?"#fca5a5":"#c4b5fd";}}
   function selectElement(el){
@@ -64,7 +66,7 @@
     selected=el;el.classList.add("as-dom-selected");var item=findEdit(el),label=document.getElementById("as-dom-current");
     if(label)label.textContent="المحدد: "+el.tagName.toLowerCase()+(el.id?" #"+el.id:"")+" — "+String(el.innerText||el.alt||"").trim().slice(0,55);
     document.getElementById("as-dom-x").value=item.x||0;document.getElementById("as-dom-y").value=item.y||0;
-    document.getElementById("as-dom-scale").value=Math.round((Number(item.scale)||1)*100);document.getElementById("as-dom-z").value=item.z||0;
+    document.getElementById("as-dom-scale").value=Math.round((Number(item.scale)||1)*100);document.getElementById("as-dom-width").value=item.width==null?Math.round(el.getBoundingClientRect().width):item.width;document.getElementById("as-dom-height").value=item.height==null?Math.round(el.getBoundingClientRect().height):item.height;document.getElementById("as-dom-z").value=item.z||0;
   }
   function pickable(target){
     if(!target||!target.closest)return null;
@@ -94,6 +96,8 @@
     item.x=Math.max(-5000,Math.min(5000,Number(document.getElementById("as-dom-x").value)||0));
     item.y=Math.max(-5000,Math.min(5000,Number(document.getElementById("as-dom-y").value)||0));
     item.scale=Math.max(.25,Math.min(3,(Number(document.getElementById("as-dom-scale").value)||100)/100));
+    item.width=Math.max(0,Math.min(10000,Number(document.getElementById("as-dom-width").value)||0));
+    item.height=Math.max(0,Math.min(10000,Number(document.getElementById("as-dom-height").value)||0));
     item.z=Math.max(0,Math.min(9999,Number(document.getElementById("as-dom-z").value)||0));applyOne(selected,item);
     status("تم تطبيق التعديلات على المعاينة. اضغط حفظ لنشرها.");
   }
@@ -114,14 +118,14 @@
   async function save(){
     if(!user||user.email.toLowerCase()!==ADMIN_EMAIL)return;
     var b=document.getElementById("as-dom-save");b.disabled=true;b.textContent="جارٍ الحفظ...";
-    try{await db.collection("site").doc("content").set({customDomEdits:edits.slice(0,500)},{merge:true});status("تم حفظ تحريك وحذف العناصر في Firebase بنجاح.");}
+    try{await db.collection("site").doc("content").set({customDomEdits:edits.slice(0,500)},{merge:true});status("تم حفظ الموضع والأبعاد والتحجيم وحذف العناصر في Firebase بنجاح.");}
     catch(e){status("تعذر الحفظ: "+(e.message||"خطأ غير معروف"),true);}
     finally{b.disabled=false;b.textContent="💾 حفظ تحريك العناصر";}
   }
   function buildUi(){
     if(uiReady)return;var pane=document.getElementById("p-visual");if(!pane)return;addCss();
     var card=document.createElement("div");card.id="as-dom-editor-card";
-    card.innerHTML='<strong>🧭 تحكم حر في كل عناصر الموقع</strong><p class="hint">فعّل التحرير ثم انقر على أي عنصر أصلي في الصفحة: العناوين، النصوص، الصور، الأزرار، البطاقات والأقسام. اسحب العنصر مباشرة لتحريكه، أو عدّل الحجم والطبقة. حذف العنصر يخفيه دون إتلاف محتواه نهائيًا، ويمكن التراجع قبل الحفظ.</p><button type="button" id="as-dom-enable" class="primary">✥ تفعيل التحرير الحر</button><p id="as-dom-current" class="status">لم يتم تحديد عنصر.</p><div class="as-dom-grid"><div><label>الإزاحة الأفقية px</label><input id="as-dom-x" type="number" value="0"></div><div><label>الإزاحة الرأسية px</label><input id="as-dom-y" type="number" value="0"></div><div><label>الحجم %</label><input id="as-dom-scale" type="number" min="25" max="300" value="100"></div><div><label>ترتيب الطبقة</label><input id="as-dom-z" type="number" min="0" max="9999" value="0"></div></div><div class="as-dom-grid"><button type="button" id="as-dom-apply" class="primary">تطبيق القيم</button><button type="button" id="as-dom-delete" class="danger">حذف العنصر</button><button type="button" id="as-dom-front">إحضار للأمام</button><button type="button" id="as-dom-back">إرسال للخلف</button><button type="button" id="as-dom-undo">↶ تراجع</button><button type="button" id="as-dom-redo">↷ إعادة</button><button type="button" id="as-dom-save" class="primary">💾 حفظ تحريك العناصر</button></div><p id="as-dom-status" class="status">سجّل الدخول بحساب الإدارة لبدء التحرير.</p>';
+    card.innerHTML='<strong>🧭 تحكم حر في كل عناصر الموقع</strong><p class="hint">فعّل التحرير ثم انقر على أي عنصر أصلي في الصفحة: العناوين، النصوص، الصور، الأزرار، البطاقات والأقسام. اسحب العنصر مباشرة لتحريكه، أو أدخل عرضًا وارتفاعًا مستقلين بالبكسل أو استخدم الحجم النسبي، وعدّل الطبقة. حذف العنصر يخفيه دون إتلاف محتواه نهائيًا، ويمكن التراجع قبل الحفظ.</p><button type="button" id="as-dom-enable" class="primary">✥ تفعيل التحرير الحر</button><p id="as-dom-current" class="status">لم يتم تحديد عنصر.</p><div class="as-dom-grid"><div><label>الإزاحة الأفقية px</label><input id="as-dom-x" type="number" value="0"></div><div><label>الإزاحة الرأسية px</label><input id="as-dom-y" type="number" value="0"></div><div><label>الحجم العام %</label><input id="as-dom-scale" type="number" min="25" max="300" value="100"></div><div><label>العرض px (0 تلقائي)</label><input id="as-dom-width" type="number" min="0" max="10000" value="0"></div><div><label>الارتفاع px (0 تلقائي)</label><input id="as-dom-height" type="number" min="0" max="10000" value="0"></div><div><label>ترتيب الطبقة</label><input id="as-dom-z" type="number" min="0" max="9999" value="0"></div></div><div class="as-dom-grid"><button type="button" id="as-dom-apply" class="primary">تطبيق القيم</button><button type="button" id="as-dom-delete" class="danger">حذف العنصر</button><button type="button" id="as-dom-front">إحضار للأمام</button><button type="button" id="as-dom-back">إرسال للخلف</button><button type="button" id="as-dom-undo">↶ تراجع</button><button type="button" id="as-dom-redo">↷ إعادة</button><button type="button" id="as-dom-save" class="primary">💾 حفظ تحريك العناصر</button></div><p id="as-dom-status" class="status">سجّل الدخول بحساب الإدارة لبدء التحرير.</p>';
     pane.insertBefore(card,pane.firstChild);
     document.getElementById("as-dom-enable").addEventListener("click",function(){setEnabled(!enabled);});
     document.getElementById("as-dom-apply").addEventListener("click",updateControls);
