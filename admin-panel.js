@@ -686,11 +686,22 @@
     var list = document.getElementById("as-v-list"); if (!list) return; list.textContent = "";
     if (!draftVisualItems.length) { var empty = document.createElement("p"); empty.className = "st-note"; empty.textContent = "لم تتم إضافة عناصر بعد."; list.appendChild(empty); return; }
     draftVisualItems.forEach(function (item) {
-      var row = document.createElement("div"); row.className = "as-v-list-row"; var label = document.createElement("span");
+      var row = document.createElement("div"); row.className = "as-v-list-row";
+      if (item.id === activeVisualItemId) { row.style.borderColor = "#a78bfa"; row.style.background = "#211b38"; }
+      var label = document.createElement("span");
       label.textContent = (item.type === "image" ? "🖼️ صورة" : item.type === "icon" ? "✦ أيقونة" : item.type === "button" ? "▣ زر" : "T نص") + " — " + String(item.text || item.id).slice(0,36);
       var select = document.createElement("button"); select.type = "button"; select.className = "st-btn"; select.textContent = "تحديد";
-      select.addEventListener("click", function () { activeVisualItemId = item.id; fillVisualControls(item); renderVisualItems(draftVisualItems); renderVisualList(); });
-      row.appendChild(label); row.appendChild(select); list.appendChild(row);
+      select.addEventListener("click", function () {
+        activeVisualItemId = item.id;
+        fillVisualControls(item); renderVisualItems(draftVisualItems); renderVisualList();
+      });
+      var remove = document.createElement("button"); remove.type = "button"; remove.className = "st-btn st-danger"; remove.textContent = "حذف";
+      remove.setAttribute("aria-label", "حذف " + String(item.text || item.id));
+      remove.addEventListener("click", function (event) {
+        event.preventDefault(); event.stopPropagation();
+        deleteVisualItemById(item.id);
+      });
+      row.appendChild(label); row.appendChild(select); row.appendChild(remove); list.appendChild(row);
     });
   }
   function fillVisualControls(item) {
@@ -763,12 +774,17 @@
     }
   }
 
-  function deleteActiveVisualItem() {
-    if (!activeVisualItemId) return;
-    draftVisualItems = draftVisualItems.filter(function (item) { return item.id !== activeVisualItemId; });
-    activeVisualItemId = draftVisualItems.length ? draftVisualItems[draftVisualItems.length - 1].id : null;
+  function deleteVisualItemById(id) {
+    if (!id) { status("st-msg", "اختر العنصر الذي تريد حذفه أولًا.", "error"); return; }
+    var before = draftVisualItems.length;
+    draftVisualItems = draftVisualItems.filter(function (item) { return item.id !== id; });
+    if (draftVisualItems.length === before) { status("st-msg", "لم يتم العثور على العنصر المحدد.", "error"); return; }
+    if (activeVisualItemId === id) activeVisualItemId = draftVisualItems.length ? draftVisualItems[draftVisualItems.length - 1].id : null;
     renderVisualItems(draftVisualItems); renderVisualList(); fillVisualControls();
-    status("st-msg", "تم حذف العنصر من المسودة. احفظ التعديلات لتأكيد الحذف.", "success");
+    status("st-msg", "تم حذف العنصر من المسودة. اضغط «حفظ التعديلات» أسفل اللوحة لتأكيد الحذف على الموقع.", "success");
+  }
+  function deleteActiveVisualItem() {
+    deleteVisualItemById(activeVisualItemId);
   }
 
   function collect() {
