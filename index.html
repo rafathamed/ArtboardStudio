@@ -259,6 +259,54 @@ h1 span{color:#a78bfa}
 .showcase-nav button:hover{border-color:#8062dc;color:#fff}
 .showcase-nav button.active{background:linear-gradient(120deg,#7954ec,#a17aff);border-color:transparent;color:#fff}
 
+
+/* ===== Automatic product video showcase ===== */
+.product-video-section{
+ position:relative;isolation:isolate;overflow:hidden;
+ padding:62px 0 78px;
+ background:radial-gradient(ellipse at 50% 45%,#30205a66 0,transparent 58%);
+}
+.product-video-section::before{
+ content:"";position:absolute;z-index:-1;inset:15% 12%;
+ border-radius:50%;background:#4c35a8;filter:blur(100px);opacity:.17;
+ pointer-events:none;
+}
+.product-video-shell{
+ position:relative;max-width:1000px;margin:0 auto;padding:10px;
+ border:1px solid #5a4a8b;border-radius:24px;
+ background:linear-gradient(135deg,#282044,#111827 55%,#172b43);
+ box-shadow:0 28px 85px #0009,0 0 45px #7954ec26;
+}
+.product-video-shell::before{
+ content:"";position:absolute;inset:-1px;border-radius:24px;
+ background:linear-gradient(120deg,#a78bfa66,transparent 35%,#38bdf866);
+ z-index:-1;filter:blur(18px);opacity:.5;
+}
+.product-video-frame{
+ position:relative;overflow:hidden;border-radius:16px;
+ background:#05070d;aspect-ratio:16/9;
+}
+.product-video-frame video{
+ display:block;width:100%;height:100%;object-fit:contain;background:#05070d;
+}
+.product-video-caption{
+ display:flex;align-items:center;justify-content:center;gap:10px;
+ margin:18px auto 0;color:#c8c4dc;font-size:13px;text-align:center;
+}
+.product-video-caption .video-dot{
+ width:8px;height:8px;border-radius:50%;background:#8b6cff;
+ box-shadow:0 0 14px #a78bfa;flex:0 0 auto;
+}
+@media(max-width:600px){
+ .product-video-section{padding:42px 0 55px}
+ .product-video-shell{padding:6px;border-radius:16px}
+ .product-video-frame{border-radius:11px}
+ .product-video-caption{font-size:11px;padding:0 12px}
+}
+@media(prefers-reduced-motion:reduce){
+ .product-video-section video{animation:none}
+}
+
 section{padding:78px 0}
 .section-title{text-align:center;margin-bottom:42px}
 .section-title h2{font-size:32px;font-weight:900}
@@ -460,6 +508,31 @@ footer{
     <button data-i="3">تحويل الصورة</button>
    </div>
   </div>
+ </div>
+</section>
+
+<section class="product-video-section" id="product-video">
+ <div class="container">
+  <div class="section-title">
+   <h2>شاهد Artboard Studio أثناء العمل</h2>
+   <p>جولة مرئية توضح أدوات الإضافة وطريقة استخدامها داخل Adobe Illustrator</p>
+  </div>
+  <div class="product-video-shell">
+   <div class="product-video-frame">
+    <video
+     src="./Artboard_Studio_1.12.0_English_Guide.mp4"
+     autoplay
+     muted
+     playsinline
+     controls
+     preload="metadata"
+     aria-label="Artboard Studio English guide video">
+     متصفحك لا يدعم تشغيل الفيديو.
+     <a href="./Artboard_Studio_1.12.0_English_Guide.mp4">شاهد الفيديو</a>
+    </video>
+   </div>
+  </div>
+  <div class="product-video-caption"><span class="video-dot"></span> يبدأ الفيديو تلقائيًا بدون صوت — يمكنك تشغيل الصوت من أدوات الفيديو</div>
  </div>
 </section>
 
