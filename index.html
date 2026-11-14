@@ -4,7 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>document.documentElement.classList.add("as-content-loading");window.setTimeout(function(){document.documentElement.classList.remove("as-content-loading");},10000);</script>
-<style>html.as-content-loading body{visibility:hidden}html.as-content-loading::before{content:"جارٍ تحميل أحدث نسخة من الموقع…";position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#090b13;color:#c4b5fd;font:700 16px Cairo,Tahoma,sans-serif}</style>
+<style>html.as-content-loading body{visibility:hidden}html.as-content-loading::before{content:"جارٍ تحميل أحدث نسخة من الموقع…";position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#090b13;color:#c4b5fd;font:700 16px Cairo,Tahoma,sans-serif}
+.nav-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.language-picker{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #39334f;border-radius:10px;background:#151827;color:#e9e5ff}
+.language-picker select{background:transparent;color:#fff;border:0;outline:0;font:700 12px 'Cairo',sans-serif;cursor:pointer;max-width:115px}
+.language-picker option{background:#151827;color:#fff}
+html[dir="ltr"] body{text-align:left}
+html[dir="ltr"] h1{text-align:left}
+html[dir="ltr"] .chip{direction:ltr}
+html[dir="ltr"] .float-wa{left:auto;right:20px}
+html[dir="ltr"] .nav{direction:ltr}
+html[dir="ltr"] .hero-grid{direction:ltr}
+html[dir="ltr"] .hero p{margin-left:0;margin-right:auto}
+html[dir="ltr"] .contact{text-align:center}
+@media(max-width:900px){.nav-right{justify-content:center}}
+@media(max-width:520px){.nav-right{justify-content:center;width:100%;gap:10px}.language-picker{margin-top:2px}}
+
+</style>
 <meta name="description" content="Artboard Studio - إضافة احترافية لأدوات Adobe Illustrator">
 <title>Artboard Studio | أدوات احترافية لإليستريتور</title>
 <style>
@@ -353,13 +369,26 @@ footer{
 <header>
  <div class="container nav">
   <div class="logo">ARTBOARD <span>STUDIO</span></div>
-  <nav>
-   <a href="#home">الرئيسية</a>
-   <a href="#features">المميزات</a>
-   <a href="#gallery">معرض الصور</a>
-   <a href="#install">التثبيت</a>
-   <a href="#contact">تواصل معنا</a>
-  </nav>
+  <div class="nav-right">
+   <nav>
+    <a href="#home" data-i18n="navHome">الرئيسية</a>
+    <a href="#features" data-i18n="navFeatures">المميزات</a>
+    <a href="#gallery" data-i18n="navGallery">معرض الصور</a>
+    <a href="#install" data-i18n="navInstall">التثبيت</a>
+    <a href="#contact" data-i18n="navContact">تواصل معنا</a>
+   </nav>
+   <label class="language-picker" aria-label="اختر لغة الموقع">
+    <span aria-hidden="true">🌐</span>
+    <select id="siteLanguage" aria-label="اختر لغة الموقع">
+     <option value="ar">العربية</option>
+     <option value="en">English</option>
+     <option value="ru">Русский</option>
+     <option value="hi">हिन्दी</option>
+     <option value="zh">中文</option>
+     <option value="ja">日本語</option>
+    </select>
+   </label>
+  </div>
  </div>
 </header>
 
@@ -620,6 +649,166 @@ footer{
  });
  lb.addEventListener('click',function(){lb.classList.remove('open')});
  document.addEventListener('keydown',function(e){if(e.key==='Escape')lb.classList.remove('open')});
+})();
+</script>
+
+
+<script>
+(function(){
+ const translations = {
+ en:{
+  navHome:"Home",navFeatures:"Features",navGallery:"Gallery",navInstall:"Installation",navContact:"Contact us",
+  tag:"Professional extension for designers",
+  hero:"Upgrade your Adobe Illustrator experience with practical tools for managing artboards, images and objects, editing and transforming images directly on the canvas, and creating editable vector QR codes.",
+  whatsapp:"◉ Order via WhatsApp",discover:"Explore features",
+  chip1:"✂️ Precisely crop beyond the Artboard",chip2:"🔗 Editable vector QR codes",chip3:"🎨 Edit and transform images instantly",
+  showcase:["Artboard tools","QR Code generator","Image editing","Image transformation"],
+  featureTitle:"Extension features",featureSub:"Practical tools to help you work efficiently inside Illustrator",
+  features:[
+   ["Crop objects outside the artboard","Crop objects extending beyond Artboard boundaries using Pathfinder Crop."],
+   ["Automatic clipping masks","Create clipping masks for selected objects and layers."],
+   ["Image fitting","Create masks for linked and embedded images within artboard boundaries."],
+   ["Artboard-sized rectangle","Create a rectangle matching the active Artboard, with customizable fill, stroke, colors and weight."],
+   ["Phone QR code","Generate scannable QR codes for phone numbers with country-code support."],
+   ["WhatsApp QR code","Create a QR code that opens a WhatsApp conversation directly."],
+   ["URL QR code","Easily convert website links into QR codes."],
+   ["Editable vector paths","Generate QR codes as editable vector shapes and paths in Illustrator."],
+   ["Unified tools panel","Access a range of functions through one panel inside the application."],
+   ["Camera Raw-style image editing","Adjust lighting, colors and image details, with a live preview directly on the image."],
+   ["Before and after comparison","Use auto-adjust and reset, and compare the original and edited image instantly."],
+   ["Apply or cancel in one click","Apply edits in Illustrator or cancel and revert, with an option to replace the original image."],
+   ["Free image transformation","Free Transform, Scale, Rotate and Skew with a live preview while moving."],
+   ["Distortion and perspective","Use Distort and Perspective to change image angles and create realistic perspective by dragging corners."],
+   ["Warp and Split Warp","Warp images freely and split them horizontally, vertically or crosswise for precise curve control."]
+  ],
+  galleryTitle:"Extension gallery",gallerySub:"Explore Artboard Studio inside Illustrator (click an image to enlarge)",
+  gallery:["Crop and fit","Actual cropping, object masks, image masks and Artboard-sized rectangles","QR Code generator","Phone · WhatsApp · URL, generated locally","Image editing","Direct image adjustments with before/after comparison","Image transformation","Free Transform · Warp · Perspective · Split Warp"],
+  installTitle:"How to install",installSub:"Follow these steps to start using the extension",
+  steps:["Download Artboard Studio from the download link.","Extract the file and choose the folder for your Illustrator version.","Close Illustrator and run the included installer.","Open Illustrator and go to Window > Extensions (Legacy) > Artboard Studio."],
+  downloadTitle:"Get Artboard Studio now",downloadSub:"Start using the extension tools inside Adobe Illustrator.",win:"Download for Windows 📥",mac:"Download for macOS",
+  contactTitle:"Get the extension and activation",contactSub:"For questions or to request the extension and activation, contact us directly.",contactBtn:"☎ Contact via WhatsApp",facebook:"Developer's Facebook page",
+  faqTitle:"Frequently asked questions",
+  faq:[["What is Artboard Studio?","An Adobe Illustrator extension that provides tools for artboards, objects, images and QR code creation."],["What can I do with images?","Edit lighting, colors and details like Camera Raw, or transform images with Free Transform, Warp and Perspective, with a live preview in Illustrator."],["How do I get the extension?","Download it using the download button on this website."],["How do I request activation?","Contact us using the WhatsApp button on this website."],["Can QR codes be edited?","Yes. They are created as vector shapes and paths that can be ungrouped and edited in Illustrator."]],
+  footerDev:"Developed by: RAFAT HAMED",privacy:"To improve the website, we may record visits, download clicks, IP address, approximate network location and a random browser identifier to count unique visitors. Analytics logs are retained for up to 30 days."
+ },
+ ru:{
+  navHome:"Главная",navFeatures:"Возможности",navGallery:"Галерея",navInstall:"Установка",navContact:"Связаться",
+  tag:"Профессиональное расширение для дизайнеров",
+  hero:"Расширьте возможности Adobe Illustrator с помощью инструментов для работы с монтажными областями, изображениями и объектами, редактирования и преобразования изображений прямо на холсте, а также создания редактируемых векторных QR-кодов.",
+  whatsapp:"◉ Заказать через WhatsApp",discover:"Все возможности",
+  chip1:"✂️ Точная обрезка за пределами монтажной области",chip2:"🔗 Редактируемые векторные QR-коды",chip3:"🎨 Мгновенное редактирование и преобразование изображений",
+  showcase:["Инструменты Artboard","Генератор QR-кодов","Редактирование изображений","Преобразование изображений"],
+  featureTitle:"Возможности расширения",featureSub:"Практичные инструменты для эффективной работы в Illustrator",
+  features:[
+   ["Обрезка объектов за пределами области","Обрезайте объекты за границами Artboard с помощью Pathfinder Crop."],["Автоматические обтравочные маски","Создавайте Clipping Mask для выбранных объектов и слоёв."],["Настройка изображений","Создавайте маски для связанных и встроенных изображений в пределах монтажной области."],["Прямоугольник по размеру Artboard","Создавайте прямоугольник по размеру активной области с настройкой заливки, обводки и цветов."],["QR-код для телефона","Создавайте QR-коды для телефонных номеров с кодом страны."],["QR-код WhatsApp","Создавайте QR-код для прямого открытия чата WhatsApp."],["QR-код для ссылок","Легко преобразуйте ссылки сайтов в QR-коды."],["Редактируемые векторные контуры","Создавайте QR-коды как редактируемые векторные фигуры и контуры."],["Единая панель инструментов","Получайте доступ к функциям через одну панель в приложении."],["Редактирование как в Camera Raw","Настраивайте свет, цвета и детали с предварительным просмотром."],["Сравнение до и после","Сравнивайте оригинал и результат, используйте автонастройку и сброс."],["Применить или отменить одним нажатием","Применяйте изменения или возвращайтесь к оригиналу."],["Свободное преобразование","Free Transform, Scale, Rotate и Skew с живым предпросмотром."],["Искажение и перспектива","Меняйте углы изображения и создавайте перспективу перетаскиванием углов."],["Warp и Split Warp","Свободное искажение и разделение по горизонтали, вертикали или сетке."]
+  ],
+  galleryTitle:"Галерея расширения",gallerySub:"Интерфейс Artboard Studio в Illustrator (нажмите на изображение, чтобы увеличить)",
+  gallery:["Обрезка и подгонка","Обрезка, маски объектов и изображений, прямоугольник по размеру Artboard","Генератор QR-кодов","Телефон · WhatsApp · URL, локальная генерация","Редактирование изображений","Изменения изображения со сравнением до и после","Преобразование изображения","Free Transform · Warp · Perspective · Split Warp"],
+  installTitle:"Установка",installSub:"Выполните следующие шаги, чтобы начать работу",
+  steps:["Скачайте Artboard Studio по ссылке.","Распакуйте файл и выберите папку для вашей версии Illustrator.","Закройте Illustrator и запустите установщик.","Откройте Illustrator: Window > Extensions (Legacy) > Artboard Studio."],
+  downloadTitle:"Получите Artboard Studio",downloadSub:"Используйте инструменты расширения в Adobe Illustrator.",win:"Скачать для Windows 📥",mac:"Скачать для macOS",
+  contactTitle:"Заказать расширение и активацию",contactSub:"По вопросам и для заказа расширения и активации свяжитесь с нами.",contactBtn:"☎ Связаться через WhatsApp",facebook:"Страница разработчика в Facebook",
+  faqTitle:"Часто задаваемые вопросы",
+  faq:[["Что такое Artboard Studio?","Расширение для Adobe Illustrator с инструментами для монтажных областей, объектов, изображений и QR-кодов."],["Что можно делать с изображениями?","Редактировать свет, цвета и детали, а также преобразовывать изображения с живым предпросмотром."],["Как получить расширение?","Скачайте его с помощью кнопки загрузки на сайте."],["Как запросить активацию?","Свяжитесь с нами через кнопку WhatsApp на сайте."],["Можно ли редактировать QR-коды?","Да, они создаются как векторные фигуры и контуры, доступные для редактирования в Illustrator."]],
+  footerDev:"Разработано: RAFAT HAMED",privacy:"Для улучшения сайта могут записываться посещения, нажатия на загрузку, IP-адрес, примерное местоположение сети и случайный идентификатор браузера. Данные аналитики хранятся до 30 дней."
+ },
+ hi:{
+  navHome:"होम",navFeatures:"विशेषताएँ",navGallery:"गैलरी",navInstall:"इंस्टॉलेशन",navContact:"संपर्क करें",
+  tag:"डिज़ाइनरों के लिए पेशेवर एक्सटेंशन",
+  hero:"Adobe Illustrator में अपने काम को बेहतर बनाएँ। आर्टबोर्ड, चित्रों और ऑब्जेक्ट्स को प्रबंधित करें, कैनवास पर ही चित्र संपादित और रूपांतरित करें, और संपादन योग्य वेक्टर QR कोड बनाएँ।",
+  whatsapp:"◉ WhatsApp से ऑर्डर करें",discover:"विशेषताएँ देखें",
+  chip1:"✂️ आर्टबोर्ड के बाहर सटीक क्रॉप",chip2:"🔗 संपादन योग्य वेक्टर QR कोड",chip3:"🎨 चित्रों को तुरंत संपादित और रूपांतरित करें",
+  showcase:["Artboard टूल्स","QR कोड जनरेटर","चित्र संपादन","चित्र रूपांतरण"],
+  featureTitle:"एक्सटेंशन की विशेषताएँ",featureSub:"Illustrator में तेज़ी और आसानी से काम करने के उपयोगी टूल",
+  features:[
+   ["आर्टबोर्ड के बाहर ऑब्जेक्ट क्रॉप करें","Pathfinder Crop से आर्टबोर्ड की सीमा के बाहर के ऑब्जेक्ट क्रॉप करें।"],["ऑटोमैटिक क्लिपिंग मास्क","चुने हुए ऑब्जेक्ट और लेयर के लिए Clipping Mask बनाएँ।"],["चित्रों को फिट करें","आर्टबोर्ड की सीमा में लिंक और एम्बेड किए गए चित्रों के लिए मास्क बनाएँ।"],["आर्टबोर्ड के आकार का आयत","सक्रिय Artboard के आकार का आयत बनाएँ और रंग तथा बॉर्डर अनुकूलित करें।"],["फ़ोन QR कोड","देश कोड सहित फ़ोन नंबर के लिए स्कैन करने योग्य QR कोड बनाएँ।"],["WhatsApp QR कोड","ऐसा QR कोड बनाएँ जो सीधे WhatsApp चैट खोले।"],["लिंक QR कोड","वेबसाइट लिंक को आसानी से QR कोड में बदलें।"],["संपादन योग्य वेक्टर पाथ","Illustrator में संपादन योग्य वेक्टर आकारों और पाथ के रूप में QR कोड बनाएँ।"],["एकीकृत टूल पैनल","ऐप के एक ही पैनल से कई फ़ंक्शन इस्तेमाल करें।"],["Camera Raw जैसा चित्र संपादन","लाइटिंग, रंग और विवरण समायोजित करें और लाइव परिणाम देखें।"],["पहले और बाद की तुलना","मूल और संपादित चित्र की तुरंत तुलना करें।"],["एक क्लिक में लागू या रद्द करें","Illustrator में बदलाव लागू करें या मूल चित्र पर लौटें।"],["फ़्री इमेज ट्रांसफ़ॉर्म","चलाते समय लाइव प्रीव्यू के साथ Free Transform, Scale, Rotate और Skew।"],["डिस्टॉर्शन और पर्सपेक्टिव","कोनों को खींचकर चित्र का कोण बदलें और वास्तविक परिप्रेक्ष्य बनाएँ।"],["Warp और Split Warp","चित्र को स्वतंत्र रूप से मोड़ें और सटीक नियंत्रण के लिए विभाजित करें।"]
+  ],
+  galleryTitle:"एक्सटेंशन गैलरी",gallerySub:"Illustrator में Artboard Studio देखें (बड़ा करने के लिए चित्र पर क्लिक करें)",
+  gallery:["क्रॉप और फ़िट","क्रॉप, ऑब्जेक्ट मास्क, इमेज मास्क और Artboard आकार का आयत","QR कोड जनरेटर","फ़ोन · WhatsApp · URL, स्थानीय रूप से तैयार","चित्र संपादन","पहले और बाद की तुलना के साथ सीधे बदलाव","चित्र रूपांतरण","Free Transform · Warp · Perspective · Split Warp"],
+  installTitle:"इंस्टॉलेशन कैसे करें",installSub:"एक्सटेंशन शुरू करने के लिए ये चरण अपनाएँ",
+  steps:["डाउनलोड लिंक से Artboard Studio डाउनलोड करें।","फ़ाइल अनज़िप करें और अपने Illustrator संस्करण का फ़ोल्डर चुनें।","Illustrator बंद करें और दिए गए इंस्टॉलर को चलाएँ।","Illustrator खोलें और Window > Extensions (Legacy) > Artboard Studio पर जाएँ।"],
+  downloadTitle:"Artboard Studio अभी प्राप्त करें",downloadSub:"Adobe Illustrator में एक्सटेंशन टूल का उपयोग शुरू करें।",win:"Windows के लिए डाउनलोड 📥",mac:"macOS के लिए डाउनलोड",
+  contactTitle:"एक्सटेंशन और एक्टिवेशन प्राप्त करें",contactSub:"सवालों या एक्सटेंशन और एक्टिवेशन के अनुरोध के लिए हमसे संपर्क करें।",contactBtn:"☎ WhatsApp पर संपर्क करें",facebook:"डेवलपर का Facebook पेज",
+  faqTitle:"अक्सर पूछे जाने वाले प्रश्न",
+  faq:[["Artboard Studio क्या है?","Adobe Illustrator का एक्सटेंशन, जिसमें आर्टबोर्ड, ऑब्जेक्ट, चित्र और QR कोड के टूल हैं।"],["चित्रों के साथ क्या कर सकते हैं?","Camera Raw की तरह रोशनी, रंग और विवरण संपादित करें तथा लाइव प्रीव्यू के साथ चित्र रूपांतरित करें।"],["एक्सटेंशन कैसे प्राप्त करें?","इस वेबसाइट के डाउनलोड बटन से इसे डाउनलोड करें।"],["एक्टिवेशन कैसे माँगें?","वेबसाइट पर WhatsApp बटन से संपर्क करें।"],["क्या QR कोड संपादित किए जा सकते हैं?","हाँ, वे वेक्टर आकारों और पाथ के रूप में बनते हैं जिन्हें Illustrator में संपादित किया जा सकता है।"]],
+  footerDev:"विकसितकर्ता: RAFAT HAMED",privacy:"वेबसाइट सुधारने के लिए विज़िट, डाउनलोड क्लिक, IP पता, अनुमानित नेटवर्क स्थान और अद्वितीय विज़िटर गिनने हेतु एक यादृच्छिक ब्राउज़र पहचान दर्ज की जा सकती है। विश्लेषण लॉग 30 दिनों तक रखे जाते हैं।"
+ },
+ zh:{
+  navHome:"首页",navFeatures:"功能",navGallery:"图片展示",navInstall:"安装",navContact:"联系我们",
+  tag:"面向设计师的专业扩展",
+  hero:"通过实用工具提升 Adobe Illustrator 使用体验，轻松管理画板、图像和对象，直接在画布上编辑与变换图像，并创建可编辑的矢量二维码。",
+  whatsapp:"◉ 通过 WhatsApp 订购",discover:"探索功能",
+  chip1:"✂️ 精确裁切画板外对象",chip2:"🔗 可编辑矢量二维码",chip3:"🎨 即时编辑和变换图像",
+  showcase:["画板工具","二维码生成器","图像编辑","图像变换"],
+  featureTitle:"扩展功能",featureSub:"帮助您在 Illustrator 中高效完成工作的实用工具",
+  features:[
+   ["裁切画板外对象","使用 Pathfinder Crop 裁切超出 Artboard 边界的对象。"],["自动剪切蒙版","为选定对象和图层创建 Clipping Mask。"],["图像适配","为画板范围内的链接和嵌入图像创建蒙版。"],["匹配画板尺寸的矩形","创建与当前 Artboard 尺寸一致的矩形，并自定义填充、描边和颜色。"],["电话二维码","创建可扫描的电话号码二维码，支持国家区号。"],["WhatsApp 二维码","创建可直接打开 WhatsApp 对话的二维码。"],["链接二维码","轻松将网站链接转换为二维码。"],["可编辑矢量路径","在 Illustrator 中将二维码生成为可编辑的矢量形状和路径。"],["统一工具面板","通过应用程序中的单一面板访问多种功能。"],["类似 Camera Raw 的图像编辑","调整光线、颜色和细节，并直接预览图像效果。"],["编辑前后对比","即时比较原图和编辑后的图像，并可自动调整或重置。"],["一键应用或取消","在 Illustrator 中应用修改，或取消并恢复原图。"],["自由变换图像","移动时实时预览 Free Transform、Scale、Rotate 和 Skew。"],["扭曲与透视","拖动角点改变图像角度并创建真实透视效果。"],["Warp 与 Split Warp","自由扭曲图像，并进行水平、垂直或交叉分割以精确控制曲线。"]
+  ],
+  galleryTitle:"扩展界面展示",gallerySub:"查看 Artboard Studio 在 Illustrator 中的界面（点击图片可放大）",
+  gallery:["裁切与适配","实际裁切、对象蒙版、图像蒙版及画板尺寸矩形","二维码生成器","电话 · WhatsApp · URL，本地生成","图像编辑","直接调整图像并比较前后效果","图像变换","Free Transform · Warp · Perspective · Split Warp"],
+  installTitle:"安装方法",installSub:"按照以下步骤开始使用扩展",
+  steps:["通过下载链接下载 Artboard Studio。","解压文件并选择适合您 Illustrator 版本的文件夹。","关闭 Illustrator 并运行安装程序。","打开 Illustrator，进入 Window > Extensions (Legacy) > Artboard Studio。"],
+  downloadTitle:"立即获取 Artboard Studio",downloadSub:"开始在 Adobe Illustrator 中使用扩展工具。",win:"下载 Windows 版 📥",mac:"下载 macOS 版",
+  contactTitle:"获取扩展与激活",contactSub:"如有疑问或需要扩展及激活，请直接联系我们。",contactBtn:"☎ 通过 WhatsApp 联系",facebook:"开发者 Facebook 页面",
+  faqTitle:"常见问题",
+  faq:[["Artboard Studio 是什么？","这是一个 Adobe Illustrator 扩展，提供画板、对象、图像处理和二维码创建工具。"],["可以如何处理图像？","可像 Camera Raw 一样调整光线、颜色和细节，也可使用变换工具并实时预览。"],["如何获取扩展？","点击本网站上的下载按钮即可下载。"],["如何申请激活？","通过网站上的 WhatsApp 按钮联系我们。"],["二维码可以编辑吗？","可以。二维码以矢量形状和路径创建，可在 Illustrator 中取消编组并编辑。"]],
+  footerDev:"开发者：RAFAT HAMED",privacy:"为改进网站，我们可能记录访问量、下载点击、IP 地址、大致网络位置及随机浏览器标识，以统计独立访客。分析记录最多保存 30 天。"
+ },
+ ja:{
+  navHome:"ホーム",navFeatures:"機能",navGallery:"ギャラリー",navInstall:"インストール",navContact:"お問い合わせ",
+  tag:"デザイナー向けのプロフェッショナル拡張機能",
+  hero:"実用的なツールで Adobe Illustrator の作業を効率化。アートボード、画像、オブジェクトの管理、キャンバス上での画像編集・変形、編集可能なベクター QR コードの作成ができます。",
+  whatsapp:"◉ WhatsAppで注文",discover:"機能を見る",
+  chip1:"✂️ アートボード外を正確にトリミング",chip2:"🔗 編集可能なベクター QR コード",chip3:"🎨 画像をすぐに編集・変形",
+  showcase:["アートボードツール","QRコード生成","画像編集","画像変形"],
+  featureTitle:"拡張機能の特徴",featureSub:"Illustratorでの作業を効率化する便利なツール",
+  features:[
+   ["アートボード外のオブジェクトをトリミング","Pathfinder Cropでアートボードの外側にはみ出したオブジェクトをトリミングします。"],["自動クリッピングマスク","選択したオブジェクトやレイヤーにClipping Maskを作成します。"],["画像の調整","アートボード内のリンク画像や埋め込み画像にマスクを作成します。"],["アートボードと同じサイズの長方形","アクティブなArtboardと同じサイズの長方形を作成し、塗りや線、色を調整できます。"],["電話番号QRコード","国番号に対応した電話番号用のQRコードを作成します。"],["WhatsApp QRコード","WhatsAppのチャットを直接開くQRコードを作成します。"],["URL QRコード","ウェブサイトのリンクを簡単にQRコードへ変換します。"],["編集可能なベクターパス","Illustrator内で編集可能なベクター図形とパスとしてQRコードを生成します。"],["統合ツールパネル","アプリ内の1つのパネルからさまざまな機能にアクセスできます。"],["Camera Rawのような画像編集","明るさ、色、ディテールを調整し、画像上で結果をリアルタイムに確認できます。"],["編集前後の比較","自動調整やリセットを使い、元画像と編集後をすぐに比較できます。"],["ワンクリックで適用・取消","Illustratorで変更を適用するか、取消して元に戻せます。"],["自由な画像変形","移動中にプレビューしながらFree Transform、Scale、Rotate、Skewを使用できます。"],["歪みと遠近法","角をドラッグして画像の角度を変え、自然な遠近感を作成します。"],["WarpとSplit Warp","画像を自由に変形し、水平・垂直・交差方向に分割して曲線を細かく調整できます。"]
+  ],
+  galleryTitle:"拡張機能ギャラリー",gallerySub:"Illustrator内のArtboard Studioを確認（画像をクリックすると拡大）",
+  gallery:["トリミングとフィット","トリミング、オブジェクトマスク、画像マスク、Artboardサイズの長方形","QRコード生成","電話 · WhatsApp · URL、ローカル生成","画像編集","編集前後を比較しながら画像を直接調整","画像変形","Free Transform · Warp · Perspective · Split Warp"],
+  installTitle:"インストール方法",installSub:"以下の手順で拡張機能を使い始めましょう",
+  steps:["ダウンロードリンクからArtboard Studioをダウンロードします。","ファイルを解凍し、お使いのIllustratorバージョンに合うフォルダーを選択します。","Illustratorを終了し、付属のインストーラーを実行します。","Illustratorを開き、Window > Extensions (Legacy) > Artboard Studioを選択します。"],
+  downloadTitle:"Artboard Studioを今すぐ入手",downloadSub:"Adobe Illustratorで拡張機能のツールを使い始めましょう。",win:"Windows版をダウンロード 📥",mac:"macOS版をダウンロード",
+  contactTitle:"拡張機能とライセンス認証",contactSub:"ご質問や拡張機能・認証のお申し込みは、直接お問い合わせください。",contactBtn:"☎ WhatsAppで問い合わせ",facebook:"開発者のFacebookページ",
+  faqTitle:"よくある質問",
+  faq:[["Artboard Studioとは？","アートボード、オブジェクト、画像、QRコード作成のツールを提供するAdobe Illustrator用拡張機能です。"],["画像で何ができますか？","Camera Rawのように明るさや色、ディテールを編集し、リアルタイムプレビューで画像を変形できます。"],["拡張機能を入手するには？","このウェブサイトのダウンロードボタンから入手できます。"],["認証を申し込むには？","ウェブサイトのWhatsAppボタンからご連絡ください。"],["QRコードは編集できますか？","はい。ベクター図形とパスとして作成され、Illustrator内でグループ解除して編集できます。"]],
+  footerDev:"開発者：RAFAT HAMED",privacy:"サイト改善のため、訪問数、ダウンロードクリック、IPアドレス、おおよそのネットワーク位置、ユニーク訪問者数を数えるランダムなブラウザー識別子を記録する場合があります。分析ログは最大30日間保存されます。"
+ }
+ };
+ const langs={ar:{dir:"rtl",font:"'Cairo',sans-serif"},en:{dir:"ltr",font:"Arial,sans-serif"},ru:{dir:"ltr",font:"Arial,sans-serif"},hi:{dir:"ltr",font:"Arial,sans-serif"},zh:{dir:"ltr",font:"Arial,sans-serif"},ja:{dir:"ltr",font:"Arial,sans-serif"}};
+ const $=s=>document.querySelector(s);
+ function setText(sel,val){const el=$(sel);if(el&&val!==undefined)el.textContent=val;}
+ function apply(lang){
+  const t=translations[lang]||translations.en;const meta=langs[lang]||langs.en;
+  document.documentElement.lang=lang;document.documentElement.dir=meta.dir;
+  document.body.style.fontFamily=meta.font;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;if(t[k])el.textContent=t[k];});
+  setText(".tag",t.tag);setText(".hero-grid > div:first-child > p",t.hero);
+  setText(".hero .btn.whatsapp",t.whatsapp);setText('.hero .btn.secondary',t.discover);
+  [".chip.a",".chip.b",".chip.c"].forEach((s,i)=>setText(s,t["chip"+(i+1)]));
+  document.querySelectorAll("#showcaseNav button").forEach((el,i)=>setText("#showcaseNav button:nth-child("+(i+1)+")",t.showcase[i]));
+  setText("#features .section-title h2",t.featureTitle);setText("#features .section-title p",t.featureSub);
+  document.querySelectorAll("#features .feature").forEach((el,i)=>{if(t.features[i]){setText("#features .feature:nth-child("+(i+1)+") h3",t.features[i][0]);setText("#features .feature:nth-child("+(i+1)+") p",t.features[i][1]);}});
+  setText("#gallery .section-title h2",t.galleryTitle);setText("#gallery .section-title p",t.gallerySub);
+  document.querySelectorAll("#gallery figcaption").forEach((el,i)=>{if(t.gallery[i*2]){el.innerHTML=t.gallery[i*2]+"<small>"+t.gallery[i*2+1]+"</small>";}});
+  setText("#install .section-title h2",t.installTitle);setText("#install .section-title p",t.installSub);
+  document.querySelectorAll("#install .step p").forEach((el,i)=>setText("#install .step:nth-child("+(i+1)+") p",t.steps[i]));
+  setText(".download-box h2",t.downloadTitle);setText(".download-box p",t.downloadSub);
+  setText(".download-box .btn.primary",t.win);setText(".download-box .btn.macos",t.mac);
+  setText("#contact .section-title h2",t.contactTitle);setText("#contact .section-title p",t.contactSub);
+  setText("#contact .btn.whatsapp",t.contactBtn);setText("#contact .btn.secondary",t.facebook);
+  setText(".faq .section-title h2",t.faqTitle);
+  document.querySelectorAll(".faq details").forEach((el,i)=>{if(t.faq[i]){el.querySelector("summary").textContent=t.faq[i][0];el.querySelector("p").textContent=t.faq[i][1];}});
+  setText("footer .container p:nth-of-type(1)",t.footerDev);setText("footer .container p:nth-of-type(3)",t.privacy);
+  const select=$("#siteLanguage");if(select&&select.value!==lang)select.value=lang;
+  try{localStorage.setItem("artboardStudioLanguage",lang);}catch(e){}
+ }
+ const select=$("#siteLanguage");
+ let initial="ar";try{initial=localStorage.getItem("artboardStudioLanguage")||"ar";}catch(e){}
+ if(!translations[initial])initial="ar";
+ if(select){select.value=initial;select.addEventListener("change",()=>apply(select.value));}
+ apply(initial);
 })();
 </script>
 
