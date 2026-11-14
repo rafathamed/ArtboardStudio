@@ -1,18 +1,18 @@
 {
-  "version": "1.11.0",
+  "version": "1.12.0",
   "minVersion": "1.0.0",
   "releasedAt": "2026-11-14",
   "notes": [
-    "إصدار 1.11.0: معالج تثبيت رسومي موحّد لـ Illustrator 2024–2027 مع حماية وتشفير كامل للكود.",
-    "تحسينات في أدوات القص الفعلي والماسك الذكي وCamera Raw وMesh Warp ومولّد QR."
+    "إصدار 1.12.0: دعم 6 لغات كاملة (العربية، الإنجليزية، الروسية، الهندية، الصينية، اليابانية) داخل معالج التثبيت وداخل جميع أدوات الإضافة في Illustrator.",
+    "تبديل فوري للغة والاتجاه (RTL / LTR) من داخل اللوحة أو أثناء التثبيت مع حفظ اللغة المفضلة تلقائيًا."
   ],
-  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.11.0_Setup.exe",
-  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.11.0_Setup.exe",
-  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.11.0_macOS_PROTECTED.zip",
+  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.0_Setup.exe",
+  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.0_Setup.exe",
+  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.0_macOS_PROTECTED.zip",
   "package": {
-    "url": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.11.0_Update.zip",
-    "size": 2756804,
-    "sha256": "cb2aaa52679e2dda3c2f393bc4fbef8c98771d478e47805dfd889a58c5b3297f",
-    "signature": "NL9yWPca6iW7EJu5sJzMw8s6BwCDLPA5zl+ISIP4CbA4ycqiOgH2cNyRGZcMeq3LO5hpPMRTUVwLTurIQsBZqw=="
+    "url": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.0_Update.zip",
+    "size": 3380262,
+    "sha256": "5956cd0c4ac3d27baaba74c50975a41de5a43197fc5c8d6a94683dd81d79f86f",
+    "signature": "+sw2fopSAGW9gfkL4d2KOxpHxlAT89JWy29KkMuT/LqF/ilqxGglPvEfSOn0jWL9sZZA186iZmOzDbGbk9ZokQ=="
   }
 }
