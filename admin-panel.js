@@ -189,7 +189,11 @@
     }
     var desc = document.querySelector(".hero-grid > div:first-child p");
     if (desc && typeof d.heroDesc === "string") desc.textContent = d.heroDesc;
-    var dl = url(d.downloadFileUrl || defaults.downloadFileUrl, true);
+    var configuredDownloadUrl = d.downloadFileUrl || defaults.downloadFileUrl;
+    if (/^(?:\.\/)?(?:ArtboardStudio\.rar|Artboard_Studio_Setup\.exe)$/i.test(String(configuredDownloadUrl).trim())) {
+      configuredDownloadUrl = defaults.downloadFileUrl;
+    }
+    var dl = url(configuredDownloadUrl, true);
     document.querySelectorAll(".hero .btn.primary,.download-box .btn.primary").forEach(function (a) {
       a.textContent = (d.downloadIcon || "") + " " + (d.downloadBtnText || defaults.downloadBtnText);
       if (dl) a.href = dl;
