@@ -112,7 +112,11 @@
     });
     function endPanelDrag(){panelDrag=null;}
     head.addEventListener("pointerup",endPanelDrag);head.addEventListener("pointercancel",endPanelDrag);
-    fab.addEventListener("click", function () { overlay.style.display = "flex"; });
+    fab.addEventListener("click", function () {
+      var emailField = document.getElementById("st-em");
+      if (emailField && !emailField.value.trim()) emailField.value = ADMIN_EMAIL;
+      overlay.style.display = "flex";
+    });
     document.getElementById("as-analytics-refresh").addEventListener("click", refreshAnalytics);
     document.getElementById("st-close").addEventListener("click", function () { overlay.style.display = "none"; });
     document.querySelectorAll("#studio-overlay .st-tab").forEach(function (tab) {
