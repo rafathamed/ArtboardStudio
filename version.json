@@ -1,18 +1,18 @@
 {
   "version": "1.11.0",
-  "released": "2026-11-12",
-  "minVersion": "1.4.0",
+  "minVersion": "1.0.0",
+  "releasedAt": "2026-11-14",
   "notes": [
-    "واجهة أهدأ: توحيد ألوان المفاتيح، دمج خانات القصّ والماسكات، إخفاء عدد السريالات، شريط تمرير داكن من جهة واحدة، أيقونات للتبويبات، وإصلاح الفراغ الفارغ أسفل أدوات الـArtboard"
+    "إصدار 1.11.0: معالج تثبيت رسومي موحّد لـ Illustrator 2024–2027 مع حماية وتشفير كامل للكود.",
+    "تحسينات في أدوات القص الفعلي والماسك الذكي وCamera Raw وMesh Warp ومولّد QR."
   ],
-  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/",
-  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/",
-  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/",
+  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.11.0_Setup.exe",
+  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.11.0_Setup.exe",
+  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.11.0_macOS_PROTECTED.zip",
   "package": {
-    "url": "https://rafathamed.github.io/ArtboardStudio/updates/ArtboardStudio-update-1.11.0.zip",
-    "size": 1614029,
-    "sha256": "2e89acd601a388bd3d8268b9a6f142ffa68c9dcbe8f7b24b1382e154c0d7f2a3",
-    "signature": "Ey3vAmV3SpzGzCYVGLi9k093jCyoKESisJ2eFQJ/CpyntvWXKMFEv0myc2XYlLDtV9ksb67qFTfd5v6AxD1wFQ==",
-    "format": "zip-stored-v1"
+    "url": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.11.0_Update.zip",
+    "size": 2756804,
+    "sha256": "cb2aaa52679e2dda3c2f393bc4fbef8c98771d478e47805dfd889a58c5b3297f",
+    "signature": "NL9yWPca6iW7EJu5sJzMw8s6BwCDLPA5zl+ISIP4CbA4ycqiOgH2cNyRGZcMeq3LO5hpPMRTUVwLTurIQsBZqw=="
   }
 }
