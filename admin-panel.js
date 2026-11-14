@@ -161,7 +161,15 @@
   function color(value, fallback) { return /^#[0-9a-f]{3,8}$/i.test(String(value || "")) ? String(value) : fallback; }
   function url(value, relative) {
     var raw = String(value || "").trim(); if (!raw) return null;
-    try { var parsed = new URL(raw, location.href); if (parsed.protocol === "https:" || (relative && parsed.origin === location.origin)) return parsed.href; } catch (e) {}
+    try {
+      var parsed = new URL(raw, location.href);
+      if (parsed.protocol !== "https:" && !(relative && parsed.origin === location.origin)) return null;
+      var fileName = parsed.pathname.split("/").pop();
+      if (/^(?:ArtboardStudio\\.rar|Artboard_Studio_Setup\\.exe)$/i.test(fileName)) {
+        return new URL("./Artboard_Studio_1.12.0_Setup.exe", location.href).href;
+      }
+      return parsed.href;
+    } catch (e) {}
     return null;
   }
   function digits(value) { return String(value || "").replace(/\D/g, "").slice(0, 18); }
