@@ -190,7 +190,8 @@
     var desc = document.querySelector(".hero-grid > div:first-child p");
     if (desc && typeof d.heroDesc === "string") desc.textContent = d.heroDesc;
     var configuredDownloadUrl = d.downloadFileUrl || defaults.downloadFileUrl;
-    if (/^(?:\.\/)?(?:ArtboardStudio\.rar|Artboard_Studio_Setup\.exe)$/i.test(String(configuredDownloadUrl).trim())) {
+    var configuredDownloadPath = String(configuredDownloadUrl).trim().split(/[?#]/)[0].split("/").pop();
+    if (/^(?:ArtboardStudio\.rar|Artboard_Studio_Setup\.exe)$/i.test(configuredDownloadPath)) {
       configuredDownloadUrl = defaults.downloadFileUrl;
     }
     var dl = url(configuredDownloadUrl, true);
