@@ -74,8 +74,13 @@ h1 span{color:#a78bfa}
   linear-gradient(#fff 0 0) right bottom/11px 11px no-repeat;
 }
 .hero .btn.macos::before,.download-box .btn.macos::before{
- content:"";display:block;font-family:Arial,sans-serif;
- font-size:29px;line-height:27px;font-weight:400;
+ content:"";display:block;width:27px;height:20px;
+ border:2px solid #fff;border-radius:3px;
+ box-shadow:inset 0 0 0 2px #ffffff20;
+}
+.hero .btn.macos::after,.download-box .btn.macos::after{
+ content:"";display:block;width:34px;height:4px;margin-top:-3px;
+ background:#fff;border-radius:0 0 5px 5px;
 }
 
 /* ============ Illustrator showcase ============ */
@@ -492,7 +497,7 @@ footer{
    <h2>احصل على Artboard Studio الآن</h2>
    <p>ابدأ باستخدام أدوات الإضافة داخل Adobe Illustrator.</p>
    <a class="btn primary" href="./Artboard_Studio_1.12.0_Setup.exe" download>تحميل Windows 📥</a>
-   <a class="btn macos" href="./Artboard_Studio_1.12.0_macOS_PROTECTED.zip" download> تحميل macOS</a>
+   <a class="btn macos" href="./Artboard_Studio_1.12.0_macOS_PROTECTED.zip" download>تحميل macOS</a>
   </div>
  </div>
 </section>
