@@ -664,7 +664,23 @@
       });
       canvas.appendChild(node);
     });
-    document.body.appendChild(canvas); document.documentElement.classList.toggle("as-v-editing", !!visualEditMode);
+    document.body.appendChild(canvas);
+    // Hide the user-added image positioned directly beneath the developer Facebook link.
+    var facebookLink = document.querySelector('#contact a[href*="facebook.com/rafat.hamed1"]');
+    if (facebookLink) {
+      var facebookRect = facebookLink.getBoundingClientRect();
+      var contactRect = document.getElementById("contact").getBoundingClientRect();
+      canvas.querySelectorAll('.as-visual-item img').forEach(function (image) {
+        var item = image.closest(".as-visual-item");
+        if (!item) return;
+        var rect = item.getBoundingClientRect();
+        var overlapsHorizontally = rect.right > facebookRect.left && rect.left < facebookRect.right;
+        if (overlapsHorizontally && rect.top >= facebookRect.bottom - 2 && rect.top < contactRect.bottom) {
+          item.style.display = "none";
+        }
+      });
+    }
+    document.documentElement.classList.toggle("as-v-editing", !!visualEditMode);
   }
   function renderVisualList() {
     var list = document.getElementById("as-v-list"); if (!list) return; list.textContent = "";
