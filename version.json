@@ -1,18 +1,21 @@
 {
   "version": "1.12.1",
   "minVersion": "1.0.0",
-  "releasedAt": "2026-11-14",
+  "releasedAt": "2026-11-15",
   "notes": [
-    "إصدار 1.12.1: إضافة أيقونة مخصصة لـ Artboard Studio داخل شريط وألواح Adobe Illustrator (تدعم الوضع الفاتح والداكن وحالات التمرير).",
-    "دعم 6 لغات كاملة (العربية، الإنجليزية، الروسية، الهندية، الصينية، اليابانية) مع تحديث آمن وموحد لنسخ Windows وmacOS (2024–2027)."
+    "إصدار 1.12.1: إضافة أيقونة مخصصة لـ Artboard Studio داخل Adobe Illustrator ودعم 6 لغات كاملة (العربية، الإنجليزية، الروسية، الهندية، الصينية، اليابانية).",
+    "إضافة أزرار لصق ونسخ السريال مباشرة داخل خانة التفعيل.",
+    "تسريع أدوات القصّ والماسك على الـArtboard (خاصة لإصدار 2026) وحصر التطبيق على الـArtboard النشط فقط.",
+    "دعم QR Code لمنصات Instagram وX وTelegram وFacebook وTikTok وYouTube مع إدراج أيقونة التطبيق داخل الـQR.",
+    "إصلاح وتسريع تعديل الصور وتحويل الصور بالعمل المباشر وإظهار مقابض التحويل على الصورة داخل Illustrator على Windows وmacOS (2024–2027)."
   ],
   "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_Setup.exe",
   "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_Setup.exe",
   "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_macOS_PROTECTED.zip",
   "package": {
     "url": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_Update.zip",
-    "size": 3393354,
-    "sha256": "c1642e1889e36b2fc46234c568b88623eb46a8f28e4a86a1866d878c5dad27d2",
-    "signature": "n3lGyQ/CEpqlTjrShVm9de+NCe9nyrPvz4oFL0BOAYR2ox2Kkk55RT6FIkCeKxtXwNWTzQnPKR0B/vPSRlppxA=="
+    "size": 4436430,
+    "sha256": "b4c2cc4e793120429168064262718a0ef82209a452dcc2770de55559c06d87fc",
+    "signature": "5upEg+eLb6vCXUqJxIpT911lXXpW/4v8DVqg5K1/XMYMtcyN56ANWs/YvPJmMmPUhjuvCISpQSyaIOCtFAIxAw=="
   }
 }
