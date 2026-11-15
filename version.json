@@ -7,15 +7,16 @@
     "إضافة أزرار لصق ونسخ السريال مباشرة داخل خانة التفعيل.",
     "تسريع أدوات القصّ والماسك على الـArtboard (خاصة لإصدار 2026) وحصر التطبيق على الـArtboard النشط فقط.",
     "دعم QR Code لمنصات Instagram وX وTelegram وFacebook وTikTok وYouTube مع إدراج أيقونة التطبيق داخل الـQR.",
-    "إصلاح وتسريع تعديل الصور وتحويل الصور بالعمل المباشر وإظهار مقابض التحويل على الصورة داخل Illustrator على Windows وmacOS (2024–2027)."
+    "إصلاح تعليق نافذة «جارٍ تجهيز التعديل المباشر على الصورة» في تعديل الصور وتسريع القراءة والمعاينة الفورية.",
+    "إعادة تصميم «تحويل الصورة» بدون تشنّج أو إقفال: قفل الأدوات وتبهيتها قبل البدء، وتوفير أدوات التحويل الـ11 المطابقة لـ Photoshop بمقابض وشبكة تحكم واضحة مباشرة على الصورة داخل Illustrator على Windows وmacOS (2024–2027)."
   ],
   "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_Setup.exe",
   "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_Setup.exe",
   "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_macOS_PROTECTED.zip",
   "package": {
     "url": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_Update.zip",
-    "size": 4436430,
-    "sha256": "b4c2cc4e793120429168064262718a0ef82209a452dcc2770de55559c06d87fc",
-    "signature": "5upEg+eLb6vCXUqJxIpT911lXXpW/4v8DVqg5K1/XMYMtcyN56ANWs/YvPJmMmPUhjuvCISpQSyaIOCtFAIxAw=="
+    "size": 5096650,
+    "sha256": "e1a8a5e1f48a2d90445cae72ebeb10bb676074852a696558ef4a12371aa64613",
+    "signature": "aMj9Mu6pqOgFyAcKD+Dlt6+4wWz1R/Gk54xBrVAwiw8muX3aFtbo2FDOB0POiYyGVjuuY8ThkHBZWQkj9Npyjg=="
   }
 }
