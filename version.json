@@ -1,22 +1,20 @@
 {
-  "version": "1.12.1",
+  "version": "1.12.6",
   "minVersion": "1.0.0",
-  "releasedAt": "2026-11-15",
+  "releasedAt": "2026-11-17",
   "notes": [
-    "إصدار 1.12.1: إضافة أيقونة مخصصة لـ Artboard Studio داخل Adobe Illustrator ودعم 6 لغات كاملة (العربية، الإنجليزية، الروسية، الهندية، الصينية، اليابانية).",
-    "إضافة أزرار لصق ونسخ السريال مباشرة داخل خانة التفعيل.",
-    "تسريع أدوات القصّ والماسك على الـArtboard (خاصة لإصدار 2026) وحصر التطبيق على الـArtboard النشط فقط.",
-    "دعم QR Code لمنصات Instagram وX وTelegram وFacebook وTikTok وYouTube مع إدراج أيقونة التطبيق داخل الـQR.",
-    "إصلاح تعليق نافذة «جارٍ تجهيز التعديل المباشر على الصورة» في تعديل الصور وتسريع القراءة والمعاينة الفورية.",
-    "إعادة تصميم «تحويل الصورة» بدون تشنّج أو إقفال: قفل الأدوات وتبهيتها قبل البدء، وتوفير أدوات التحويل الـ11 المطابقة لـ Photoshop بمقابض وشبكة تحكم واضحة مباشرة على الصورة داخل Illustrator على Windows وmacOS (2024–2027)."
+    "إصدار 1.12.6: اعتماد حزمة النوافذ الكبيرة المنفصلة (Photo Editor · Camera Raw وImage Transform · Warp) مع شريط التقدم والفتح التلقائي الصامت واختصارات Ctrl+Z / Ctrl+Shift+Z وZoom واختيار الدقة.",
+    "تضمين المثبت المتحرك لويندوز (Setup.exe) وإنشاء مثبت ماك متحرك مماثل (Artboard Studio Setup.app + .command) باللغات الست كاملة.",
+    "دعم QR Code لـ Snapchat مع شعار سناب شات الأصلي، وجميع أدوات Camera Raw 2026 وPhotoshop Transform الـ11.",
+    "تقسيم الحزم الرسمية بالكامل لنظامَي Windows وmacOS (محمية + مطورين + تحديث تلقائي موقّع)."
   ],
-  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_Setup.exe",
-  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_Setup.exe",
-  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_macOS_PROTECTED.zip",
+  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.6_Setup.exe",
+  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.6_Setup.exe",
+  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.6_macOS_Setup.zip",
   "package": {
-    "url": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.1_Update.zip",
-    "size": 5096650,
-    "sha256": "e1a8a5e1f48a2d90445cae72ebeb10bb676074852a696558ef4a12371aa64613",
-    "signature": "aMj9Mu6pqOgFyAcKD+Dlt6+4wWz1R/Gk54xBrVAwiw8muX3aFtbo2FDOB0POiYyGVjuuY8ThkHBZWQkj9Npyjg=="
+    "url": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.12.6_Update.zip",
+    "size": 5718858,
+    "sha256": "f5882d2e29508823ccb13f87845de07e088356e861981fbb4554527111827095",
+    "signature": "+rOElKpE4Hp4cOOuzGdRtmYrvah/Ear0Y48KB9ZQ+dqkwY//nuGHbaQj/MKUITPAKaFTs7y0nMnJbK/IFqsuLg=="
   }
 }
