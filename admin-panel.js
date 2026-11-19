@@ -1,7 +1,6 @@
 /* Artboard Studio — Firebase-authenticated live admin panel */
 (function () {
   "use strict";
-  var ADMIN_EMAIL = "rafathamed9@gmail.com";
   var ANALYTICS_API_URL = "https://artboard-studio-analytics.rafat-hamed.workers.dev";
   var analyticsMapInstance = null, analyticsMapLayer = null, analyticsLeafletPromise = null;
   var FIREBASE_CONFIG = {
@@ -16,7 +15,7 @@
   var defaults = {
     tagIcon:"✨", tagText:"إضافة احترافية للمصممين", heroTitle:"ARTBOARD STUDIO",
     heroDesc:"ارتقِ بتجربتك داخل Adobe Illustrator مع مجموعة من الأدوات العملية المصممة لتسهيل التعامل مع لوحات الرسم والصور والعناصر، وتعديل الصور وتحويلها مباشرة على لوحة العمل، وإنشاء رموز QR متجهية قابلة للتحرير.",
-    downloadIcon:"📥", downloadBtnText:"Download for Windows", downloadFileUrl:"https://github.com/rafathamed/ArtboardStudio/raw/refs/heads/main/Artboard_Studio_1.13.4_Setup.exe",
+    downloadIcon:"📥", downloadBtnText:"Download for Windows", downloadFileUrl:"./Artboard_Studio_1.13.4_Setup.exe",
     whatsappNumber:"201127502899", buttonColor1:"#7954ec", buttonColor2:"#a17aff", buttonAngle:120,
     pageBg:"#090b13", glow1:"#30205a", glow2:"#102d4b", textColor:"#f5f6ff",
     secondaryTextColor:"#b9bdd0", siteFont:"'Cairo',sans-serif", baseFontSize:16,
@@ -68,7 +67,7 @@
       "<section id='p-txt' class='st-pane active'><label>أيقونة ونص الشارة العلوية</label><div class='st-row'><input id='f-tico' value='✨' style='width:58px;text-align:center'><input id='f-tag' value='إضافة احترافية للمصممين'></div>",
       "<label>العنوان الرئيسي</label><input id='f-title' value='ARTBOARD STUDIO'><label>الوصف التعريفي أسفل العنوان</label><textarea id='f-desc' rows='4'></textarea>",
       "<label>أيقونة ونص زر التحميل</label><div class='st-row'><input id='f-bico' value='📥' style='width:58px;text-align:center'><input id='f-btxt' value='Download for Windows'></div>",
-      "<label>رابط ملف التحميل</label><input id='f-download' value='https://github.com/rafathamed/ArtboardStudio/raw/refs/heads/main/Artboard_Studio_1.13.4_Setup.exe' placeholder='https://... أو مسار نسبي'><label>رقم الواتساب (بدون +)</label><input id='f-wa' value='201127502899' inputmode='numeric'></section>",
+      "<label>رابط ملف التحميل</label><input id='f-download' value='./Artboard_Studio_1.13.4_Setup.exe' placeholder='https://... أو مسار نسبي'><label>رقم الواتساب (بدون +)</label><input id='f-wa' value='201127502899' inputmode='numeric'></section>",
       "<section id='p-col' class='st-pane'><label>تدرج الأزرار (لون 1 / لون 2 / الزاوية)</label><div class='st-grid3'><input type='color' id='f-c1' value='#7954ec'><input type='color' id='f-c2' value='#a17aff'><input type='number' id='f-ang' value='120' min='0' max='360'></div>",
       "<label>خلفية الموقع وتوهج الواجهة</label><div class='st-grid3'><input type='color' id='f-bg' value='#090b13'><input type='color' id='f-g1' value='#30205a'><input type='color' id='f-g2' value='#102d4b'></div>",
       "<label>لون النصوص (أساسي / ثانوي)</label><div class='st-grid2'><input type='color' id='f-tc' value='#f5f6ff'><input type='color' id='f-sc' value='#b9bdd0'></div></section>",
@@ -166,7 +165,7 @@
       if (parsed.protocol !== "https:" && !(relative && parsed.origin === location.origin)) return null;
       var fileName = parsed.pathname.split("/").pop();
       if (/^(?:ArtboardStudio\\.rar|Artboard_Studio_Setup\\.exe)$/i.test(fileName)) {
-        return new URL("https://github.com/rafathamed/ArtboardStudio/raw/refs/heads/main/Artboard_Studio_1.13.4_Setup.exe").href;
+        return new URL("./Artboard_Studio_1.13.4_Setup.exe").href;
       }
       return parsed.href;
     } catch (e) {}
@@ -807,12 +806,12 @@
       siteFont:document.getElementById("f-font").value,baseFontSize:Math.max(12,Math.min(30,parseInt(document.getElementById("f-fs").value,10)||16)),
       heroTitleSize:Math.max(28,Math.min(90,parseInt(document.getElementById("f-hs").value,10)||54)),
       animation:document.getElementById("f-anm").value,heroOrder:document.getElementById("f-ord").value,
-      customCards:draftCards.slice(0,60),customButtons:draftButtons.slice(0,100),sidePages:draftPages.slice(0,50),customElements:draftElements.slice(0,150),customCanvasItems:draftVisualItems.slice(0,100),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:currentUser.email
+      customCards:draftCards.slice(0,60),customButtons:draftButtons.slice(0,100),sidePages:draftPages.slice(0,50),customElements:draftElements.slice(0,150),customCanvasItems:draftVisualItems.slice(0,100),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:"admin"
     };
   }
 
   async function save() {
-    if (!currentUser || currentUser.email.toLowerCase() !== ADMIN_EMAIL) { status("st-msg","سجّل الدخول بحساب الإدارة أولًا.","error"); return; }
+    if (!currentUser) { status("st-msg","سجّل الدخول بحساب الإدارة أولًا.","error"); return; }
     var button = document.getElementById("st-save"); button.disabled = true; button.textContent = "جارٍ الحفظ...";
     try {
       var payload = collect();
@@ -838,15 +837,31 @@
     document.getElementById("st-login").classList.remove("st-hidden"); document.getElementById("st-body").classList.add("st-hidden");
     document.getElementById("st-logout").classList.add("st-hidden"); if (message) status("st-login-msg",message,error?"error":"");
   }
+  async function verifyAdminSession(user) {
+    if (!user || !user.emailVerified) return false;
+    try {
+      var token = await user.getIdToken();
+      var response = await fetch(ANALYTICS_API_URL + "/admin/summary?days=1", {
+        method: "GET",
+        headers: { "Authorization": "Bearer " + token }
+      });
+      if (!response.ok) return false;
+      var data = await response.json();
+      return !!(data && data.ok === true);
+    } catch (error) {
+      console.error("Admin session verification failed:", error);
+      return false;
+    }
+  }
+
   async function login() {
-    var email = document.getElementById("st-em").value.trim().toLowerCase(), password = document.getElementById("st-pw").value;
-    if (email !== ADMIN_EMAIL) { status("st-login-msg","هذا البريد غير مصرح له بالدخول إلى لوحة الإدارة.","error"); return; }
-    if (!password) { status("st-login-msg","أدخل كلمة المرور.","error"); return; }
+    var email = document.getElementById("st-em").value.trim(), password = document.getElementById("st-pw").value;
+    if (!email || !password) { status("st-login-msg","أدخل البريد الإلكتروني وكلمة المرور.","error"); return; }
     var button = document.getElementById("st-go"); button.disabled = true; button.textContent = "جارٍ التحقق...";
     try {
       var result = await auth.signInWithEmailAndPassword(email,password), user = result.user;
-      if (!user || !user.email || user.email.toLowerCase() !== ADMIN_EMAIL) { await auth.signOut(); throw new Error("الحساب غير مصرح له."); }
-      if (!user.emailVerified) { await auth.signOut(); throw new Error("يجب توثيق البريد الإلكتروني من رسالة Firebase أولًا."); }
+      if (!user || !user.emailVerified) { await auth.signOut(); throw new Error("يجب توثيق البريد الإلكتروني أولًا."); }
+      if (!(await verifyAdminSession(user))) { await auth.signOut(); throw new Error("هذا الحساب غير مصرح له بلوحة الإدارة."); }
       currentUser = user; document.getElementById("st-pw").value = ""; showAdmin();
     } catch (e) {
       var message = e && e.code === "auth/wrong-password" ? "كلمة المرور غير صحيحة." :
@@ -1111,9 +1126,13 @@
         console.error("Artboard Studio live content listener failed:", error);
         revealPublishedSite();
       });
-      auth.onAuthStateChanged(function (user) {
-        if (user && user.email && user.email.toLowerCase() === ADMIN_EMAIL && user.emailVerified) { currentUser = user; showAdmin(); }
-        else { currentUser = null; setVisualEditMode(false); if (user) auth.signOut(); showLogin("سجّل الدخول باستخدام بريد الإدارة الموثّق.",false); }
+      auth.onAuthStateChanged(async function (user) {
+        if (user && user.emailVerified && await verifyAdminSession(user)) { currentUser = user; showAdmin(); }
+        else {
+          currentUser = null; setVisualEditMode(false);
+          if (user) await auth.signOut().catch(function(){});
+          showLogin("سجّل الدخول باستخدام حساب الإدارة الموثّق.",false);
+        }
       });
       loadContent();
     } catch (e) { console.error("Admin initialization failed:",e); showLogin("تعذر تهيئة Firebase. تحقق من اتصال الموقع وإعدادات المشروع.",true); }
