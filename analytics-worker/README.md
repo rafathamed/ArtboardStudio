@@ -49,7 +49,7 @@ Run these commands from the `analytics-worker` folder:
    npx.cmd wrangler secret put FIREBASE_API_KEY
    ```
 
-6. Store the administrator email as a Cloudflare secret. Enter the account email only at the Wrangler prompt; it will not be written into the public repository:
+6. Store the administrator email as a Cloudflare secret. If `ADMIN_EMAIL` is still present under `[vars]` in your existing local `wrangler.toml`, remove that line first. Enter the account email only at the Wrangler prompt; it will not be written into the public repository:
 
    ```powershell
    npx.cmd wrangler secret put ADMIN_EMAIL
