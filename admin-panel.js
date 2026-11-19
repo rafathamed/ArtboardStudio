@@ -563,7 +563,12 @@
       d.heroDesc = data.heroDescHtml.replace(/<br\s*\/?\s*>/gi, " ").replace(/<\/p>/gi, " ").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
     }
     var map = {"f-tico":"tagIcon","f-tag":"tagText","f-title":"heroTitle","f-desc":"heroDesc","f-bico":"downloadIcon","f-btxt":"downloadBtnText","f-download":"downloadFileUrl","f-wa":"whatsappNumber","f-c1":"buttonColor1","f-c2":"buttonColor2","f-ang":"buttonAngle","f-bg":"pageBg","f-g1":"glow1","f-g2":"glow2","f-tc":"textColor","f-sc":"secondaryTextColor","f-font":"siteFont","f-fs":"baseFontSize","f-hs":"heroTitleSize","f-anm":"animation","f-ord":"heroOrder"};
-    Object.keys(map).forEach(function (id) { var el = document.getElementById(id); if (el) el.value = d[map[id]] == null ? "" : d[map[id]]; });
+    Object.keys(map).forEach(function (id) {
+      var el = document.getElementById(id); if (!el) return;
+      var value = d[map[id]];
+      if (id === "f-download") value = url(value, true) || defaults.downloadFileUrl;
+      el.value = value == null ? "" : value;
+    });
     draftCards = Array.isArray(d.customCards) ? d.customCards.slice(0, 60) : []; renderDraftCards();
     draftButtons = Array.isArray(d.customButtons) ? d.customButtons.slice(0, 100) : [];
     draftPages = Array.isArray(d.sidePages) ? d.sidePages.slice(0, 50) : [];
