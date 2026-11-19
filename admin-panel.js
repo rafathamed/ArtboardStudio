@@ -164,8 +164,13 @@
       var parsed = new URL(raw, location.href);
       if (parsed.protocol !== "https:" && !(relative && parsed.origin === location.origin)) return null;
       var fileName = parsed.pathname.split("/").pop();
-      if (/^(?:ArtboardStudio\\.rar|Artboard_Studio_Setup\\.exe)$/i.test(fileName)) {
-        return new URL("./Artboard_Studio_1.13.4_Setup.exe").href;
+      if (/^(?:ArtboardStudio\.rar|Artboard_Studio_Setup\.exe)$/i.test(fileName)) {
+        return new URL("./Artboard_Studio_1.13.4_Setup.exe", location.href).href;
+      }
+      // Convert legacy direct GitHub asset URLs saved in Firestore to same-site paths.
+      if (parsed.hostname === "github.com" && /\/rafathamed\/ArtboardStudio\/raw\//i.test(parsed.pathname) &&
+          /^Artboard_Studio_\d+(?:\.\d+){1,2}_(?:Setup\.exe|macOS_Setup\.zip|Update\.zip)$/i.test(fileName)) {
+        return new URL("./" + fileName, location.href).href;
       }
       return parsed.href;
     } catch (e) {}
