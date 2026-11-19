@@ -1,7 +1,7 @@
 /* Artboard Studio — original website element editor */
 (function () {
   "use strict";
-  var ADMIN_EMAIL="rafathamed9@gmail.com",db=null,auth=null,user=null,enabled=false,selected=null,edits=[],undoStack=[],redoStack=[],drag=null,resizing=null,selectionUi=null,appliedKeys=[],uiReady=false;
+  var ANALYTICS_API_URL="https://artboard-studio-analytics.rafat-hamed.workers.dev",db=null,auth=null,user=null,enabled=false,selected=null,edits=[],undoStack=[],redoStack=[],drag=null,resizing=null,selectionUi=null,appliedKeys=[],uiReady=false;
   function addCss(){
     if(document.getElementById("as-dom-editor-css"))return;
     var st=document.createElement("style");st.id="as-dom-editor-css";
@@ -154,7 +154,7 @@
   }
   function undo(){restore(undoStack,redoStack);}function redo(){restore(redoStack,undoStack);}
   async function save(){
-    if(!user||user.email.toLowerCase()!==ADMIN_EMAIL)return;
+    if(!user)return;
     var b=document.getElementById("as-dom-save");b.disabled=true;b.textContent="جارٍ الحفظ...";
     try{await db.collection("site").doc("content").set({customDomEdits:edits.slice(0,500)},{merge:true});status("تم حفظ الموضع والأبعاد والتحجيم وحذف العناصر في Firebase بنجاح.");}
     catch(e){status("تعذر الحفظ: "+(e.message||"خطأ غير معروف"),true);}
@@ -178,10 +178,20 @@
   }
   function init(){
     if(!window.firebase||!firebase.apps.length)return;db=firebase.firestore();auth=firebase.auth();
-    auth.onAuthStateChanged(function(u){
-      user=u&&u.email&&u.email.toLowerCase()===ADMIN_EMAIL&&u.emailVerified?u:null;
+    async function verifyAdminSession(u){
+      if(!u||!u.emailVerified)return false;
+      try{
+        var token=await u.getIdToken();
+        var response=await fetch(ANALYTICS_API_URL+"/admin/summary?days=1",{headers:{"Authorization":"Bearer "+token}});
+        if(!response.ok)return false;
+        var data=await response.json();return !!(data&&data.ok===true);
+      }catch(error){console.error("DOM editor admin verification failed:",error);return false;}
+    }
+    auth.onAuthStateChanged(async function(u){
+      user=u&&await verifyAdminSession(u)?u:null;
       var card=document.getElementById("as-dom-editor-card");if(card)card.style.display=user?"":"none";
-      if(!user)setEnabled(false);else status("تم التحقق من حساب الإدارة. يمكنك تحرير عناصر الموقع.");
+      if(!user){setEnabled(false);if(u)await auth.signOut().catch(function(){});}
+      else status("تم التحقق من حساب الإدارة. يمكنك تحرير عناصر الموقع.");
     });
     db.collection("site").doc("content").onSnapshot(function(snap){if(snap.exists){edits=Array.isArray(snap.data().customDomEdits)?snap.data().customDomEdits.slice(0,500):[];applyAll();}});
     var observer=new MutationObserver(function(){buildUi();});observer.observe(document.body,{childList:true,subtree:true});buildUi();
