@@ -5,7 +5,6 @@ workers_dev = true
 
 [vars]
 SITE_ORIGIN = "https://rafathamed.github.io"
-ADMIN_EMAIL = "rafathamed9@gmail.com"
 
 [[d1_databases]]
 binding = "DB"
