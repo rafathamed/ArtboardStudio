@@ -11,7 +11,7 @@ This Cloudflare Worker records page visits and download clicks for the GitHub Pa
 
 IP addresses and visit-level records are retained for **30 days**. Old rows are removed during incoming tracking requests. The location is approximate (often a city/network area), not a home or street address. Download numbers are **download-link clicks**, not proof that the file finished downloading.
 
-The dashboard endpoint checks Firebase ID tokens with Firebase Identity Toolkit and permits only the verified `rafathamed9@gmail.com` admin account. Never expose an admin API token or the D1 database credentials.
+The dashboard endpoint checks Firebase ID tokens with Firebase Identity Toolkit and permits only the verified admin account configured in the Cloudflare Worker secret `ADMIN_EMAIL`. Never place that value in public files or expose an admin API token or D1 database credentials.
 
 ## Deploy from Windows PowerShell
 
@@ -49,7 +49,13 @@ Run these commands from the `analytics-worker` folder:
    npx.cmd wrangler secret put FIREBASE_API_KEY
    ```
 
-6. Add a private random key used to hash browser identifiers. Generate one in PowerShell and paste it when Wrangler prompts:
+6. Store the administrator email as a Cloudflare secret. Enter the account email only at the Wrangler prompt; it will not be written into the public repository:
+
+   ```powershell
+   npx.cmd wrangler secret put ADMIN_EMAIL
+   ```
+
+7. Add a private random key used to hash browser identifiers. Generate one in PowerShell and paste it when Wrangler prompts:
 
    ```powershell
    ([guid]::NewGuid().ToString("N") + [guid]::NewGuid().ToString("N"))
@@ -59,7 +65,7 @@ Run these commands from the `analytics-worker` folder:
    npx.cmd wrangler secret put VISITOR_HASH_SECRET
    ```
 
-7. Deploy:
+8. Deploy:
 
    ```powershell
    npx.cmd wrangler deploy
@@ -76,7 +82,7 @@ If Cloudflare prints a different URL, update `ANALYTICS_API_URL` near the top of
 ## Firebase requirements
 
 - The project must use Firebase Authentication Email/Password.
-- `rafathamed9@gmail.com` must be an existing user with a verified email.
+- The administrator account configured in the `ADMIN_EMAIL` Worker secret must exist in Firebase Authentication and have a verified email.
 - The Firebase API key used by the Worker must allow the Identity Toolkit API. If the key has HTTP-referrer restrictions, adjust them so the Worker-side Identity Toolkit lookup is allowed.
 
 ## Dashboard endpoints
