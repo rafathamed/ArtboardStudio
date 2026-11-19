@@ -16,7 +16,7 @@
   var defaults = {
     tagIcon:"✨", tagText:"إضافة احترافية للمصممين", heroTitle:"ARTBOARD STUDIO",
     heroDesc:"ارتقِ بتجربتك داخل Adobe Illustrator مع مجموعة من الأدوات العملية المصممة لتسهيل التعامل مع لوحات الرسم والصور والعناصر، وتعديل الصور وتحويلها مباشرة على لوحة العمل، وإنشاء رموز QR متجهية قابلة للتحرير.",
-    downloadIcon:"📥", downloadBtnText:"Download for Windows", downloadFileUrl:"https://github.com/rafathamed/ArtboardStudio/raw/refs/heads/main/Artboard_Studio_1.13.1_Setup.exe",
+    downloadIcon:"📥", downloadBtnText:"Download for Windows", downloadFileUrl:"https://github.com/rafathamed/ArtboardStudio/raw/refs/heads/main/Artboard_Studio_1.13.3_Setup.exe",
     whatsappNumber:"201127502899", buttonColor1:"#7954ec", buttonColor2:"#a17aff", buttonAngle:120,
     pageBg:"#090b13", glow1:"#30205a", glow2:"#102d4b", textColor:"#f5f6ff",
     secondaryTextColor:"#b9bdd0", siteFont:"'Cairo',sans-serif", baseFontSize:16,
@@ -68,7 +68,7 @@
       "<section id='p-txt' class='st-pane active'><label>أيقونة ونص الشارة العلوية</label><div class='st-row'><input id='f-tico' value='✨' style='width:58px;text-align:center'><input id='f-tag' value='إضافة احترافية للمصممين'></div>",
       "<label>العنوان الرئيسي</label><input id='f-title' value='ARTBOARD STUDIO'><label>الوصف التعريفي أسفل العنوان</label><textarea id='f-desc' rows='4'></textarea>",
       "<label>أيقونة ونص زر التحميل</label><div class='st-row'><input id='f-bico' value='📥' style='width:58px;text-align:center'><input id='f-btxt' value='Download for Windows'></div>",
-      "<label>رابط ملف التحميل</label><input id='f-download' value='https://github.com/rafathamed/ArtboardStudio/raw/refs/heads/main/Artboard_Studio_1.13.1_Setup.exe' placeholder='https://... أو مسار نسبي'><label>رقم الواتساب (بدون +)</label><input id='f-wa' value='201127502899' inputmode='numeric'></section>",
+      "<label>رابط ملف التحميل</label><input id='f-download' value='https://github.com/rafathamed/ArtboardStudio/raw/refs/heads/main/Artboard_Studio_1.13.3_Setup.exe' placeholder='https://... أو مسار نسبي'><label>رقم الواتساب (بدون +)</label><input id='f-wa' value='201127502899' inputmode='numeric'></section>",
       "<section id='p-col' class='st-pane'><label>تدرج الأزرار (لون 1 / لون 2 / الزاوية)</label><div class='st-grid3'><input type='color' id='f-c1' value='#7954ec'><input type='color' id='f-c2' value='#a17aff'><input type='number' id='f-ang' value='120' min='0' max='360'></div>",
       "<label>خلفية الموقع وتوهج الواجهة</label><div class='st-grid3'><input type='color' id='f-bg' value='#090b13'><input type='color' id='f-g1' value='#30205a'><input type='color' id='f-g2' value='#102d4b'></div>",
       "<label>لون النصوص (أساسي / ثانوي)</label><div class='st-grid2'><input type='color' id='f-tc' value='#f5f6ff'><input type='color' id='f-sc' value='#b9bdd0'></div></section>",
@@ -166,7 +166,7 @@
       if (parsed.protocol !== "https:" && !(relative && parsed.origin === location.origin)) return null;
       var fileName = parsed.pathname.split("/").pop();
       if (/^(?:ArtboardStudio\\.rar|Artboard_Studio_Setup\\.exe)$/i.test(fileName)) {
-        return new URL("https://github.com/rafathamed/ArtboardStudio/raw/refs/heads/main/Artboard_Studio_1.13.1_Setup.exe").href;
+        return new URL("https://github.com/rafathamed/ArtboardStudio/raw/refs/heads/main/Artboard_Studio_1.13.3_Setup.exe").href;
       }
       return parsed.href;
     } catch (e) {}
@@ -201,7 +201,7 @@
     var configuredDownloadUrl = d.downloadFileUrl || defaults.downloadFileUrl;
     var configuredDownloadPath = String(configuredDownloadUrl).trim().split(/[?#]/)[0].split("/").pop();
     // Upgrade stale saved Artboard Studio installer URLs to the newest repository release.
-    if (/^Artboard_Studio_\d+(?:\.\d+){1,2}_Setup\.exe$/i.test(configuredDownloadPath) && configuredDownloadPath !== "Artboard_Studio_1.13.1_Setup.exe") {
+    if (/^Artboard_Studio_\d+(?:\.\d+){1,2}_Setup\.exe$/i.test(configuredDownloadPath) && configuredDownloadPath !== "Artboard_Studio_1.13.3_Setup.exe") {
       configuredDownloadUrl = defaults.downloadFileUrl;
     }
     if (/^(?:ArtboardStudio\.rar|Artboard_Studio_Setup\.exe)$/i.test(configuredDownloadPath)) {
