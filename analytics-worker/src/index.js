@@ -1,4 +1,3 @@
-const ADMIN_EMAIL = "rafathamed9@gmail.com";
 const MAX_DAYS = 30;
 const DEFAULT_DAYS = 30;
 const MAX_RECENT = 120;
@@ -104,7 +103,8 @@ async function authenticateAdmin(request, env) {
   const user = data && data.users && data.users[0];
   if (!user) return { ok: false, reason: "firebase_user_missing" };
 
-  const allowedAdmin = String(env.ADMIN_EMAIL || ADMIN_EMAIL).trim().toLowerCase();
+  const allowedAdmin = String(env.ADMIN_EMAIL || "").trim().toLowerCase();
+  if (!allowedAdmin) return { ok: false, reason: "admin_allowlist_not_configured" };
   if (String(user.email || "").trim().toLowerCase() !== allowedAdmin) {
     return { ok: false, reason: "admin_email_mismatch" };
   }
