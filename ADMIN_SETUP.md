@@ -4,14 +4,14 @@
 
 - المشروع: `artboardstudio-117a6`
 - المسار: `site/content`
-- حساب الإدارة المسموح به في الواجهة: `rafathamed9@gmail.com`
+- حساب الإدارة المسموح به: الحساب الذي تضبط بريده في سر Cloudflare Worker باسم `ADMIN_EMAIL`
 
 ## 1. تفعيل تسجيل الدخول
 
 1. افتح Firebase Console ثم مشروع `artboardstudio-117a6`.
 2. انتقل إلى Authentication ثم Sign-in method.
 3. فعّل مزوّد Email/Password.
-4. من تبويب Users، أنشئ حساب الإدارة `rafathamed9@gmail.com` أو استخدم الحساب الموجود بالفعل.
+4. من تبويب Users، أنشئ حساب الإدارة الذي ستستخدمه أو استخدم الحساب الموجود بالفعل.
 5. أرسل رسالة توثيق البريد من Firebase، ثم افتحها ووثّق البريد الإلكتروني.
 6. عيّن كلمة مرور قوية للحساب من Firebase Console أو استخدم آلية إعادة تعيين كلمة المرور الخاصة بـ Firebase. لا تضع كلمة المرور في ملفات الموقع أو GitHub.
 
@@ -29,7 +29,7 @@ match /site/content {
   allow list: if false;
 
   allow create, update, delete: if request.auth != null
-    && request.auth.token.email == "rafathamed9@gmail.com"
+    && request.auth.token.email == "ADMIN_EMAIL_FROM_FIREBASE_CONSOLE"
     && request.auth.token.email_verified == true;
 }
 ```
