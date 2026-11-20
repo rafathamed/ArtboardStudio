@@ -17,9 +17,9 @@
     "تراجع وإعادة بـ Ctrl+Z وCtrl+Shift+Z في النافذتين، وتكبير/تصغير وسحب الصورة، ومساطر وشبكة خلفية في «تحويل الصورة».",
     "تحسين السرعة والاستقرار على Windows وmacOS (Adobe Illustrator 2024–2027)."
   ],
-  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.4_Setup.exe",
-  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.4_Setup.exe",
-  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.4_macOS_Setup.zip",
+  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.5_Setup.exe",
+  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.5_Setup.exe",
+  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.5_macOS_Setup.zip",
   "package": {
     "url": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.4_Update.zip",
     "size": 4673454,
