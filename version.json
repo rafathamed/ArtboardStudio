@@ -1,8 +1,10 @@
 {
-  "version": "1.13.4",
+  "version": "1.13.6",
   "minVersion": "1.0.0",
-  "releasedAt": "2026-11-19",
+  "releasedAt": "2026-11-21",
   "notes": [
+    "تسريع فتح نافذتي تعديل الصور وتحويل الصورة: نافذة الانتظار تُغلق فور ظهور النافذة الجديدة بدل انتظار تحميل الصورة.",
+    "إصلاح جذري: سنة Illustrator الداخلية كانت خاطئة لإصدارات 2024/2025/2027 مما كان يمنع التحديث التلقائي ويفتح أحيانًا نافذة السنة الخطأ. من تأثر بهذا يحتاج إعادة تثبيت واحدة من Setup.exe (وليس زر التحديث) لتلك السنة.",
     "نافذتا تعديل الصور وتحويل الصورة مترجمتان بالكامل للغات المدعومة (EN/RU/HI/ZH/JA) وتتبعان لغة اللوحة الرئيسية.",
     "بطاقة «معلومات التفعيل» تعرض السريال المثبّت سابقًا حتى بعد التحديث أو إلغاء التثبيت (نسخة دائمة خارج مجلد الإضافة).",
     "تحديث أكثر أمانًا: فحص صلاحية الكتابة والنسخ الاحتياطي قبل أي تغيير، تحقق من ملف التعريف بعد الكتابة، رجوع كامل عند أي خطأ دون حذف أي ملف موجود، وسجل abs_update.log.",
@@ -11,19 +13,19 @@
     "إصلاح إضافي: قناة تفعيل داخل Illustrator نفسه تضمن عدم ظهور طلب السريال في نافذتي «تعديل الصور» و«تحويل الصورة» بعد التفعيل.",
     "إصلاح: نافذتا «تعديل الصور» و«تحويل الصورة» لا تطلبان التفعيل مجددًا طالما اللوحة الرئيسية مفعّلة (قناة تفعيل مشتركة بين اللوحة والنافذتين).",
     "إصلاح: نافذتا «تعديل الصور» و«تحويل الصورة» لم تعودا تطلبان التفعيل بالسريال عند التحديث فوق نسخة مفعّلة.",
-    "إصدار 1.13.4: «تعديل الصور» و«تحويل الصورة» صارا نافذتين كبيرتين مستقلتين (1280×820 قابلتين للتكبير) تعملان على الصورة المحددة داخل النافذة، وعند التطبيق تُستبدل الصورة الأصلية مباشرة دون أي تعديل على الأرتبورد.",
+    "إصدار 1.13.6: «تعديل الصور» و«تحويل الصورة» صارا نافذتين كبيرتين مستقلتين (1280×820 قابلتين للتكبير) تعملان على الصورة المحددة داخل النافذة، وعند التطبيق تُستبدل الصورة الأصلية مباشرة دون أي تعديل على الأرتبورد.",
     "فتح الصورة بدون New Document وبدون نافذة جانبية: تصدير معزول من نفس المستند، وتصدير واحد فقط لكل جلسة يُستخدم عند التطبيق.",
     "شريط تقدم في اللوحة الرئيسية وفي النافذتين أثناء الفتح والتطبيق، مع اختيار دقة التصدير (سريعة / متوازنة / عالية / قصوى) وعرض زمن كل خطوة.",
     "تراجع وإعادة بـ Ctrl+Z وCtrl+Shift+Z في النافذتين، وتكبير/تصغير وسحب الصورة، ومساطر وشبكة خلفية في «تحويل الصورة».",
     "تحسين السرعة والاستقرار على Windows وmacOS (Adobe Illustrator 2024–2027)."
   ],
-  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.5_Setup.exe",
-  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.5_Setup.exe",
-  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.5_macOS_Setup.zip",
+  "downloadUrl": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.6_Setup.exe",
+  "downloadUrlWin": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.6_Setup.exe",
+  "downloadUrlMac": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.6_macOS_Setup.zip",
   "package": {
-    "url": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.4_Update.zip",
-    "size": 4673454,
-    "sha256": "45647176ed1342b399805e86afc261b293505b9c67e75acd71a8140f97ff2bd6",
-    "signature": "1xSnlA04RhKxr/6MyzC3HcanOMcRU9GeIzpaR+MPXbXdQpRUi/4q1WEhNYyfQdXI16/bbLlI72BCwkJBf3AMnQ=="
+    "url": "https://rafathamed.github.io/ArtboardStudio/Artboard_Studio_1.13.6_Update.zip",
+    "size": 4683705,
+    "sha256": "41985da39e4cf1a459a433cbc1ddc762596c8118356bc97b884aa4330541d309",
+    "signature": "e+T3uzPmuH6hXiRN+MHFLuon8/cV6+7QfknC0u0ZfgNS8VR4oyWDMUxsdt4eB/3bEeTVSj2bZfO8KMvmUycbSQ=="
   }
 }
